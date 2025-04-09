@@ -1,0 +1,70 @@
+services:
+  # APIサーバー - ユーザーデータやステータス情報の処理
+  api:
+    build:
+      context: ./backend/api
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/gamification
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+
+  # ワーカー - 非同期処理を担当
+  worker:
+    build:
+      context: ./backend/worker
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/gamification
+    depends_on:
+      - postgres
+      - api
+    restart: unless-stopped
+
+
+  # PostgreSQLデータベース - ユーザーや企業情報の保存
+  postgres:
+    build:
+      context: ./backend/database
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/database/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  # フロントエンド - Reactアプリケーション
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    volumes:
+      - ./backend/pgadmin4/config.json:/pgadmin4/servers.json
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@example.com
+      PGADMIN_DEFAULT_PASSWORD: rootpass
+
+      # 下記の設定によりログインを短縮
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:

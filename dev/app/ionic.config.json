@@ -1,0 +1,7 @@
+{
+  "name": "worker-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}

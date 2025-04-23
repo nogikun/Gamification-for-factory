@@ -20,4 +20,8 @@
 [![Docusaurus](https://img.shields.io/badge/Docusaurus-2E8555?style=for-the-badge&logo=docusaurus&logoColor=white)](https://gamification-for-factory.netlify.app/)
 [![Notion](https://img.shields.io/badge/Notion-333333?style=for-the-badge&logo=notion&logoColor=white)](https://www.notion.so/15bc5dbe3ed380df85faefed023c13e2?pvs=4)
 
+[![Docusaurus(v0.1.0)](https://img.shields.io/badge/Docusaurus-Dev.0.1.0-ff33ff?style=for-the-badge&logo=docusaurus&logoColor=white)](https://develop-0-1-0--gamification-for-factory.netlify.app)  
+[![基本設計仕様書](https://img.shields.io/badge/基本設計仕様書-4285F4?style=for-the-badge&logo=googledocs&logoColor=white)](https://docs.google.com/spreadsheets/d/1PUPR3mHfcklcqDcPCDLQJtMUopYBBfQV/edit?usp=sharing&ouid=100052829736987286489&rtpof=true&sd=true)
+[![ガントチャート](https://img.shields.io/badge/ガントチャート-34A853?style=for-the-badge&logo=googlesheets&logoColor=white)](https://docs.google.com/spreadsheets/d/1PUPR3mHfcklcqDcPCDLQJtMUopYBBfQV/edit?usp=sharing&ouid=100052829736987286489&rtpof=true&sd=true)
+
 </div>

@@ -50,19 +50,14 @@ services:
       - api
     restart: unless-stopped
 
-  pgadmin4:
-    image: dpage/pgadmin4
-    volumes:
-      - ./backend/pgadmin4/config.json:/pgadmin4/servers.json
+  adminer:
+    image: adminer
+    restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: user@example.com
-      PGADMIN_DEFAULT_PASSWORD: rootpass
-
-      # 下記の設定によりログインを短縮
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+      - ADMINER_DESIGN=pepa_linha
+      - SERVER=postgres
     ports:
-      - "5050:80"
+      - 5050:8080
     depends_on:
       - postgres
 

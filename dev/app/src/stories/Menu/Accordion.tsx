@@ -17,7 +17,7 @@ export interface AccordionProps {
 	/** ボタンの内容 */
 	label: string;
 	/** 角丸の大きさ (px) */
-  borderRadius?: number;
+    borderRadius?: number;
 	/** 幅（px または % など） */
 	width?: string | number;
 	/** 高さ（px または % など） */

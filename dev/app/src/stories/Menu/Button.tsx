@@ -11,7 +11,7 @@ import { ReactComponent as Settings } from './assets/settings_applications.svg';
 import { Component } from '@storybook/blocks';
 
 // アイコンコンポーネントの型を定義
-type Icons = React.FC<React.SVGProps<SVGSVGElement>>;
+type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;
 
 // Buttonの型定義
 export interface ButtonProps { // Buttonのprops（パラメータ）の型定義
@@ -28,7 +28,7 @@ export interface ButtonProps { // Buttonのprops（パラメータ）の型定�
 		borderRadiusTopRight?: string; // 右上の角の丸み
 		borderRadiusBottomLeft?: string; // 左下の角の丸み
 		borderRadiusBottomRight?: string; // 右下の角の丸み
-		icon?: Icons; // | keyof typeof Icons; // アイコンのコンポーネント
+		icon?: IconComponent | keyof typeof Icons; // アイコンコンポーネントまたはアイコン名
 		alt?: string; // 画像のalt属性
     onClick?: () => void; // 今はvoid関数であるが、クリック時に実行される関数を指定するためのもの
 }
@@ -42,11 +42,11 @@ export const Button = ({
 	borderRadiusTopRight,
 	borderRadiusBottomLeft,
 	borderRadiusBottomRight,
-	icon: Icon = Crown, // デフォルトは適当なアイコン
+	icon: IconProp = Crown, // デフォルトは適当なアイコン
   ...props
 }: ButtonProps) => {
   const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
-  // const Icon = typeof IconProp === 'string' ? Icons[IconProp as keyof typeof Icons] : IconProp;
+  const Icon = typeof IconProp === 'string' ? Icons[IconProp as keyof typeof Icons] : IconProp;
     
 	return (
     <button

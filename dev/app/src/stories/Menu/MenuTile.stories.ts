@@ -31,5 +31,14 @@ export const Primary : Story ={
         variant: 'primary',
         width: "100vw",
         height: "100%",
+        position: "absolute",
+        menuBtnTop: "50%",
+        menuBtnLeft: "50%",
+        menuTransform: "translate(-50%, -50%)",
+        menuZIndex: 10,
+        menuMargin: "0em",
+        menuJustifyContent: "",
+        menuAlignItems: "",
+        bottomMarginTop: ""
     },
 }

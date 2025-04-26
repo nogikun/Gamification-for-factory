@@ -1,0 +1,19 @@
+.top-buttons, .bottom-buttons {
+  display: flex;
+  width: 100%;
+}
+
+/* middle-accordion のスタイルはすべてPropsで管理されるようになりました */
+.middle-accrdion {
+    position: absolute;
+    display: 'flex';
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    margin: 0em;
+    justify-content: center;
+    align-items: center;
+}
+
+/* bottom-buttons のmargin-topもPropsで管理されるようになりました */

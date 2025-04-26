@@ -14,6 +14,22 @@ export interface MenuTileProps {
     backgroundColor?: string; // 背景色
     width?: string; // ボタンの幅
     height?: string; // ボタンの高さ
+    
+    // 親コンテナの位置設定
+    position?: 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky'; // 親コンテナの配置方法（relative, absoluteなど）
+    
+    // 中央アコーディオンの設定
+    menuBtnTop?: string; // メニューボタンの上からの位置
+    menuBtnLeft?: string; // メニューボタンの左からの位置
+    menuTransform?: string; // メニューボタンの変形
+    menuZIndex?: number; // メニューボタンの重なり順序
+    menuMargin?: string; // メニューボタンのマージン
+    menuJustifyContent?: string; // メニューボタン内の水平方向の配置
+    menuAlignItems?: string; // メニューボタン内の垂直方向の配置
+    
+    // 下部ボタンの設定
+    bottomMarginTop?: string; // 下部ボタンの上マージン
+    
     onClick?: () => void; // 今はvoid関数であるが、クリック時に実行される関数を指定するためのもの
 }
 
@@ -23,6 +39,15 @@ export const MenuTile = ({
     backgroundColor,
     width,
     height,
+    position = 'relative', // デフォルト値を設定
+    menuBtnTop,
+    menuBtnLeft,
+    menuTransform,
+    menuZIndex = 10, // デフォルト値を設定
+    menuMargin = '20px 0', // デフォルト値を設定
+    menuJustifyContent = 'center', // デフォルト値を設定
+    menuAlignItems = 'center', // デフォルト値を設定
+    bottomMarginTop = '-0px', // デフォルト値を設定
     onClick,
 }: MenuTileProps) => {
     const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
@@ -32,7 +57,7 @@ export const MenuTile = ({
             width: `${width}`,
             height: `${height}`
         }} >
-            <div> {/* 上段 */}
+            <div className="top-buttons"> {/* 上段 */}
                 <Button
                     alt=""
                     backgroundColor="#FCAA1B"
@@ -70,7 +95,33 @@ export const MenuTile = ({
                 />
             </div>
 
-            <div> {/* 下段 */}
+            <div style={{
+                position: position,
+                display: 'flex',
+                justifyContent: menuJustifyContent,
+                alignItems: menuAlignItems,
+                margin: menuMargin,
+                top: menuBtnTop,
+                left: menuBtnLeft,
+                transform: menuTransform,
+                zIndex: menuZIndex
+                }}
+                // className="middle-accordion"
+                >
+                <Accordion
+                    backgroundColor="#262626"
+                    borderRadius={50}
+                    height={100}
+                    icon={"Menu"}
+                    label=""
+                    onClick={() => {}}
+                    primary
+                    textcolor="#ffffff"
+                    width={100}
+                />
+            </div>
+
+            <div className="bottom-buttons" style={{ marginTop: bottomMarginTop }}> {/* 下段 */}
                 <Button
                     alt=""
                     backgroundColor="#34AFB8"

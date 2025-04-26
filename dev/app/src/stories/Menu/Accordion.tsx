@@ -1,8 +1,17 @@
 import React from 'react';
-
 import './Accordion.css';
-import { P } from 'storybook/internal/components';
-import { color } from 'storybook/internal/theming';
+
+// アイコンコンポーネントのインポート
+import { ReactComponent as Menu } from './assets/menu.svg';
+
+// アイコンコンポーネントの型を定義
+type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;
+
+// アイコンマッピングをエクスポート（Storybookで使用するため）
+export const Icons = {
+	Menu
+	// 他のアイコンも追加
+};
 
 // プロパティの型を定義
 export interface AccordionProps {
@@ -22,6 +31,10 @@ export interface AccordionProps {
 	width?: string | number;
 	/** 高さ（px または % など） */
 	height?: string | number;
+    /** ラベルを有効にするか */
+    labelEnabled?: boolean;
+    /** アイコン */
+    icon?: IconComponent | keyof typeof Icons; // アイコンコンポーネントまたはアイコン名
 	/** オプションのクリックハンドラー */
 	onClick?: () => void;
 }
@@ -36,9 +49,14 @@ export const Accordion = ({
 	borderRadius,
 	width,
 	height,
+	labelEnabled = true,
+	icon: IconProp = Menu,
+	onClick,
 	...props
 }: AccordionProps) => {
 	const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
+	const Icon = typeof IconProp === 'string' ? Icons[IconProp as keyof typeof Icons] : IconProp;
+
 	return (
 		<button
 			style={{
@@ -50,10 +68,18 @@ export const Accordion = ({
 				height: height ? (typeof height === 'number' ? `${height}px` : height) : undefined,
 				} 
 			}
-			onClick={props.onClick}
+			onClick={onClick}
 			{...props}
 		>
-			<p>{label}</p>
+			{/* アイコン */}
+			<Icon />
+			
+			{/* ラベル */}
+			{labelEnabled && (
+				<span style={{ color: textcolor }}>
+					{label}
+				</span>
+			)}
 		</button>
 	);
 };

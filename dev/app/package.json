@@ -68,6 +68,7 @@
     "typescript-eslint": "^8.24.0",
     "url-loader": "^4.1.1",
     "vite": "~5.2.0",
+    "vite-plugin-svgr": "^4.3.0",
     "vitest": "^0.34.6",
     "webpack": "^5.99.6"
   },

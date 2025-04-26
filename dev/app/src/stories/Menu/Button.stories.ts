@@ -36,7 +36,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// 基本的なボタンのストーリー
+// 基本的なボタンのストーリー（不使用）
 export const Primary : Story ={
     args: {
         primary: true,
@@ -49,7 +49,9 @@ export const Primary : Story ={
         borderRadiusTopLeft: "100px",
         borderRadiusTopRight: "0px",
         borderRadiusBottomLeft: "0px",
-        borderRadiusBottomRight: "0px"
+        borderRadiusBottomRight: "0px",
+        fontSize: "32px",
+        color: "#ffffff"
     },
 };
 

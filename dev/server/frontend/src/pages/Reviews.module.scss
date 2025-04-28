@@ -1,0 +1,133 @@
+@use '../styles/variables' as *;
+
+.reviews {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 32px 0 0 0;
+  max-width: 720px;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  border: 1px solid var(--bg-sidebar);
+}
+.reviews__title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+.reviews__table {
+  width: 100%;
+  min-width: 720px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background: #fff;
+}
+.reviews__table th, .reviews__table td {
+  padding: 12px 16px;
+  min-height: 48px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  border-bottom: 1px solid #f0f0f0;
+}
+.reviews__table th:last-child, .reviews__table td:last-child {
+  width: 110px;
+  text-align: center;
+}
+.reviews__table tr:hover {
+  background: #f7fafd;
+}
+.inputBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 16px;
+  font-size: 0.96rem;
+  cursor: pointer;
+  transition: background 0.18s;
+  margin: 0 2px;
+}
+.inputBtn:hover {
+  background: #0d47a1;
+}
+
+// モーダル
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modalContent {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 24px 20px 24px;
+  min-width: 320px;
+  max-width: 400px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.13);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.reviewTextarea {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  padding: 10px 12px;
+  font-size: 1rem;
+  resize: vertical;
+  margin-bottom: 10px;
+}
+.modalActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.submitBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.submitBtn:hover {
+  background: #0d47a1;
+}
+.closeBtn {
+  background: #eee;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.closeBtn:hover {
+  background: #ccc;
+}
+@media (max-width: 600px) {
+  .modalContent {
+    min-width: 0;
+    width: 96vw;
+    padding: 16px 4vw 12px 4vw;
+  }
+  .reviews__table th, .reviews__table td {
+    padding: 8px 6px;
+    font-size: 0.98rem;
+  }
+  .reviews__table {
+    min-width: 540px;
+    font-size: 0.97rem;
+  }
+}

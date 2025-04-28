@@ -1,0 +1,110 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+@use 'sass:color';
+
+.dashboard {
+  background: #fff;
+  min-height: 100vh;
+  color: #222;
+}
+
+.dashboard__title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 32px;
+  color: #222;
+}
+
+.dashboard__kpiRow {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  background: #fff;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.dashboard__calendarRow {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  @media (max-width: 900px) {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.kpiCard {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px 20px 20px 20px;
+  border: 1px solid #eee;
+  min-width: 180px;
+  flex: 1 1 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 4px 8px rgba(0,0,0,.06);
+  color: #222;
+  margin-bottom: 24px;
+}
+
+.kpiCard__icon {
+  color: $accent;
+  margin-bottom: 8px;
+}
+
+.kpiCard__label {
+  font-size: 1.05rem;
+  color: #1ea7ff;
+  margin-bottom: 2px;
+}
+
+.kpiCard__value {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 2px;
+}
+
+.kpiCard__sub {
+  font-size: 0.97rem;
+  color: #1ea7ff;
+}
+
+.dashboard__activity {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #fff;
+  width: 320px;
+  min-width: 220px;
+  box-sizing: border-box;
+}
+
+.dashboard__sectionTitle {
+  font-size: 1.2rem;
+  color: #222;
+  margin-bottom: 16px;
+}
+
+.activityList {
+  padding-left: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.activityList li {
+  padding: 8px 0;
+  border-bottom: 1px solid #fff;
+  color: #222;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.activityList li:last-child {
+  border-bottom: none;
+}

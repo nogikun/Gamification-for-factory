@@ -1,0 +1,73 @@
+@use '../styles/variables' as *;
+
+.companyEdit {
+  background: #fff;
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 32px 24px;
+  max-width: 520px;
+  margin: 0 auto;
+  min-height: 100vh;
+  box-shadow: none;
+  border: none;
+}
+.companyEdit__title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 24px;
+  color: #222;
+}
+.companyEdit__form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #fff;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    input, textarea {
+      margin-top: 4px;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid var(--bg-sidebar);
+      background: var(--bg-base);
+      color: var(--text-main);
+      font-size: 1rem;
+      resize: vertical;
+      transition: border 0.2s;
+      &:focus-visible {
+        border: 1.5px solid var(--accent);
+        outline: none;
+      }
+    }
+    textarea {
+      min-height: 80px;
+    }
+  }
+}
+.companyEdit__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  justify-content: flex-end;
+  button {
+    background: #fff;
+    color: #1976d2;
+    border: 1px solid #1976d2;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    &:hover, &:focus-visible {
+      background: var(--accent-hover);
+    }
+  }
+}

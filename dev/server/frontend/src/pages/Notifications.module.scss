@@ -1,0 +1,45 @@
+@use '../styles/variables' as *;
+
+.notifications {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 32px 24px;
+  max-width: 520px;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px var(--box-shadow);
+  border: 1px solid var(--bg-sidebar);
+}
+.notifications__title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 24px;
+  color: var(--text-main);
+}
+.notifications__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.notifications__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--bg-sidebar);
+  font-size: 1rem;
+  color: var(--text-main);
+  background: var(--bg-surface);
+}
+.notifications__item:last-child {
+  border-bottom: none;
+}
+.notifications__message {
+  flex: 1;
+  color: var(--text-main);
+}
+.notifications__date {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-left: 16px;
+}

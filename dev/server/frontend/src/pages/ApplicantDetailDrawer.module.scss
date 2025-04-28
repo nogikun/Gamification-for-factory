@@ -1,0 +1,63 @@
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.18);
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
+}
+.drawer {
+  background: #fff;
+  width: 380px;
+  max-width: 90vw;
+  height: 100vh;
+  box-shadow: -2px 0 20px rgba(0,0,0,0.09);
+  padding: 32px 28px 24px 28px;
+  display: flex;
+  flex-direction: column;
+}
+h2 {
+  font-size: 1.3rem;
+  margin-bottom: 18px;
+  color: #1976d2;
+}
+.detailField {
+  margin-bottom: 12px;
+  font-size: 1.04em;
+  span {
+    display: inline-block;
+    min-width: 80px;
+    color: #888;
+    margin-right: 8px;
+    font-weight: bold;
+  }
+}
+.buttonRow {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+}
+.approve {
+  background: #1abc9c;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.reject {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.close {
+  background: #fff;
+  color: #1976d2;
+  border: 1px solid #1976d2;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}

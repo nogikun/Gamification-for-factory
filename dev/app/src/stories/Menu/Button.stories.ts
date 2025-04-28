@@ -71,7 +71,8 @@ export const Ranks : Story ={
         color: "#ffffff",
         fontSize: "24px",
         alt: "",
-        icon: "Crown"
+        icon: "Crown",
+        onClickPath: "/tab4"
     },
 };
 

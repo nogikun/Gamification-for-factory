@@ -1,4 +1,5 @@
 import React from 'react';
+import { useIonRouter } from '@ionic/react';
 
 // css
 import './MenuTile.css'; // cssファイルのインポート
@@ -33,6 +34,11 @@ export interface MenuTileProps {
     onClick?: () => void; // 今はvoid関数であるが、クリック時に実行される関数を指定するためのもの
 }
 
+function add(a: number, b: number): number {
+    console.log("add function called with arguments:", a, b); // 引数をログに出力
+    return a + b;
+}
+
 export const MenuTile = ({
     primary = false,
     label,
@@ -55,7 +61,8 @@ export const MenuTile = ({
     return (
         <div style={{
             width: `${width}`,
-            height: `${height}`
+            height: `${height}`,
+            position: 'relative'
         }} >
             <div className="top-buttons"> {/* 上段 */}
                 <Button
@@ -71,7 +78,7 @@ export const MenuTile = ({
                     height="80px"
                     icon={"Crown"}
                     label="ランク"
-                    onClick={() => {}}
+                    onClickPath="/tab3"
                     primary
                     variant="primary"
                 />
@@ -89,7 +96,7 @@ export const MenuTile = ({
                     height="80px"
                     icon={"Settings"}
                     label="設定"
-                    onClick={() => {}}
+                    onClickPath="/tab4"
                     primary
                     variant="primary"
                 />
@@ -97,7 +104,6 @@ export const MenuTile = ({
 
             <div style={{
                 position: position,
-                display: 'flex',
                 justifyContent: menuJustifyContent,
                 alignItems: menuAlignItems,
                 margin: menuMargin,
@@ -135,7 +141,7 @@ export const MenuTile = ({
                     height="80px"
                     icon={"Search"}
                     label="探す"
-                    onClick={() => {}}
+                    onClickPath="/tab1"
                     primary
                     variant="primary"
                 />
@@ -152,7 +158,7 @@ export const MenuTile = ({
                     height="80px"
                     icon={"Battle"}
                     label="戦う"
-                    onClick={() => {}}
+                    onClickPath="/tab2"
                     primary
                     variant="primary"
                 />

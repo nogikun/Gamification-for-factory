@@ -16,7 +16,7 @@ const config: StorybookConfig = {
     "options": {}
   },
   "staticDirs": [
-    "..\\public"
+    "../public"
   ],
   // SVG読み込み設定を追加
   webpackFinal: async (config) => {

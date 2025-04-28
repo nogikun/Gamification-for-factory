@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useIonRouter } from '@ionic/react';
 
 // css
@@ -57,6 +57,13 @@ export const MenuTile = ({
     onClick,
 }: MenuTileProps) => {
     const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
+    const [isTopButtonsVisible, setIsTopButtonsVisible] = useState(false); // useStateフックを使用して状態を管理
+
+    // Accordionボタンのクリックハンドラ
+    const handleAccordionClick = () => {
+        setIsTopButtonsVisible(!isTopButtonsVisible);
+        console.log("Accordion clicked, top buttons visibility:", !isTopButtonsVisible);
+    };
 
     return (
         <div style={{
@@ -70,7 +77,7 @@ export const MenuTile = ({
                     backgroundColor="#FCAA1B"
                     borderRadiusBottomLeft="0px"
                     borderRadiusBottomRight="0px"
-                    borderRadiusTopLeft="80px"
+                    borderRadiusTopLeft="30px"
                     borderRadiusTopRight="0px"
                     color="#ffffff"
                     fontSize="24px"
@@ -89,7 +96,7 @@ export const MenuTile = ({
                     borderRadiusBottomLeft="0px"
                     borderRadiusBottomRight="0px"
                     borderRadiusTopLeft="0px"
-                    borderRadiusTopRight="80px"
+                    borderRadiusTopRight="30px"
                     color="#ffffff"
                     fontSize="24px"
                     width="50vw"
@@ -132,7 +139,7 @@ export const MenuTile = ({
                     alt=""
                     backgroundColor="#34AFB8"
                     borderRadiusBottomLeft="0px"
-                    borderRadiusBottomRight="80px"
+                    borderRadiusBottomRight="30px"
                     borderRadiusTopLeft="0px"
                     borderRadiusTopRight="0px"
                     color="#ffffff"
@@ -148,7 +155,7 @@ export const MenuTile = ({
 
                 <Button
                     backgroundColor="#FF8587"
-                    borderRadiusBottomLeft="80px"
+                    borderRadiusBottomLeft="30px"
                     borderRadiusBottomRight="0px"
                     borderRadiusTopLeft="0px"
                     borderRadiusTopRight="0px"

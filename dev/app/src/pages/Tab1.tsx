@@ -14,33 +14,35 @@ const Tab1: React.FC = () => {
 			</IonHeader>
 			<IonContent fullscreen>
 				{/* <Accordion label="This is Menu" borderRadius={50} width="100px" height="100px" backgroundColor='#262626'/> */}
-                <div style={{ position: 'fixed', bottom: 0}}>
-                    <MenuTile
-                        backgroundColor="#6100ff"
-                        bottomMarginTop=""
-                        height="100%"
-                        label="Button"
-                        menuAlignItems="center"
-                        menuBtnLeft="50%"
-                        menuBtnTop=""
-                        menuJustifyContent="center"
-                        menuMargin="0em"
-                        menuTransform="translate(-50%, -50%)"
-                        menuZIndex={10}
-                        onClick={() => {}}
-                        position="absolute"
-                        primary
-                        variant="primary"
-                        width="100vw"
-                    />
-                </div>
-
 				<IonHeader collapse="condense">
 					<IonToolbar>
 						<IonTitle size="large">Tab 1</IonTitle>
 					</IonToolbar>
 				</IonHeader>
 				<ExploreContainer name="Tab 1 page" />
+
+                <p>ここは検索画面です。</p>
+
+                <MenuTile
+                    primary
+                    backgroundColor="#6100ff"
+                    bottomMarginTop=""
+                    height="100%"
+                    label="Button"
+                    menuAlignItems="center"
+                    menuBtnLeft="50%"
+                    menuBtnTop=""
+                    menuJustifyContent="center"
+                    menuMargin="0em"
+                    menuTransform="translate(-50%, -50%)"
+                    menuZIndex={10}
+                    onClick={() => {}}
+                    position="fixed"
+                    accordionPosition="absolute"
+                    bottom="0px"
+                    variant="primary"
+                    width="100vw"
+                />
 			</IonContent>
 		</IonPage>
 	);

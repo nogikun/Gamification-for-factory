@@ -9,6 +9,7 @@ import { ReactComponent as Crown } from './assets/crown.svg'; // 画像のイン
 import { ReactComponent as Search } from './assets/manage_search.svg';
 import { ReactComponent as Battle } from './assets/swords.svg';
 import { ReactComponent as Settings } from './assets/settings_applications.svg';
+import { ReactComponent as Steps } from './assets/steps.svg';
 
 import { Component } from '@storybook/blocks';
 
@@ -112,6 +113,7 @@ export const Icons = {
 	Crown,
 	Search,
 	Battle,
-	Settings
+	Settings,
+    Steps,
 	// 他のアイコンも追加
 };

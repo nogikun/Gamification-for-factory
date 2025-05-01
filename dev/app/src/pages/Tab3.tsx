@@ -2,6 +2,9 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/rea
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab3.css';
 
+// components
+import { MenuTile } from '../stories/Menu/MenuTile';
+
 const Tab3: React.FC = () => {
 	return (
 		<IonPage>
@@ -17,6 +20,29 @@ const Tab3: React.FC = () => {
 					</IonToolbar>
 				</IonHeader>
 				<ExploreContainer name="Tab 3 page" />
+
+                <p>ここはあしあと機能の画面です。</p>
+
+                <MenuTile
+                    primary
+                    backgroundColor="#6100ff"
+                    bottomMarginTop=""
+                    height="100%"
+                    label="Button"
+                    menuAlignItems="center"
+                    menuBtnLeft="50%"
+                    menuBtnTop=""
+                    menuJustifyContent="center"
+                    menuMargin="0em"
+                    menuTransform="translate(-50%, -50%)"
+                    menuZIndex={10}
+                    onClick={() => {}}
+                    position="fixed"
+                    accordionPosition="absolute"
+                    bottom="0px"
+                    variant="primary"
+                    width="100vw"
+                />
 			</IonContent>
 		</IonPage>
 	);

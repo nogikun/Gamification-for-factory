@@ -23,7 +23,8 @@ const meta = {
                 Crown: 'ランキング',
                 Battle: '戦闘',
                 Search: '探す',
-                Settings: '設定'
+                Settings: '設定',
+                Steps: 'あしあと',
                 // 他のアイコンも追加
               }
             }
@@ -133,4 +134,25 @@ export const Battle : Story ={
         fontSize: "24px",
         icon: "Battle"
     },
+};
+
+export const Activity: Story = {
+    args: {
+        primary: true,
+        label: "あしあと",
+        backgroundColor: "#FCAA1B",
+        disabled: false,
+        variant: "primary",
+        width: "200px",
+        height: "80px",
+        borderRadiusTopLeft: "80px",
+        borderRadiusTopRight: "0px",
+        borderRadiusBottomLeft: "0px",
+        borderRadiusBottomRight: "0px",
+        color: "#ffffff",
+        fontSize: "24px",
+        alt: "",
+        icon: "Steps",
+        onClickPath: "/tab4"
+    }
 };

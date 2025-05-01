@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useIonRouter } from '@ionic/react';
 
+// redux
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../redux/store';
 // css
-import './MenuTile.css'; // cssファイルのインポート
+import './MenuTile.css';
 
 // Components
 import { Button } from './Button';
@@ -34,35 +37,30 @@ export interface MenuTileProps {
     onClick?: () => void; // 今はvoid関数であるが、クリック時に実行される関数を指定するためのもの
 }
 
-function add(a: number, b: number): number {
-    console.log("add function called with arguments:", a, b); // 引数をログに出力
-    return a + b;
-}
-
 export const MenuTile = ({
     primary = false,
     label,
     backgroundColor,
     width,
     height,
-    position = 'relative', // デフォルト値を設定
+    position = 'relative',
     menuBtnTop,
     menuBtnLeft,
     menuTransform,
-    menuZIndex = 10, // デフォルト値を設定
-    menuMargin = '20px 0', // デフォルト値を設定
-    menuJustifyContent = 'center', // デフォルト値を設定
-    menuAlignItems = 'center', // デフォルト値を設定
-    bottomMarginTop = '-0px', // デフォルト値を設定
+    menuZIndex = 10,
+    menuMargin = '20px 0',
+    menuJustifyContent = 'center',
+    menuAlignItems = 'center',
+    bottomMarginTop = '-0px',
     onClick,
 }: MenuTileProps) => {
-    const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
-    const [isTopButtonsVisible, setIsTopButtonsVisible] = useState(false); // useStateフックを使用して状態を管理
-
-    // Accordionボタンのクリックハンドラ
+    const dispatch = useDispatch();
+    const menuIsOpen = useSelector((state: RootState) => state.menu.isOpen);
+    
+    // アコーディオンのクリックハンドラ - Reduxアクションをディスパッチ
     const handleAccordionClick = () => {
-        setIsTopButtonsVisible(!isTopButtonsVisible);
-        console.log("Accordion clicked, top buttons visibility:", !isTopButtonsVisible);
+        dispatch({ type: 'menu/toggleMenu' });
+        console.log("Accordion clicked, toggling menu state");
     };
 
     return (
@@ -71,43 +69,51 @@ export const MenuTile = ({
             height: `${height}`,
             position: 'relative'
         }} >
-            <div className="top-buttons"> {/* 上段 */}
-                <Button
-                    alt=""
-                    backgroundColor="#FCAA1B"
-                    borderRadiusBottomLeft="0px"
-                    borderRadiusBottomRight="0px"
-                    borderRadiusTopLeft="30px"
-                    borderRadiusTopRight="0px"
-                    color="#ffffff"
-                    fontSize="24px"
-                    width="50vw"
-                    height="80px"
-                    icon={"Crown"}
-                    label="ランク"
-                    onClickPath="/tab3"
-                    primary
-                    variant="primary"
-                />
-                
-                <Button
-                    alt=""
-                    backgroundColor="#A3A3A3"
-                    borderRadiusBottomLeft="0px"
-                    borderRadiusBottomRight="0px"
-                    borderRadiusTopLeft="0px"
-                    borderRadiusTopRight="30px"
-                    color="#ffffff"
-                    fontSize="24px"
-                    width="50vw"
-                    height="80px"
-                    icon={"Settings"}
-                    label="設定"
-                    onClickPath="/tab4"
-                    primary
-                    variant="primary"
-                />
-            </div>
+            {/* menuIsOpenの値に基づいて上段ボタンを条件付きレンダリング */}
+            {menuIsOpen && (
+                <div 
+                    className="top-buttons"
+                    style={{
+                        animation: 'fadeIn 0.3s ease-in-out', // アニメーション効果を追加
+                    }}
+                > 
+                    <Button
+                        alt=""
+                        backgroundColor="#FCAA1B"
+                        borderRadiusBottomLeft="0px"
+                        borderRadiusBottomRight="0px"
+                        borderRadiusTopLeft="30px"
+                        borderRadiusTopRight="0px"
+                        color="#ffffff"
+                        fontSize="24px"
+                        width="50vw"
+                        height="80px"
+                        icon={"Crown"}
+                        label="ランク"
+                        onClickPath="/tab3"
+                        primary
+                        variant="primary"
+                    />
+                    
+                    <Button
+                        alt=""
+                        backgroundColor="#A3A3A3"
+                        borderRadiusBottomLeft="0px"
+                        borderRadiusBottomRight="0px"
+                        borderRadiusTopLeft="0px"
+                        borderRadiusTopRight="30px"
+                        color="#ffffff"
+                        fontSize="24px"
+                        width="50vw"
+                        height="80px"
+                        icon={"Settings"}
+                        label="設定"
+                        onClickPath="/tab4"
+                        primary
+                        variant="primary"
+                    />
+                </div>
+            )}
 
             <div style={{
                 position: position,
@@ -119,22 +125,24 @@ export const MenuTile = ({
                 transform: menuTransform,
                 zIndex: menuZIndex
                 }}
-                // className="middle-accordion"
-                >
+            >
                 <Accordion
                     backgroundColor="#262626"
+                    borderColor="#ffffff"
                     borderRadius={50}
+                    borderWidth={3}
+                    bordered
                     height={100}
                     icon={"Menu"}
                     label=""
-                    onClick={() => {}}
+                    onClick={handleAccordionClick} // 関数参照に変更
                     primary
                     textcolor="#ffffff"
                     width={100}
                 />
             </div>
 
-            <div className="bottom-buttons" style={{ marginTop: bottomMarginTop }}> {/* 下段 */}
+            <div className="bottom-buttons" style={{ marginTop: bottomMarginTop }}>
                 <Button
                     alt=""
                     backgroundColor="#34AFB8"
@@ -169,7 +177,6 @@ export const MenuTile = ({
                     primary
                     variant="primary"
                 />
-
             </div>
         </div>
     );

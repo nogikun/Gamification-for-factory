@@ -58,11 +58,13 @@ export const MenuButton: Story = {
         label: "",
         textcolor: "#ffffff",
         backgroundColor: "#262626",
-        bordered: false,
+        bordered: true,
         borderRadius: 50,
         width: 100,
         height: 100,
         labelEnabled: false,
-        icon: "Menu"
+        icon: "Menu",
+        borderColor: "#ffffff",
+        borderWidth: 3
     }
 };

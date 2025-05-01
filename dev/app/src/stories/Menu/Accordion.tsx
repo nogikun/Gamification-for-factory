@@ -23,6 +23,10 @@ export interface AccordionProps {
 	backgroundColor?: string;
 	/** ボーダーを表示するかどうか */
 	bordered?: boolean;
+    /** ボーダーの色 */
+    borderColor?: string;
+    /** ボーダーの太さ */
+    borderWidth?: number;
 	/** ボタンの内容 */
 	label: string;
 	/** 角丸の大きさ (px) */
@@ -51,6 +55,8 @@ export const Accordion = ({
 	height,
 	labelEnabled = true,
 	icon: IconProp = Menu,
+    borderColor,
+    borderWidth,
 	onClick,
 	...props
 }: AccordionProps) => {
@@ -62,7 +68,7 @@ export const Accordion = ({
 			style={{
 				backgroundColor : backgroundColor,
 				color : textcolor,
-				border : bordered ? '1px solid' : 'none',
+				border : bordered ? `${borderWidth}px solid ${borderColor}` : 'none',
 				borderRadius : borderRadius ? `${borderRadius}px` : '0px',
 				width: width ? (typeof width === 'number' ? `${width}px` : width) : undefined,
 				height: height ? (typeof height === 'number' ? `${height}px` : height) : undefined,

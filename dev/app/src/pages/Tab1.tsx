@@ -27,7 +27,7 @@ const Tab1: React.FC = () => {
                     menuTransform="translate(-50%, -50%)"
                     menuZIndex={10}
                     onClick={() => {}}
-                    position="fixed"
+                    position="absolute"
                     primary
                     variant="primary"
                     width="100vw"

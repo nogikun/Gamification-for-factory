@@ -69,7 +69,7 @@ const App: React.FC = () => (
 						<Redirect to="/tab1" />
 					</Route>
 				</IonRouterOutlet>
-				<IonTabBar slot="bottom">
+				{/* <IonTabBar slot="bottom">
 					<IonTabButton tab="tab1" href="/tab1">
 						<IonIcon aria-hidden="true" icon={triangle} />
 						<IonLabel>Tab 1</IonLabel>
@@ -87,7 +87,7 @@ const App: React.FC = () => (
 						<IonLabel>Tab 4</IonLabel>
 					</IonTabButton>
                     
-				</IonTabBar>
+				</IonTabBar> */}
 			</IonTabs>
 		</IonReactRouter>
 	</IonApp>

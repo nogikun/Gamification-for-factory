@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styles from "./CompanyEdit.module.scss";
+import { usePageAnimation } from "../hooks/usePageAnimation";
 
 const initial = {
   user_id: "d1b2c3e4-5678-1234-9abc-123456789abc",
@@ -15,14 +16,24 @@ const initial = {
 };
 
 export default function CompanyEdit() {
+  const containerRef = useRef(null);
+  const titleRef = useRef(null);
+  const formRef = useRef(null);
+
+  usePageAnimation({
+    containerRef,
+    titleRef,
+    contentRefs: [formRef]
+  });
+
   const [form, setForm] = useState(initial);
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
   return (
-    <div className={styles.companyEdit}>
-      <h1 className={styles.companyEdit__title}>企業情報編集</h1>
-      <form className={styles.companyEdit__form} onSubmit={e => e.preventDefault()}>
+    <div ref={containerRef} className={styles.companyEdit}>
+      <h1 ref={titleRef} className={styles.companyEdit__title}>企業情報編集</h1>
+      <form ref={formRef} className={styles.companyEdit__form} onSubmit={e => e.preventDefault()}>
         <label>
           ユーザーID（UUID）
           <input name="user_id" value={form.user_id} readOnly />

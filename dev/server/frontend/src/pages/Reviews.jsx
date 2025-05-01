@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styles from "./Reviews.module.scss";
 import ReviewInputModal from "./ReviewInputModal";
+import { usePageAnimation } from "../hooks/usePageAnimation";
 
 const dummyReviews = [
   { reviewer: "管理者A", target: "山田 太郎", comment: "積極的な姿勢が印象的でした。", status: "承認済み" },
@@ -9,6 +10,16 @@ const dummyReviews = [
 ];
 
 export default function Reviews() {
+  const containerRef = useRef(null);
+  const titleRef = useRef(null);
+  const tableRef = useRef(null);
+
+  usePageAnimation({ 
+    containerRef, 
+    titleRef, 
+    contentRefs: [tableRef] 
+  });
+
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTarget, setModalTarget] = useState("");
 
@@ -26,9 +37,9 @@ export default function Reviews() {
   };
 
   return (
-    <div className={styles.reviews}>
-      <h1 className={styles.reviews__title}>レビューリスト</h1>
-      <table className={styles.reviews__table}>
+    <div ref={containerRef} className={styles.reviews}>
+      <h1 ref={titleRef} className={styles.reviews__title}>レビューリスト</h1>
+      <table ref={tableRef} className={styles.reviews__table}>
         <thead>
           <tr>
             <th>レビュアー</th>

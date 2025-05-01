@@ -1,20 +1,137 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
+import { gsap } from "gsap";
 import DashboardCalendar from "../components/DashboardCalendar";
 import styles from "./Dashboard.module.scss";
 import { UserPlus, CalendarCheck, HourglassMedium } from "phosphor-react";
 
 const Dashboard = () => {
-  const kpi = [
-    { icon: <UserPlus size={28} />, label: "応募者", value: 12, sub: "本日 +2名" },
-    { icon: <CalendarCheck size={28} />, label: "今後のイベント", value: 3, sub: "今週 1件" },
-    { icon: <HourglassMedium size={28} />, label: "未対応レビュー", value: 5, sub: "昨日 -1件" },
+  const location = useLocation(); // Get location object
+  const navigate = useNavigate(); // Get navigate function
+  const titleRef = useRef(null); // Keep ref in case needed later, but element is removed
+  const cardsRef = useRef([]);
+  // Separate refs for calendar row elements
+  const calendarRef = useRef(null);
+  const activitySectionRef = useRef(null);
+  const activityTitleRef = useRef(null);
+  const activityListItemsRef = useRef([]);
+
+  // Collect refs for KPI cards
+  const addToCardsRef = (el) => {
+    if (el && !cardsRef.current.includes(el)) {
+      cardsRef.current.push(el);
+    }
+  };
+
+  // Collect refs for Activity list items
+  const addToActivityListItemsRef = (el) => {
+    if (el && !activityListItemsRef.current.includes(el)) {
+      activityListItemsRef.current.push(el);
+    }
+  };
+
+  // Refs array for easier reset
+  const animatedElements = useRef([]);
+  useEffect(() => {
+    animatedElements.current = [
+      titleRef.current,
+      ...cardsRef.current,
+      calendarRef.current,
+      activitySectionRef.current,
+      activityTitleRef.current,
+      ...activityListItemsRef.current
+    ].filter(Boolean); // Ensure only valid refs are included
+  }, [titleRef, cardsRef, calendarRef, activitySectionRef, activityTitleRef, activityListItemsRef]); // Update when refs change
+
+  useEffect(() => {
+    // 1. Set initial states for elements (off-screen/invisible)
+    // Use autoAlpha for visibility and opacity control
+    gsap.set(titleRef.current, { y: -20, autoAlpha: 0 });
+    gsap.set(cardsRef.current, { y: 40, autoAlpha: 0 });
+    gsap.set(calendarRef.current, { scale: 0.95, autoAlpha: 0 });
+    gsap.set(activitySectionRef.current, { x: 30, autoAlpha: 0 });
+    gsap.set(activityTitleRef.current, { y: -10, autoAlpha: 0 }); // Already handled by section's autoAlpha, but specific y offset
+    gsap.set(activityListItemsRef.current, { y: 20, autoAlpha: 0 });
+
+    const tl = gsap.timeline();
+
+    // Animate title
+    tl.to(titleRef.current, { // Animate TO final state
+      y: 0, // Target y
+      autoAlpha: 1, // Target visibility
+      duration: 0.8,
+      ease: "power3.out",
+    }, 0); // Start at 0s
+
+    // Animate KPI cards staggered
+    tl.to(cardsRef.current, { // Animate TO final state
+      y: 0, // Target y
+      autoAlpha: 1, // Target visibility
+      duration: 0.8,
+      ease: "power3.out",
+      stagger: 0.15,
+    }, 0.2); // Start at 0.2s
+
+    // Animate Calendar
+    tl.to(calendarRef.current, { // Animate TO final state
+      scale: 1, // Target scale
+      autoAlpha: 1, // Target visibility
+      duration: 0.8,
+      ease: "power3.out",
+    }, 0.5); // Start at 0.5s
+
+    // Animate Activity Section (wrapper + title)
+    tl.to(activitySectionRef.current, { // Animate TO final state
+      x: 0, // Target x
+      autoAlpha: 1, // Target visibility
+      duration: 0.8,
+      ease: "power3.out",
+    }, 0.6) // Start slightly after calendar
+    .to(activityTitleRef.current, { // Animate TO final state (y and visibility)
+      y: 0,
+      autoAlpha: 1, // Although section handles visibility, ensure y is correct
+      duration: 0.6,
+      ease: "power2.out",
+    }, "-=0.6"); // Start with section wrapper
+
+    // Animate Activity List Items staggered
+    tl.to(activityListItemsRef.current, { // Animate TO final state
+      y: 0, // Target y
+      autoAlpha: 1, // Target visibility
+      duration: 0.5,
+      ease: "power2.out",
+      stagger: 0.1,
+    }, 0.8); // Start after section title appears
+
+    // Clean up timeline on component unmount or before re-run
+    return () => {
+      tl.kill();
+    };
+  }, [location.pathname]); // Re-run effect when pathname changes
+
+  // Add target route to KPI data
+  const kpiData = [
+    { id: 'applicants', icon: <UserPlus size={28} />, label: "応募者", value: 12, sub: "本日 +2名", route: "/applicants" },
+    { id: 'events', icon: <CalendarCheck size={28} />, label: "今後のイベント", value: 3, sub: "今週 1件", route: "/event-registration" },
+    { id: 'reviews', icon: <HourglassMedium size={28} />, label: "未対応レビュー", value: 5, sub: "昨日 -1件", route: "/reviews" },
   ];
+
+  // Navigation handler
+  const handleCardClick = (route) => {
+    navigate(route);
+  };
+
   return (
     <div className={styles.dashboard}>
-      <h1 className={styles.dashboard__title}>ダッシュボード概要</h1>
       <div className={styles.dashboard__kpiRow}>
-        {kpi.map((item, i) => (
-          <div className={`${styles.kpiCard} shadow-md rounded-md`} key={i}>
+        {kpiData.map((item) => (
+          // Added onClick handler and key using item.id
+          <div 
+            ref={addToCardsRef} 
+            className={`${styles.kpiCard} shadow-md rounded-md`} 
+            key={item.id} 
+            onClick={() => handleCardClick(item.route)}
+          >
             <div className={styles.kpiCard__icon}>{item.icon}</div>
             <div className={styles.kpiCard__label}>{item.label}</div>
             <div className={styles.kpiCard__value}>{item.value}</div>
@@ -23,13 +140,15 @@ const Dashboard = () => {
         ))}
       </div>
       <div className={styles.dashboard__calendarRow}>
-        <DashboardCalendar />
-        <section className={styles.dashboard__activity}>
-          <h2 className={styles.dashboard__sectionTitle}>最近のアクティビティ</h2>
-          <ul className={styles.activityList}>
-            <li>ユーザーAがイベントXに応募しました</li>
-            <li>イベントYが作成されました</li>
-            <li>ユーザーBのレビューが提出されました</li>
+        <div ref={calendarRef}>
+          <DashboardCalendar />
+        </div>
+        <section ref={activitySectionRef} className={styles.dashboard__activity}>
+          <h2 ref={activityTitleRef} className={styles.dashboard__sectionTitle}>最近のアクティビティ</h2>
+          <ul className={styles.activityList}> {/* No ref needed for ul itself */}
+            <li ref={addToActivityListItemsRef}>ユーザーAがイベントXに応募しました</li>
+            <li ref={addToActivityListItemsRef}>イベントYが作成されました</li>
+            <li ref={addToActivityListItemsRef}>ユーザーBのレビューが提出されました</li>
           </ul>
         </section>
       </div>

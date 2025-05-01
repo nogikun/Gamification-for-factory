@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import ApplicantDetailDrawer from "./ApplicantDetailDrawer";
 import styles from "./Applicants.module.scss";
+import { usePageAnimation } from "../hooks/usePageAnimation";
 
 const mockApplicants = [
   { id: 1, last_name: "山田", first_name: "太郎", university: "東京大学", mail_address: "taro@example.com", license: "英検2級", status: "書類選考中", updated_at: "2025-04-27T18:22:00" },
@@ -9,6 +10,15 @@ const mockApplicants = [
 ];
 
 export default function Applicants() {
+  const containerRef = useRef(null);
+  const tableWrapperRef = useRef(null);
+
+  // Apply animation hook (No explicit title, using table as main content)
+  usePageAnimation({ 
+    containerRef, 
+    contentRefs: [tableWrapperRef] 
+  });
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
@@ -38,8 +48,8 @@ export default function Applicants() {
   const selectedApplicant = applicantList.find(a => a.id === Number(selectedId));
 
   return (
-    <div className={styles.applicantsPage}>
-      <div className={styles.tableWrapper}>
+    <div ref={containerRef} className={styles.applicantsPage}>
+      <div ref={tableWrapperRef} className={styles.tableWrapper}>
         <table className={styles.applicantsTable}>
           <thead className={styles.tableHead}>
             <tr>

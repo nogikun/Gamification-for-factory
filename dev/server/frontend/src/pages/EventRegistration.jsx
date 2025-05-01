@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import styles from "./EventRegistration.module.scss";
+import { usePageAnimation } from "../hooks/usePageAnimation";
 
 const jaWeekdays = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -15,6 +16,18 @@ function formatDateYMD(date) {
 }
 
 export default function EventRegistration() {
+  const containerRef = useRef(null);
+  const titleRef = useRef(null);
+  const calendarRef = useRef(null);
+  const formRef = useRef(null);
+
+  // Apply animation hook
+  usePageAnimation({ 
+    containerRef, 
+    titleRef, 
+    contentRefs: [calendarRef, formRef] // Pass refs for main content blocks
+  });
+
   const [searchParams] = useSearchParams();
   const dateParam = searchParams.get("date");
   const [startDate, setStartDate] = useState("");
@@ -33,22 +46,11 @@ export default function EventRegistration() {
     setStartDate(d.toISOString().slice(0,10));
   };
 
-  let badge = null;
-  if (dateParam) {
-    const d = new Date(dateParam);
-    badge = (
-      <div className={styles.badge}>
-        <span>◉ {d.getMonth()+1}/{d.getDate()} で作成中</span>
-      </div>
-    );
-  }
-
   return (
-    <div className={styles.eventRegWrap}>
-      <h1 className={styles.title}>イベント登録</h1>
-      {badge}
+    <div ref={containerRef} className={styles.eventRegWrap}>
+      <h1 ref={titleRef} className={styles.title}>イベント登録</h1>
       <div className={styles.gridRow}>
-        <div className={styles.calendarCard}>
+        <div ref={calendarRef} className={styles.calendarCard}>
           <div className={styles.calendarTitle}>開催日を選択</div>
           <Calendar
             locale="ja-JP"
@@ -64,7 +66,7 @@ export default function EventRegistration() {
             next2Label={null}
           />
         </div>
-        <form className={styles.formCard} onSubmit={e => e.preventDefault()}>
+        <form ref={formRef} className={styles.formCard} onSubmit={e => e.preventDefault()}>
           <div className={styles.formField}>
             <label className={styles.formLabel}>開催日
               <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} required className={styles.formInput} />

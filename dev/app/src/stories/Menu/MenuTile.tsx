@@ -166,7 +166,7 @@ export const MenuTile = ({
                     />
                 </div>
 
-                <div className="bottom-buttons" style={{ marginTop: bottomMarginTop }}>
+                <div className="bottom-buttons" style={{ marginTop: bottomMarginTop, backgroundColor: '#000000',}}>
                     <Button
                         alt=""
                         backgroundColor="#34AFB8"

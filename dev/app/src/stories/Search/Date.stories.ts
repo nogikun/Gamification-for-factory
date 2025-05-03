@@ -32,21 +32,41 @@ export const Primary: Story = {
         date: '2023-10-01',
         backgroundColor: '#6100ff',
         color: '#ffffff',
-        width: '200px',
+        width: "80px",
         height: '100px',
         borderRadius: '10px',
     },
 };
 
-export const Date: Story = {
+export const SelectedDate: Story = {
     args: {
         date: '2024-05-04',
-        backgroundColor: "#6100ff",
+        backgroundColor: "#7381C0",
         color: "#ffffff",
         width: "80px",
         height: "100px",
         borderRadius: "10px",
         dayFontSize: "32px",
-        weekdayFontSize: "24px"
+        weekdayFontSize: "24px",
+        selected: true,
+        borderWidth: 3,
+        borderColor: "#7381C0",
+        bordered: true
+    }
+};
+
+export const NotSelectedDate: Story = {
+    args: {
+        date: "2024-05-04",
+        backgroundColor: "#ffffff",
+        color: "#aeaeae",
+        width: "80px",
+        height: "100px",
+        borderRadius: "10px",
+        dayFontSize: "32px",
+        weekdayFontSize: "24px",
+        bordered: true,
+        borderColor: "#D9D9D9",
+        borderWidth: 3
     }
 };

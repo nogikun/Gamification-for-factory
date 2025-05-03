@@ -39,7 +39,7 @@ export interface ButtonProps { // Buttonのprops（パラメータ）の型定�
 
 export const Button = ({
 	primary = false,
-  label,
+    label,
 	color,
 	backgroundColor,
 	borderRadiusTopLeft,

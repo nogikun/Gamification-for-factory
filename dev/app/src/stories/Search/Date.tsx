@@ -1,7 +1,12 @@
 import react from 'react';
 import {useIonRouter} from '@ionic/react';
 
+// redux
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState } from '../../redux/store';
+
 import './Date.css'; // cssファイルのインポート
+// import { on } from 'events';
 
 export interface DateProps {
     selected?: boolean; // 選択された日付かどうか
@@ -34,19 +39,12 @@ export const DateComponent = ({
     bordered,
     borderColor,
     borderWidth,
-    onClick,
+    onClick = () => {},
     ...props
 }: DateProps) => {
     const ionRouter = useIonRouter();
-
-    // jumpPage関数
-    const handleClick = () => {
-        // ページ遷移の処理
-        if (onClickPath) {
-            console.log("Navigating to:", onClickPath);
-            ionRouter.push(onClickPath);
-        }
-    };
+    const dispatch = useDispatch();
+    const menuIsOpen = useSelector((state: RootState) => state.menu.isOpen);
 
     const day = new Date(date).getDate(); // 日付を取得
     const dateObj = new Date(date)
@@ -63,43 +61,62 @@ export const DateComponent = ({
 
     return (
         <div>
-            <div
-                className="date-component"
+            <button
+                type="button"
+                className="date-button"
+                onClick={() => {
+                    // 通知
+                    // console.log("selectedDate", formattedDate);
+                    // 選択された日付をReduxストアに保存
+                    dispatch({ type: 'searchDate/setSelectedDate', payload: formattedDate });
+                }}
                 style={{
-                    backgroundColor: backgroundColor,
-                    color: color,
-                    width: width,
-                    height: height,
-                    borderRadius: borderRadius,
-                    display: 'grid',
-                    placeItems: 'center',
-                    // marginTop: '100px',
-                    // marginBottom: '100px',
-                    border: bordered ? `${borderWidth}px solid ${borderColor}` : 'none',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer', // カーソルをポインターに変更
                 }}
             >
                 <div
+                    className="date-component"
                     style={{
-                        fontSize: dayFontSize,
-                        fontWeight: 'bold',
-                        paddingTop: '10px',
-                        verticalAlign: 'bottom',
+                        backgroundColor: backgroundColor,
+                        color: color,
+                        width: width,
+                        height: height,
+                        borderRadius: borderRadius,
+                        display: 'grid',
+                        placeItems: 'center',
+                        // marginTop: '100px',
+                        // marginBottom: '100px',
+                        border: bordered ? `${borderWidth}px solid ${borderColor}` : 'none',
+                        cursor: 'pointer', // カーソルをポインターに変更
                     }}
                 >
-                    {day}
+                    <div
+                        style={{
+                            fontSize: dayFontSize,
+                            fontWeight: 'bold',
+                            paddingTop: '10px',
+                            verticalAlign: 'bottom',
+                        }}
+                    >
+                        {day}
+                    </div>
+                    {/* <br /> */}
+                    <div
+                        style={{
+                            fontSize: weekdayFontSize,
+                            fontWeight: 'bold',
+                            paddingBottom: '15px',
+                            color: dayOfWeekColor,
+                        }}
+                    >
+                        {dayOfWeek}
+                    </div>
                 </div>
-                {/* <br /> */}
-                <div
-                    style={{
-                        fontSize: weekdayFontSize,
-                        fontWeight: 'bold',
-                        paddingBottom: '15px',
-                        color: dayOfWeekColor,
-                    }}
-                >
-                    {dayOfWeek}
-                </div>
-            </div>
+                
+            </button>
         </div>
     );
 };

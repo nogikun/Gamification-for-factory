@@ -22,7 +22,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
     args: {
-        selectedDate: '2025-05-05',
+        selectedDate: "2025-05-05",
         termDays: 2,
+        spaceBetween: "20px",
+        horizonMargin: "10px"
     },
 };

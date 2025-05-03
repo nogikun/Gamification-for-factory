@@ -3,6 +3,11 @@ import ExploreContainer from '../components/ExploreContainer';
 import './Tab1.css';
 import { Accordion } from '../stories/Menu/Accordion';
 import { MenuTile } from '../stories/Menu/MenuTile';
+import { isPlatform, getPlatforms } from '@ionic/react';
+
+import { DateTile } from '../stories/Search/DateTile';
+
+console.log("getPlatforms", getPlatforms());
 
 const Tab1: React.FC = () => {
 	return (
@@ -10,17 +15,24 @@ const Tab1: React.FC = () => {
 			<IonHeader>
 				<IonToolbar>
 					{/* <IonTitle>Tab 1</IonTitle> */}
-				</IonToolbar>
+                    <DateTile
+                        selectedDate="2025-05-05"
+                        termDays={2}
+                        spaceBetween='20px'
+                        horizonMargin='7px'
+                        marginTop= {isPlatform('ios') ? '15px' : isPlatform('android') ? '50px' : '15px'}
+                        marginBottom='15px'
+                    />
+                </IonToolbar>
 			</IonHeader>
 			<IonContent fullscreen>
 				{/* <Accordion label="This is Menu" borderRadius={50} width="100px" height="100px" backgroundColor='#262626'/> */}
-				<IonHeader collapse="condense">
-					<IonToolbar>
-						<IonTitle size="large">Tab 1</IonTitle>
-					</IonToolbar>
-				</IonHeader>
+                <IonHeader collapse="condense">
+                    <IonToolbar>
+                        {/* <IonTitle size="large">Tab 1</IonTitle> */}
+                    </IonToolbar>
+                </IonHeader>
 				<ExploreContainer name="Tab 1 page" />
-
                 <p>ここは検索画面です。</p>
 
                 <MenuTile

@@ -46,7 +46,41 @@ import '@ionic/react/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.css';
 
-setupIonicReact();
+setupIonicReact({
+    platform: {
+      /** The default `desktop` function returns false for devices with a touchscreen.
+       * This is not always wanted, so this function tests the User Agent instead.
+       **/
+      // windows
+      desktop: (win) => {
+				const forcePlatform = localStorage.getItem('forcePlatform');
+				if (forcePlatform === 'desktop') {
+					return true;
+				}
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(win.navigator.userAgent);
+        return !isMobile;
+      },
+      // android
+      android: (win) => {
+				const forcePlatform = localStorage.getItem('forcePlatform');
+				if (forcePlatform === 'android') {
+					return true;
+				}
+				const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(win.navigator.userAgent);
+
+				return isMobile && /Android/i.test(win.navigator.userAgent);
+			},
+			// iOS
+			ios: (win) => {
+				const forcePlatform = localStorage.getItem('forcePlatform');
+				if (forcePlatform === 'ios') {
+					return true;
+				}
+				const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(win.navigator.userAgent);
+				return isMobile && /iPhone|iPad|iPod/i.test(win.navigator.userAgent);
+			},
+		}
+});
 
 const App: React.FC = () => (
 	<IonApp>

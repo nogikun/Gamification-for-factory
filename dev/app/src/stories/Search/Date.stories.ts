@@ -70,3 +70,19 @@ export const NotSelectedDate: Story = {
         borderWidth: 3
     }
 };
+
+export const DarkNotSelectedDate: Story = {
+    args: {
+        date: "2024-05-04",
+        backgroundColor: "#333333",
+        color: "#797979",
+        width: "80px",
+        height: "100px",
+        borderRadius: "10px",
+        dayFontSize: "32px",
+        weekdayFontSize: "24px",
+        bordered: true,
+        borderColor: "#595959",
+        borderWidth: 3
+    }
+};

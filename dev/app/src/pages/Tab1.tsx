@@ -5,6 +5,8 @@ import { Accordion } from '../stories/Menu/Accordion';
 import { MenuTile } from '../stories/Menu/MenuTile';
 import { isPlatform, getPlatforms } from '@ionic/react';
 
+import { useSelector } from 'react-redux';
+
 import { DateTile } from '../stories/Search/DateTile';
 
 console.log("getPlatforms", getPlatforms());
@@ -27,13 +29,22 @@ const Tab1: React.FC = () => {
 			</IonHeader>
 			<IonContent fullscreen>
 				{/* <Accordion label="This is Menu" borderRadius={50} width="100px" height="100px" backgroundColor='#262626'/> */}
-                <IonHeader collapse="condense">
+                {/* <IonHeader collapse="condense">
                     <IonToolbar>
-                        {/* <IonTitle size="large">Tab 1</IonTitle> */}
+                        <IonTitle size="large">Tab 1</IonTitle>
                     </IonToolbar>
-                </IonHeader>
+                </IonHeader> */}
 				<ExploreContainer name="Tab 1 page" />
                 <p>ここは検索画面です。</p>
+                
+                <div style={{
+                    // justifyContent: 'space-between', // 日付を横並びに配置
+                    // padding: 'auto 20px',
+                    textAlign: 'center',
+                }}>
+                    <p style={{fontSize:"18px", marginBottom: "3px"}}>選択された日付</p>
+                    <p style={{fontSize:"24px", marginTop: "0px"}}>{useSelector((state: any) => state.searchDate.selectedDate)}</p>
+                </div>
 
                 <MenuTile
                     primary

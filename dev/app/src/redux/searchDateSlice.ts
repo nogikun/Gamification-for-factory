@@ -7,8 +7,8 @@ interface SearchDateState {
 export const searchDateSlice = createSlice({
     name: "searchDate",
     initialState: {
-        // 日本時間を取得
-        selectedDate: `${new Date().toISOString().split('T')[0]}`, // YYYY-MM-DD形式に変換
+        // 今日の日付を初期値に設定
+        selectedDate: `${new Date().getFullYear()}/${String(new Date().getMonth() + 1).padStart(2, '0')}/${String(new Date().getDate()).padStart(2, '0')}`,
     } as SearchDateState,
     reducers: {
         setSelectedDate: (state, action) => {

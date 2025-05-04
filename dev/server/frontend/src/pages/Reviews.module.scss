@@ -5,7 +5,7 @@
   color: var(--text-main);
   border-radius: 12px;
   padding: 32px 0 0 0;
-  max-width: 720px;
+  max-width: 1400px;
   margin: 0 auto;
   box-shadow: 0 2px 4px rgba(0,0,0,0.08);
   border: 1px solid var(--bg-sidebar);
@@ -17,7 +17,7 @@
 }
 .reviews__table {
   width: 100%;
-  min-width: 720px;
+  min-width: 1400px;
   table-layout: fixed;
   border-collapse: collapse;
   background: #fff;
@@ -32,7 +32,7 @@
   border-bottom: 1px solid #f0f0f0;
 }
 .reviews__table th:last-child, .reviews__table td:last-child {
-  width: 110px;
+  width: 160px;
   text-align: center;
 }
 .reviews__table tr:hover {

@@ -31,10 +31,54 @@
   gap: 32px;
   align-items: flex-start;
   margin-bottom: 32px;
-  @media (max-width: 900px) {
+  @media (max-width: 1100px) {
     flex-direction: column;
     gap: 20px;
   }
+}
+
+.dashboard__contentColumn {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  flex: 1;
+  
+  @media (max-width: 1200px) {
+    flex-direction: column;
+  }
+}
+
+.dashboard__eventList {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #eee;
+  flex: 1.5;
+  min-width: 220px;
+  box-sizing: border-box;
+}
+
+.dashboard__eventItem {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.dashboard__eventItem:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.dashboard__eventLabel {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.dashboard__eventValue {
+  font-size: 1.05rem;
+  color: #000;
+  margin-bottom: 12px;
 }
 
 .kpiCard {
@@ -87,7 +131,7 @@
   border-radius: 12px;
   padding: 24px;
   border: 1px solid #eee;
-  width: 320px;
+  flex: 1;
   min-width: 220px;
   box-sizing: border-box;
 }

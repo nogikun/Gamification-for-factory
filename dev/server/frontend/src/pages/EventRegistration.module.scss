@@ -28,7 +28,7 @@
 
 .gridRow {
   display: grid;
-  grid-template-columns: minmax(320px, 400px) minmax(360px, 440px);
+  grid-template-columns: minmax(320px, 1fr) minmax(360px, 1fr);
   gap: 48px;
   align-items: flex-start;
   @media (max-width: 1023px) {
@@ -40,6 +40,12 @@
     flex-direction: column;
     gap: 20px;
   }
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .calendarCard {
@@ -54,6 +60,7 @@
     padding: 18px 10px 14px 10px;
   }
 }
+
 .calendarTitle {
   font-size: 18px;
   font-weight: bold;
@@ -61,15 +68,140 @@
   color: #0d47a1;
   letter-spacing: 0.02em;
 }
+
+.eventsListCard {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 28px 18px 22px 18px;
+  min-width: 0;
+  @media (max-width: 767px) {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+    border-radius: 16px;
+    padding: 18px 10px 14px 10px;
+  }
+}
+
+.eventsListTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  color: #0d47a1;
+  letter-spacing: 0.02em;
+}
+
+.eventsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eventItem {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fafafa;
+}
+
+.eventHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.eventTitle {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.eventActions {
+  display: flex;
+  gap: 8px;
+}
+
+.editButton, .deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.editButton {
+  color: #1976d2;
+  &:hover {
+    background-color: rgba(25, 118, 210, 0.1);
+  }
+}
+
+.deleteButton {
+  color: #d32f2f;
+  &:hover {
+    background-color: rgba(211, 47, 47, 0.1);
+  }
+}
+
+.eventDetail {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.eventLabel {
+  font-weight: 600;
+  color: #666;
+  margin-right: 4px;
+}
+
+.noEvents {
+  text-align: center;
+  color: #666;
+  padding: 20px 0;
+  
+  p {
+    margin: 6px 0;
+  }
+}
+
 .react-calendar {
   border: none;
   background: transparent;
 }
+
 .react-calendar__tile--active,
 .selectedTile {
   background: #ffeb3b50 !important;
   color: #0d47a1 !important;
 }
+
+.eventTile {
+  background: #ffd54f !important;
+  color: #222 !important;
+}
+
+.eventTileContent {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.eventIndicator {
+  width: 100%;
+  height: 4px;
+  background-color: #ff9800;
+  border-radius: 2px;
+  margin-top: 2px;
+}
+
 // 単日選択時に前後日や次の日付が色付かないよう完全リセット
 .react-calendar__tile--range,
 .react-calendar__tile--rangeStart,
@@ -80,14 +212,17 @@
   color: inherit !important;
   box-shadow: none !important;
 }
+
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile:enabled:focus {
   background: #e0f7fa !important;
 }
+
 .react-calendar__month-view__weekdays {
   font-size: 15px;
   font-weight: 600;
 }
+
 .react-calendar__navigation button {
   font-size: 1.1em;
 }
@@ -108,18 +243,48 @@
     gap: 18px;
   }
 }
+
+.formTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #0d47a1;
+  letter-spacing: 0.02em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cancelButton {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.9rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: #f5f5f5;
+    color: #333;
+  }
+}
+
 .formField {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 100%;
 }
+
 .formLabel {
   font-size: 14px;
   font-weight: 600;
   color: #222;
   margin-bottom: 2px;
 }
+
 .formInput, .formTextarea {
   font-size: 1rem;
   border: 1px solid #cfd8dc;
@@ -133,10 +298,12 @@
   width: 100%;
   box-sizing: border-box;
 }
+
 .formInput:focus, .formTextarea:focus {
   border: 1.5px solid #1976d2;
   background: #fff;
 }
+
 .formTextarea {
   min-height: 90px;
   resize: vertical;
@@ -144,6 +311,7 @@
   font-size: 1rem;
   height: auto;
 }
+
 .submitBtn {
   width: 100%;
   height: 46px;
@@ -157,6 +325,7 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .submitBtn:hover {
   background: #003c8f;
 }

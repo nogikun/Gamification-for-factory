@@ -27,7 +27,9 @@
     "@ionic/cli": "^7.2.1",
     "@ionic/react": "^8.5.5",
     "@ionic/react-router": "^8.5.5",
+    "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
+    "@mui/styled-engine-sc": "^7.0.2",
     "@reduxjs/toolkit": "^2.7.0",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
@@ -38,7 +40,8 @@
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",
     "react-scripts": "^5.0.1",
-    "redux": "^5.0.1"
+    "redux": "^5.0.1",
+    "styled-components": "^6.1.17"
   },
   "devDependencies": {
     "@capacitor/cli": "^7.2.0",

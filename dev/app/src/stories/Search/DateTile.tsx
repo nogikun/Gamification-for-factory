@@ -44,6 +44,12 @@ export const DateTile = ({
     const darkTheme = useSelector((state: RootState) => state.theme.isDarkMode);
     console.log("darkTheme", darkTheme);
 
+    const formatter = new Intl.DateTimeFormat(undefined, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    });
+
     return (
         <div style={{
             marginLeft: `${horizonMargin}`,
@@ -62,17 +68,17 @@ export const DateTile = ({
                 {/* 
                     例: 選択日が2023-10-01、termDaysが2の場合、
 
-                    【座標】   -1,         0,          1,          2,          3
+                    【座標】   -2,         -1,         0,          1,          2
                     【value】 2023-09-29, 2023-09-30, 2023-10-01, 2023-10-02, 2023-10-03
 
                     を表示
                 */}
                 {Array.from({ length: termDays * 2 + 1 }, (_, index) => {
-                    const i = index + 1 - termDays ;
+                    const i = index - termDays ;
                     const date = new Date(selectedDate);
                     date.setDate(date.getDate() + i);
-                    const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD形式に変換
-                    const isSelected = i === 1; // 選択された日付かどうか
+                    const formattedDate = formatter.format(date).replace(/\//g, '-'); // 日付をYYYY-MM-DD形式に変換
+                    const isSelected = i === 0; // 選択された日付かどうか
                     
                     return (
                         <DateComponent

@@ -7,7 +7,7 @@ import { isPlatform, getPlatforms } from '@ionic/react';
 
 import { useSelector } from 'react-redux';
 import { DateTile } from '../stories/Search/DateTile';
-import { CardComponent } from '../stories/Search/Card';
+import { EventList } from '../stories/Search/EventList';
 
 console.log("getPlatforms", getPlatforms());
 
@@ -36,9 +36,9 @@ const Tab1: React.FC = () => {
                 </IonHeader> */}
 
 				{/* <ExploreContainer name="Tab 1 page" /> */}
-
-                <p>ここは検索画面です。</p>
                 
+                
+                {/* <p>ここは検索画面です。</p>
                 <div style={{
                     // justifyContent: 'space-between', // 日付を横並びに配置
                     // padding: 'auto 20px',
@@ -46,117 +46,14 @@ const Tab1: React.FC = () => {
                 }}>
                     <p style={{fontSize:"18px", marginBottom: "3px"}}>選択された日付</p>
                     <p style={{fontSize:"24px", marginTop: "0px"}}>{useSelector((state: any) => state.searchDate.selectedDate)}</p>
-                </div>
+                </div> */}
                 
                 <div style={{
                     justifyContent: 'space-between', // 日付を横並びに配置
                     padding: 'auto 20px',
                     textAlign: 'center',
                 }}>
-                <CardComponent
-                backgroundColor="#333333"
-                base64Image=""
-                borderRadius="10px"
-                campany="Automation 株式会社"
-                color="#ffffff"
-                currencySymbol="¥"
-                details="詳細情報"
-                endDate="2023-10-31"
-                height="100px"
-                onClick={() => {}}
-                paying={7000}
-                startDate="2023-10-01"
-                tags={[
-                    {
-                    color: '#ff0000',
-                    label: '溶接'
-                    },
-                    {
-                    color: '#00ff00',
-                    label: '金属加工'
-                    }
-                ]}
-                title="1day インターンシップ"
-                width="80px"
-                />
-                <CardComponent
-                backgroundColor="#333333"
-                base64Image=""
-                borderRadius="10px"
-                campany="Automation 株式会社"
-                color="#ffffff"
-                currencySymbol="¥"
-                details="詳細情報"
-                endDate="2023-10-31"
-                height="100px"
-                onClick={() => {}}
-                paying={7000}
-                startDate="2023-10-01"
-                tags={[
-                    {
-                    color: '#ff0000',
-                    label: '溶接'
-                    },
-                    {
-                    color: '#00ff00',
-                    label: '金属加工'
-                    }
-                ]}
-                title="1day インターンシップ"
-                width="80px"
-                />
-                <CardComponent
-                backgroundColor="#333333"
-                base64Image=""
-                borderRadius="10px"
-                campany="Automation 株式会社"
-                color="#ffffff"
-                currencySymbol="¥"
-                details="詳細情報"
-                endDate="2023-10-31"
-                height="100px"
-                onClick={() => {}}
-                paying={7000}
-                startDate="2023-10-01"
-                tags={[
-                    {
-                    color: '#ff0000',
-                    label: '溶接'
-                    },
-                    {
-                    color: '#00ff00',
-                    label: '金属加工'
-                    }
-                ]}
-                title="1day インターンシップ"
-                width="80px"
-                />
-                <CardComponent
-                backgroundColor="#333333"
-                base64Image=""
-                borderRadius="10px"
-                campany="Automation 株式会社"
-                color="#ffffff"
-                currencySymbol="¥"
-                details="詳細情報"
-                endDate="2023-10-31"
-                height="100px"
-                onClick={() => {}}
-                paying={7000}
-                startDate="2023-10-01"
-                tags={[
-                    {
-                    color: '#ff0000',
-                    label: '溶接'
-                    },
-                    {
-                    color: '#00ff00',
-                    label: '金属加工'
-                    }
-                ]}
-                title="1day インターンシップ"
-                width="80px"
-                />
+                    <EventList />
                 </div>
 
                 {/* 空白分を確保する必要がある（現在は臨時） */}

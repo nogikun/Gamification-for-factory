@@ -6,6 +6,7 @@ import type { Preview } from '@storybook/react';
 import { menuReducer } from '../src/redux/menuSlice'; // メニューのリデューサーをインポート
 import { searchDateReducer } from '../src/redux/searchDateSlice'; // 検索日付のリデューサーをインポート
 import { themeReducer } from '../src/redux/themeSlice'; // テーマのリデューサーをインポート
+import { serverReducer } from '../src/redux/serverSlice'; // サーバーのリデューサーをインポート
 
 // // メニュー状態用のリデューサー
 // const menuReducer = (state = { isOpen: false }, action: any) => {
@@ -23,6 +24,7 @@ const mockStore = configureStore({
     menu: menuReducer,
     searchDate: searchDateReducer,
     theme: themeReducer,
+    server: serverReducer,
   }
 });
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- すべてのHTTP通信を許可（開発環境用） -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- 個別のドメイン設定（これらのドメインは特に明示的に許可） -->
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- ローカルホスト接続用 -->
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain> <!-- Android Emulatorからホストマシンへの接続用 -->
+        <domain includeSubdomains="true">192.168.1.162</domain> <!-- 実際のサーバーIPアドレス -->
+        <!-- 他にも必要なIPアドレスがあれば追加 -->
+        <domain includeSubdomains="true">192.168.1.1</domain>
+    </domain-config>
+</network-security-config>

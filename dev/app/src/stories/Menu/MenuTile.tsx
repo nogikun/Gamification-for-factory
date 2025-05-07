@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIonRouter } from '@ionic/react';
 
 // redux
@@ -62,6 +62,21 @@ export const MenuTile = ({
 }: MenuTileProps) => {
     const dispatch = useDispatch();
     const menuIsOpen = useSelector((state: RootState) => state.menu.isOpen);
+    // アニメーション状態を追跡するステート
+    const [shouldAnimate, setShouldAnimate] = useState(false);
+    
+    // menuIsOpenの状態変化を監視し、trueになった時だけアニメーションを実行
+    useEffect(() => {
+        if (menuIsOpen) {
+            setShouldAnimate(true);
+            const animationDuration = 500;
+            setTimeout(() => {
+                setShouldAnimate(false);
+            }, animationDuration);
+        } else {
+            setShouldAnimate(true);
+        }
+    }, [menuIsOpen]);
     
     // アコーディオンのクリックハンドラ - Reduxアクションをディスパッチ
     const handleAccordionClick = () => {
@@ -82,7 +97,7 @@ export const MenuTile = ({
                     <div 
                         className="top-buttons"
                         style={{
-                            animation: 'fadeIn 0.3s ease-in-out', // アニメーション効果を追加
+                            animation: shouldAnimate ? menuIsOpen? 'fadeIn 0.3s ease-in-out': 'fadeOut 0.3s ease-in-out' : 'none',
                         }}
                     > 
                         <Button
@@ -151,7 +166,7 @@ export const MenuTile = ({
                     />
                 </div>
 
-                <div className="bottom-buttons" style={{ marginTop: bottomMarginTop }}>
+                <div className="bottom-buttons" style={{ marginTop: bottomMarginTop, backgroundColor: '#000000',}}>
                     <Button
                         alt=""
                         backgroundColor="#34AFB8"

@@ -71,7 +71,7 @@ export const NotSelectedDate: Story = {
     }
 };
 
-export const DarkNotSelectedDate: Story = {
+export const NotSelectedDarkDate: Story = {
     args: {
         date: "2024-05-04",
         backgroundColor: "#333333",

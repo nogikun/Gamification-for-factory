@@ -4,6 +4,7 @@ import { menu } from "ionicons/icons";
 import { menuReducer } from "./menuSlice"; // メニューのリデューサーをインポート
 import { searchDateReducer } from "./searchDateSlice"; // 検索日付のリデューサーをインポート
 import { themeReducer } from "./themeSlice";
+import { serverReducer } from "./serverSlice"; // サーバーのリデューサーをインポート
 
 // storeの作成
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
         menu: menuReducer, // メニューのリデューサーを追加
         searchDate: searchDateReducer, // 検索日付のリデューサーを追加
         theme: themeReducer, // テーマのリデューサーを追加
+        server: serverReducer, // サーバーのリデューサーを追加
     },
 });
 

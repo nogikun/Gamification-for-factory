@@ -6,8 +6,8 @@ import { MenuTile } from '../stories/Menu/MenuTile';
 import { isPlatform, getPlatforms } from '@ionic/react';
 
 import { useSelector } from 'react-redux';
-
 import { DateTile } from '../stories/Search/DateTile';
+import { EventList } from '../stories/Search/EventList';
 
 console.log("getPlatforms", getPlatforms());
 
@@ -34,9 +34,11 @@ const Tab1: React.FC = () => {
                         <IonTitle size="large">Tab 1</IonTitle>
                     </IonToolbar>
                 </IonHeader> */}
-				<ExploreContainer name="Tab 1 page" />
-                <p>ここは検索画面です。</p>
+
+				{/* <ExploreContainer name="Tab 1 page" /> */}
                 
+                
+                {/* <p>ここは検索画面です。</p>
                 <div style={{
                     // justifyContent: 'space-between', // 日付を横並びに配置
                     // padding: 'auto 20px',
@@ -44,7 +46,24 @@ const Tab1: React.FC = () => {
                 }}>
                     <p style={{fontSize:"18px", marginBottom: "3px"}}>選択された日付</p>
                     <p style={{fontSize:"24px", marginTop: "0px"}}>{useSelector((state: any) => state.searchDate.selectedDate)}</p>
+                </div> */}
+                
+                <div style={{
+                    justifyContent: 'space-between', // 日付を横並びに配置
+                    padding: 'auto 20px',
+                    textAlign: 'center',
+                }}>
+                    <EventList />
                 </div>
+
+                {/* 空白分を確保する必要がある（現在は臨時） */}
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
 
                 <MenuTile
                     primary

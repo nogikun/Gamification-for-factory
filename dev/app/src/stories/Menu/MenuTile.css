@@ -1,0 +1,41 @@
+.top-buttons, .bottom-buttons {
+  display: flex;
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(+20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(+20px);
+  }
+}
+
+/* middle-accordion のスタイルはすべてPropsで管理されるようになりました */
+.middle-accrdion {
+    position: absolute;
+    display: 'flex';
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    margin: 0em;
+    justify-content: center;
+    align-items: center;
+}
+
+/* bottom-buttons のmargin-topもPropsで管理されるようになりました */

@@ -17,7 +17,5 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
   CMD pg_isready -U postgres || exit 1
 
-
-
 # PostgreSQLのデフォルトポート
 EXPOSE 5432

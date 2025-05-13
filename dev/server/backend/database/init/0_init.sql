@@ -15,7 +15,7 @@ CREATE TABLE test (
 
 --------------------------------------------------
 --   TABLE NAME: applicant
--- DISCRIPTIONS: ユーザーの基本情報を格納するテーブル
+-- DESCRIPTIONS: ユーザーの基本情報を格納するテーブル
 --------------------------------------------------
 CREATE TABLE applicant (
     user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),    -- ユーザーID（主キー）

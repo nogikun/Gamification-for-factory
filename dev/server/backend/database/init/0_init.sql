@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 --------------------------------------------------
 --   TABLE NAME: test
--- DISCRIPTIONS: テスト用のテーブル（サンプル）
+-- DESCRIPTIONS: テスト用のテーブル（サンプル）
 --------------------------------------------------
 CREATE TABLE test (
     id SERIAL PRIMARY KEY,

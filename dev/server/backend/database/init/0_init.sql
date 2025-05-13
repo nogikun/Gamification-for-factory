@@ -31,7 +31,7 @@ CREATE TABLE applicant (
 
 --------------------------------------------------
 --   TABLE NAME: events
--- DISCRIPTIONS: イベント情報を格納するテーブル
+-- DESCRIPTIONS: イベント情報を格納するテーブル
 --------------------------------------------------
 CREATE TYPE event_type AS ENUM ('インターンシップ', '説明会');
 CREATE TABLE events (

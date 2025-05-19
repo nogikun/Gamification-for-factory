@@ -8,6 +8,12 @@ class DateModel(BaseModel):
     """
     target_date: date = Field(..., description="検索対象日")
 
+class EventIdModel(BaseModel):
+    """
+    イベントIDモデル - イベントの一意なIDを表現するためのモデル
+    """
+    event_id: str = Field(..., description="イベントの一意なID")
+
 class Event(BaseModel):
     """
     イベントモデル - イベントの基本情報を定義します

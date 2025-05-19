@@ -3,7 +3,7 @@ import { useIonRouter } from '@ionic/react';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../redux/store';
+import type { RootState } from '../../redux/store';
 
 // componentのインポート
 import { CardComponent } from './Card';
@@ -152,7 +152,12 @@ export const EventList = ({
                     startDate={event.start_time.split('T')[0]}
                     endDate={event.end_time.split('T')[0]}
                     height="auto"
-                    onClick={() => console.log(`イベント詳細: ${event.event_id}`)}
+                    onClick={() => {
+                        // クリックイベント
+                        console.log(`イベント詳細: ${event.event_id}`);
+                        // 選択されたイベントIDをReduxストアに保存
+                        dispatch({ type: 'searchEvent/setEventId', payload: event.event_id });
+                    }}
                     paying={Number.parseInt(event.reward.replace(/[^0-9]/g, ""), 10)}
                     tags={event.tags.map(tag => ({
                         color: getTagColor(tag),

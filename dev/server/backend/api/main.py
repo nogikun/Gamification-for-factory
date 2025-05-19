@@ -5,7 +5,7 @@ import uvicorn
 from typing import Dict, List
 
 # local imports
-from src.schema.schema import Event, DateModel
+from src.schema.schema import Event, DateModel, EventIdModel
 from src.demo.generator import EventGenerator
 
 # パスを追加してsrcディレクトリをインポート可能にする
@@ -45,7 +45,7 @@ async def health_check() -> Dict[str, str]:
     return {"status": "healthy"}
 
 @app.post("/demo/get-events")
-async def get_event(target_date: DateModel) -> List[Event]:
+async def get_events(target_date: DateModel) -> List[Event]:
     """
     デモ用イベント取得エンドポイント - 指定された日付のイベントリストを返します
     """
@@ -54,6 +54,34 @@ async def get_event(target_date: DateModel) -> List[Event]:
     if not generate_event_data:
         raise HTTPException(status_code=404, detail="Events not found")
     return generate_event_data
+
+@app.post("/demo/get-event")
+async def get_event(event_id_model: EventIdModel) -> Event:
+    """
+	デモ用イベント取得エンドポイント - 指定されたイベントIDのイベント情報を返します
+	"""
+    # 本来はデータベースからイベント情報を取得する処理が必要
+    # ここではサンプルデータを返す
+
+	# 結果を代入
+    event = Event(
+        event_id=event_id_model.event_id,
+        company_id="company_001",
+        event_type="type_001",
+		title="Sample Event",
+		description="This is a sample event description.",
+		start_time="2023-10-01T10:00:00Z",
+		end_time="2023-10-01T12:00:00Z",
+		location="Tokyo, Japan",
+		reward="100 points",
+		required_qualifications=["qualification_001"],
+		max_participants=100,
+		created_at="2023-09-01T10:00:00Z",
+		updated_at="2023-09-01T10:00:00Z",
+		tags=["tag1", "tag2"],
+		image=None,
+    )
+    return event
 
 # スクリプトとして直接実行された場合、Uvicornサーバーを起動
 if __name__ == "__main__":

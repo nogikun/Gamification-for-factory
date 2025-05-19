@@ -51,3 +51,15 @@ CREATE TABLE events (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,     -- 更新日時
     tags JSON                                           -- タグ・ジャンル
 );
+
+--------------------------------------------------
+--   TABLE NAME: participants
+-- DESCRIPTIONS: イベント参加者情報を管理するテーブル
+--------------------------------------------------
+CREATE TABLE participants (
+  event_id UUID REFERENCES events(event_id),                    -- イベントID（外部キー）
+  user_id UUID REFERENCES users(user_id),                       -- ユーザーID（外部キー）
+  status TEXT CHECK (status IN ('申請中', '参加中', '終了')),    -- 参加状態（申請中、参加中、終了）
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,               -- 作成日時
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP                -- 更新日時
+);

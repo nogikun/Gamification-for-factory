@@ -43,3 +43,12 @@ INSERT INTO applicant (
 ) VALUES (
     '石田', '省吾', 'ishida@gmail.com', '012000000000', '大阪', '2000-03-21', '漢検5級'
 );
+
+-- participants用テストデータの挿入
+INSERT INTO participants (
+    event_id, user_id, status
+  ) VALUES (
+    gen_random_uuid(),
+    gen_random_uuid(),
+    '参加中'
+    );

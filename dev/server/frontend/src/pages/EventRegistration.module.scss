@@ -312,6 +312,283 @@
   height: auto;
 }
 
+.formSelect {
+  font-size: 1rem;
+  border: 1px solid #cfd8dc;
+  border-radius: 6px;
+  padding: 0 14px;
+  height: 42px;
+  background: #fafdff;
+  color: #222;
+  outline: none;
+  transition: border 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+.formSelect:focus {
+  border: 1.5px solid #1976d2;
+  background-color: #fff;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.imageUploadWrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.imageInput {
+  display: none;
+}
+
+.imageUploadBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px dashed #1976d2;
+  border-radius: 6px;
+  background: #e3f2fd;
+  color: #1976d2;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: fit-content;
+  
+  &:hover {
+    background: #bbdefb;
+  }
+}
+
+.imagePreview {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.eventImage {
+  margin-bottom: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    max-height: 150px;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.eventType {
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: #e3f2fd;
+  color: #0d47a1;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.eventTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.tagPreview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.tagInputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.tagInputRow {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  
+  @media (max-width: 767px) {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+.tagColorSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.colorPickerLabel {
+  font-size: 0.85rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.colorPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+  
+  @media (max-width: 767px) {
+    gap: 4px;
+  }
+}
+
+.colorOption {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: block;
+  padding: 0;
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  
+  @media (max-width: 767px) {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.selectedColor {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 2px white, 0 0 0 3px #000;
+}
+
+.addTagButton {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background: #1976d2;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 80px;
+  
+  &:hover {
+    background: #0d47a1;
+  }
+  
+  @media (max-width: 767px) {
+    align-self: flex-start;
+  }
+}
+
+.tagWithRemove {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 2px;
+  margin-bottom: 2px;
+}
+
+.tag {
+  font-size: 0.75rem;
+  background: #eeeeee;
+  color: #555;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  @media (max-width: 767px) {
+    max-width: 150px;
+  }
+}
+
+.removeTagButton {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+.errorMessage {
+  background: #ffebee;
+  color: #c62828;
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  border-left: 4px solid #ef5350;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.submitBtn:disabled {
+  background: #90caf9;
+  cursor: not-allowed;
+}
+
 .submitBtn {
   width: 100%;
   height: 46px;

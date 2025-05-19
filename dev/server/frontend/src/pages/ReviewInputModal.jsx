@@ -1,44 +1,187 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Reviews.module.scss";
 
-export default function ReviewInputModal({ open, onClose, onSubmit, target }) {
-  const [reviewer, setReviewer] = React.useState("");
-  const [comment, setComment] = React.useState("");
+export default function ReviewInputModal({ 
+  open, 
+  onClose, 
+  onSubmit, 
+  selectedUser, 
+  selectedEvent,
+  users,
+  events
+}) {
+  const [formData, setFormData] = useState({
+    reviewer_id: "", // 自分自身のユーザーID
+    reviewee_id: "",
+    event_id: "",
+    rating: 3, // デフォルト評価: 3/5
+    comment: "",
+    advice: ""
+  });
+  
+  // モーダルが開いたときに選択されたユーザーとイベントを設定
+  useEffect(() => {
+    if (open) {
+      setFormData(prev => ({
+        ...prev,
+        reviewee_id: selectedUser ? selectedUser.user_id : "",
+        event_id: selectedEvent ? selectedEvent.event_id : ""
+      }));
+    }
+  }, [open, selectedUser, selectedEvent]);
 
   if (!open) return null;
+  
+  // 入力値の変更を処理
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: name === 'rating' ? parseInt(value, 10) : value
+    });
+  };
 
+  // フォーム送信処理
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (reviewer.trim() && comment.trim()) {
-      onSubmit({ reviewer, target, comment });
-      setComment("");
-      setReviewer("");
+    
+    if (!formData.reviewer_id) {
+      alert('レビュアーを選択してください');
+      return;
     }
+    
+    if (!formData.reviewee_id) {
+      alert('評価対象者を選択してください');
+      return;
+    }
+    
+    if (!formData.event_id) {
+      alert('イベントを選択してください');
+      return;
+    }
+    
+    onSubmit(formData);
+    
+    // フォームリセット
+    setFormData({
+      reviewer_id: "",
+      reviewee_id: "",
+      event_id: "",
+      rating: 3,
+      comment: "",
+      advice: ""
+    });
   };
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-        <h2>レビュー入力（{target}さん）</h2>
+        <h2 className={styles.modalTitle}>レビュー入力</h2>
+        
         <form onSubmit={handleSubmit}>
-          <input
-            className={styles.reviewerInput}
-            type="text"
-            value={reviewer}
-            onChange={e => setReviewer(e.target.value)}
-            placeholder="レビュアー名を入力"
-            required
-            autoFocus
-            style={{marginBottom: 12, width: '100%', padding: '8px', borderRadius: 6, border: '1px solid #e0e0e0', fontSize: '1rem'}}
-          />
-          <textarea
-            className={styles.reviewTextarea}
-            value={comment}
-            onChange={e => setComment(e.target.value)}
-            placeholder="レビュー内容を入力してください"
-            rows={5}
-            required
-          />
+          <div className={styles.formField}>
+            <label>レビュアー</label>
+            <select
+              name="reviewer_id"
+              value={formData.reviewer_id}
+              onChange={handleChange}
+              required
+              className={styles.formSelect}
+            >
+              <option value="">-- レビュアーを選択 --</option>
+              {users && users.map(user => (
+                <option key={user.user_id} value={user.user_id}>
+                  {user.last_name} {user.first_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div className={styles.formField}>
+            <label>評価対象者</label>
+            <select
+              name="reviewee_id"
+              value={formData.reviewee_id}
+              onChange={handleChange}
+              required
+              className={styles.formSelect}
+              disabled={selectedUser !== null}
+            >
+              <option value="">-- 評価対象者を選択 --</option>
+              {users && users.map(user => (
+                <option key={user.user_id} value={user.user_id}>
+                  {user.last_name} {user.first_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div className={styles.formField}>
+            <label>イベント</label>
+            <select
+              name="event_id"
+              value={formData.event_id}
+              onChange={handleChange}
+              required
+              className={styles.formSelect}
+              disabled={selectedEvent !== null}
+            >
+              <option value="">-- イベントを選択 --</option>
+              {events && events.map(event => (
+                <option key={event.event_id} value={event.event_id}>
+                  {event.title}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div className={styles.formField}>
+            <label>評価（5段階）</label>
+            <div className={styles.ratingInput}>
+              {[1, 2, 3, 4, 5].map(num => (
+                <label key={num} className={styles.ratingLabel}>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value={num}
+                    checked={formData.rating === num}
+                    onChange={handleChange}
+                    className={styles.ratingRadio}
+                  />
+                  <span className={styles.ratingText}>{num}</span>
+                </label>
+              ))}
+            </div>
+            <div className={styles.ratingPreview}>
+              {"★".repeat(formData.rating)}{"☆".repeat(5 - formData.rating)}
+            </div>
+          </div>
+          
+          <div className={styles.formField}>
+            <label>コメント</label>
+            <textarea
+              name="comment"
+              value={formData.comment}
+              onChange={handleChange}
+              placeholder="評価コメントを入力してください"
+              rows={3}
+              required
+              className={styles.reviewTextarea}
+            />
+          </div>
+          
+          <div className={styles.formField}>
+            <label>アドバイス・改善点</label>
+            <textarea
+              name="advice"
+              value={formData.advice}
+              onChange={handleChange}
+              placeholder="アドバイスや改善点を入力してください"
+              rows={3}
+              className={styles.reviewTextarea}
+            />
+          </div>
+          
           <div className={styles.modalActions}>
             <button type="submit" className={styles.submitBtn}>送信</button>
             <button type="button" className={styles.closeBtn} onClick={onClose}>閉じる</button>

@@ -46,9 +46,9 @@ INSERT INTO applicant (
 
 -- participants用テストデータの挿入
 INSERT INTO participants (
-    event_id, user_id, status
-  ) VALUES (
-    gen_random_uuid(),
-    gen_random_uuid(),
-    '参加中'
-    );
+    event_id,
+    status
+    ) VALUES (
+        1,
+        '参加中'
+        );

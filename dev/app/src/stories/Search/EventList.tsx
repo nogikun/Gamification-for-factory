@@ -83,6 +83,7 @@ export const EventList = ({
     ...props
 }: EventListProps) => {
     const dispatch = useDispatch();
+    const ionRouter = useIonRouter(); // ionRouterをコンポーネントのトップレベルに移動
     const searchSelectedDate = useSelector((state: RootState) => state.searchDate.selectedDate);
     const [events, setEvents] = useState<EventData[]>([]);
     const [loading, setLoading] = useState(false);
@@ -157,6 +158,8 @@ export const EventList = ({
                         console.log(`イベント詳細: ${event.event_id}`);
                         // 選択されたイベントIDをReduxストアに保存
                         dispatch({ type: 'searchEvent/setEventId', payload: event.event_id });
+                        // ページに遷移
+                        ionRouter.push('/event'); // イベント詳細ページに遷移
                     }}
                     paying={Number.parseInt(event.reward.replace(/[^0-9]/g, ""), 10)}
                     tags={event.tags.map(tag => ({

@@ -29,14 +29,14 @@ interface EventData {
 }
 
 // apiに問い合わせて、データを取得する関数
-function fetchData(selectedEventId: string, host: string, port?: string){
+function fetchData(selectedEventId: string, host: string, port?: string, endpoint?: string) {
     // リクエストボディ
     const requestBody = {
         event_id: selectedEventId
     };
 
     // 問い合わせ処理
-    const url = port ? `${host}:${port}/demo/get-event` : `${host}/demo/get-event`;
+    const url = port ? `${host}:${port}${endpoint}` : `${host}${endpoint}`;
     return fetch(url, {
         method: 'POST',
         headers: {
@@ -63,6 +63,7 @@ export interface EventProps {   // props（パラメータ）の型定義
     color ?: string;            // ボタンの色
     backgroundColor?: string;   // ボタンの背景色
     event_id: string;           // 選択中のイベントデータ（無い場合はエラー）
+    endpoint?: string;         // APIのエンドポイント
     onClick?: () => void;       // クリック時のイベントハンドラー
 }
 
@@ -71,7 +72,8 @@ export const Event = ({
     primary = false,
     color,
     backgroundColor,
-    event_id,
+    event_id = useSelector((state: RootState) => state.searchEvent.eventId),
+    endpoint = "/demo/get-event",
     onClick,
     ...props
 }: EventProps) => {
@@ -87,7 +89,7 @@ export const Event = ({
     // API接続
     const host = useSelector((state: RootState) => state.server.host);              // 接続先のホスト名を取得
     const port = useSelector((state: RootState) => state.server.port);              // 接続先のポート番号を取得
-    const eventId = useSelector((state: RootState) => state.searchEvent.eventId);   // 選択中のイベントIDを取得
+    // const eventId = useSelector((state: RootState) => state.searchEvent.eventId);   // 選択中のイベントIDを取得
     
     // イベントデータ状態管理
     const [eventData, setEventData] = useState<EventData | null>(null);
@@ -109,7 +111,7 @@ export const Event = ({
         setError(null);
         
         if (event_id) {
-            fetchData(event_id, host, port)
+            fetchData(event_id, host, port, endpoint)
                 .then(data => {
                     setEventData(data);
                     setLoading(false);
@@ -122,7 +124,7 @@ export const Event = ({
             setError("Event ID is required");
             setLoading(false);
         }
-    }, [event_id, host, port]);
+    }, [event_id, host, port, endpoint]);
 
     // ローディング中
     if (loading) {
@@ -138,7 +140,7 @@ export const Event = ({
         <div>
             <CardComponent
                 // key={index} // indexをキーとして使用（ユニークなIDがない場合）event.event_idではなくindexを使用
-                backgroundColor={darkTheme ? "#333333" : "#f5f5f5"}
+                backgroundColor={darkTheme ? "#000000" : "#ffffff"}
                 base64Image={eventData.image}
                 borderRadius="10px"
                 campany={eventData.location.split(" ")[2]}
@@ -157,6 +159,15 @@ export const Event = ({
                 title={eventData.title}
                 width="100%"
             />
+            <div style={{
+                margin: "7%",
+            }}>
+                <p>詳細：</p>
+                <p>{eventData.description}</p>
+                <p>場所: {eventData.location}</p>
+                <p>募集人数： {eventData.max_participants}</p>
+                <p>資格要件: {eventData.required_qualifications.join(", ")}</p>
+            </div>
         </div>
     );
 };

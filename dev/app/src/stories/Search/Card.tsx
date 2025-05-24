@@ -71,10 +71,8 @@ export const CardComponent = ({
                 backgroundColor: 'transparent', // 透明なボタン
                 border: 'none',
             }}
-            onClick={() => {
-                // クリックイベント
-                console.log("jobID", jobID);
-            }}>
+            onClick={ onClick }
+            >
                 <Card
                 variant="outlined"
                 sx={{ 

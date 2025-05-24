@@ -19,98 +19,120 @@ export default function Notifications() {
     contentRefs: [listRef]
   });
 
-  // 通知データを取得
+  // 全ての通信データを取得して通知形式に変換
   useEffect(() => {
-    const fetchNotifications = async () => {
+    const fetchAllData = async () => {
       setIsLoading(true);
       setError(null);
       
       try {
-        // APIからデータを取得
-        const response = await fetch('/api/notifications');
-        
-        if (!response.ok) {
-          throw new Error('通知データの取得に失敗しました');
-        }
-        
-        const data = await response.json();
-        
-        // 取得したデータを日付の新しい順に並べ替え
-        const sortedData = data.sort((a, b) => 
-          new Date(b.created_at) - new Date(a.created_at)
-        );
-        
-        setNotifications(sortedData);
-      } catch (err) {
-        console.error('通知データ取得エラー:', err);
-        setError(`データの取得中にエラーが発生しました: ${err.message}`);
-        
-        // エラー時はダミーデータを表示（本番環境では削除）
-        setNotifications([
-          { 
-            notification_id: 1,
+        // 並列で全てのAPIからデータを取得
+        const [eventsResponse, applicationsResponse, reviewsResponse, usersResponse] = await Promise.all([
+          fetch('http://localhost:1880/event'),
+          fetch('http://localhost:1880/applications'),
+          fetch('http://localhost:1880/api/reviews'),
+          fetch('http://localhost:1880/api/users')
+        ]);
+
+        // レスポンスのエラーチェック
+        if (!eventsResponse.ok) throw new Error('イベントデータの取得に失敗');
+        if (!applicationsResponse.ok) throw new Error('応募者データの取得に失敗');
+        if (!reviewsResponse.ok) throw new Error('レビューデータの取得に失敗');
+        if (!usersResponse.ok) throw new Error('ユーザーデータの取得に失敗');
+
+        // JSONデータを取得
+        let eventsData = await eventsResponse.json();
+        let applicationsData = await applicationsResponse.json();
+        let reviewsData = await reviewsResponse.json();
+        let usersData = await usersResponse.json();
+
+        // 配列チェック（安全性のため）
+        eventsData = Array.isArray(eventsData) ? eventsData : [];
+        applicationsData = Array.isArray(applicationsData) ? applicationsData : [];
+        reviewsData = Array.isArray(reviewsData) ? reviewsData : [];
+        usersData = Array.isArray(usersData) ? usersData : [];
+
+        // ユーザー名取得用のヘルパー関数
+        const getUserName = (userId) => {
+          const user = usersData.find(u => u.user_id === userId);
+          return user ? `${user.last_name} ${user.first_name}` : '不明なユーザー';
+        };
+
+        // イベント名取得用のヘルパー関数
+        const getEventName = (eventId) => {
+          const event = eventsData.find(e => e.event_id === eventId);
+          return event ? event.title : '不明なイベント';
+        };
+
+        // 全データを通知形式に変換
+        const allNotifications = [];
+
+        // イベントデータを通知に変換
+        eventsData.forEach(event => {
+          allNotifications.push({
+            id: `event_${event.event_id}`,
+            type: "event",
+            title: "新しいイベントが作成されました",
+            message: `イベント「${event.title}」が作成されました`,
+            created_at: event.created_at || event.start_date,
+            target_route: "events/new",
+            related_data: event,
+            action_label: "イベント管理"
+          });
+        });
+
+        // 応募データを通知に変換
+        applicationsData.forEach(application => {
+          const eventName = getEventName(application.event_id);
+          const userName = getUserName(application.user_id);
+          
+          allNotifications.push({
+            id: `application_${application.application_id}`,
             type: "application",
             title: "新しい応募が届きました",
-            message: "イベント「プログラミングコンテスト」に新しい応募があります",
-            created_at: "2025-04-27T10:00:00",
-            is_read: false,
-            related_id: 123,
-            target_route: "applicants"
-          },
-          { 
-            notification_id: 2,
-            type: "event",
-            title: "イベントが作成されました",
-            message: "新しいイベント「チームビルディングワークショップ」が作成されました",
-            created_at: "2025-04-26T15:30:00",
-            is_read: true,
-            related_id: 456,
-            target_route: "events/new"
-          },
-          { 
-            notification_id: 3,
+            message: `${userName}さんからイベント「${eventName}」への応募があります`,
+            created_at: application.created_at,
+            target_route: "applicants",
+            related_data: application,
+            action_label: "応募者確認"
+          });
+        });
+
+        // レビューデータを通知に変換
+        reviewsData.forEach(review => {
+          const reviewerName = getUserName(review.reviewer_id);
+          const revieweeName = getUserName(review.reviewee_id);
+          const eventName = getEventName(review.event_id);
+          
+          allNotifications.push({
+            id: `review_${review.review_id}`,
             type: "review",
-            title: "レビュー提出のお願い",
-            message: "イベント「技術セミナー」の参加者レビューを提出してください",
-            created_at: "2025-04-25T09:15:00",
-            is_read: false,
-            related_id: 789,
-            target_route: "reviews"
-          },
-        ]);
+            title: "新しいレビューが投稿されました",
+            message: `${reviewerName}さんから${revieweeName}さんへのレビューが投稿されました（${eventName}）`,
+            created_at: review.created_at,
+            target_route: "reviews",
+            related_data: review,
+            action_label: "レビュー確認"
+          });
+        });
+
+        // 時系列で並び替え（新しい順）
+        const sortedNotifications = allNotifications.sort((a, b) => 
+          new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        setNotifications(sortedNotifications);
+        
+      } catch (err) {
+        console.error('データ取得エラー:', err);
+        setError(`データの取得中にエラーが発生しました: ${err.message}`);
       } finally {
         setIsLoading(false);
       }
     };
     
-    fetchNotifications();
+    fetchAllData();
   }, []);
-
-  // 通知をクリックしたときの処理
-  const handleNotificationClick = async (notification) => {
-    try {
-      // 既読状態をAPIに送信
-      if (!notification.is_read) {
-        await fetch(`/api/notifications/${notification.notification_id}/read`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-
-        // 既読状態を更新
-        setNotifications(prevNotifications => 
-          prevNotifications.map(item => 
-            item.notification_id === notification.notification_id 
-              ? {...item, is_read: true} 
-              : item
-          )
-        );
-      }
-    } catch (err) {
-      console.error('既読処理エラー:', err);
-    }
-  };
 
   // 関連するタブへ移動する処理
   const navigateToTarget = (targetRoute) => {
@@ -143,16 +165,35 @@ export default function Notifications() {
     }
   };
 
+  // 通知タイプに応じた色を返す関数
+  const getNotificationColor = (type) => {
+    switch (type) {
+      case 'application':
+        return '#2196f3'; // 青
+      case 'event':
+        return '#4caf50'; // 緑
+      case 'review':
+        return '#ff9800'; // オレンジ
+      default:
+        return '#666';
+    }
+  };
+
   return (
     <div ref={containerRef} className={styles.notifications}>
-      <h1 ref={titleRef} className={styles.notifications__title}>通知一覧</h1>
+      <h1 ref={titleRef} className={styles.notifications__title}>
+        活動通知一覧
+        <span className={styles.notifications__count}>
+          （{notifications.length}件）
+        </span>
+      </h1>
       
       {error && <div className={styles.errorMessage}>{error}</div>}
       
       {isLoading ? (
         <div className={styles.loadingIndicator}>
           <div className={styles.loadingSpinner}></div>
-          <p>通知を読み込み中...</p>
+          <p>データを読み込み中...</p>
         </div>
       ) : notifications.length === 0 ? (
         <div className={styles.emptyState}>
@@ -162,27 +203,29 @@ export default function Notifications() {
         <ul ref={listRef} className={styles.notifications__list}>
           {notifications.map((notification) => (
             <li 
-              key={notification.notification_id} 
-              className={`${styles.notifications__item} ${!notification.is_read ? styles.unread : ''}`}
-              onClick={() => handleNotificationClick(notification)}
+              key={notification.id} 
+              className={styles.notifications__item}
+              style={{ borderLeft: `4px solid ${getNotificationColor(notification.type)}` }}
             >
               <div className={styles.notifications__content}>
                 <div className={styles.notifications__header}>
-                  <span className={`${styles.notifications__icon} ${getNotificationIcon(notification.type)}`}></span>
+                  <span 
+                    className={`${styles.notifications__icon} ${getNotificationIcon(notification.type)}`}
+                    style={{ backgroundColor: getNotificationColor(notification.type) }}
+                  ></span>
                   <span className={styles.notifications__title}>{notification.title}</span>
-                  {!notification.is_read && <span className={styles.unreadBadge}></span>}
+                  <span className={styles.notifications__type}>{notification.type}</span>
                 </div>
                 <p className={styles.notifications__message}>{notification.message}</p>
                 <div className={styles.notifications__footer}>
-                  <span className={styles.notifications__date}>{formatDate(notification.created_at)}</span>
+                  <span className={styles.notifications__date}>
+                    {formatDate(notification.created_at)}
+                  </span>
                   <button 
                     className={styles.notifications__actionButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigateToTarget(notification.target_route);
-                    }}
+                    onClick={() => navigateToTarget(notification.target_route)}
                   >
-                    対応する
+                    {notification.action_label}
                   </button>
                 </div>
               </div>

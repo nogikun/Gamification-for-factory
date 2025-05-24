@@ -11,90 +11,6 @@ const APPLICATION_STATUS = {
   WITHDRAW: "辞退",
 };
 
-// ダミーデータの定義
-const DUMMY_APPLICANTS = [
-  {
-    application_id: "app001",
-    user_id: "user001",
-    event_id: "event001",
-    first_name: "太郎",
-    last_name: "山田",
-    email: "taro.yamada@example.com",
-    status: APPLICATION_STATUS.PENDING,
-    created_at: "2025-04-20T10:30:00",
-    updated_at: "2025-04-20T10:30:00",
-    resume_url: "https://example.com/resume/1",
-    message: "御社のインターンシップに興味があります。よろしくお願いします。"
-  },
-  {
-    application_id: "app002",
-    user_id: "user002",
-    event_id: "event002",
-    first_name: "花子",
-    last_name: "佐藤",
-    email: "hanako.sato@example.com",
-    status: APPLICATION_STATUS.APPROVED,
-    created_at: "2025-04-18T14:20:00",
-    updated_at: "2025-04-19T09:15:00",
-    resume_url: "https://example.com/resume/2",
-    message: "プログラミング経験を活かして貢献したいと思います。"
-  },
-  {
-    application_id: "app003",
-    user_id: "user003",
-    event_id: "event001",
-    first_name: "次郎",
-    last_name: "鈴木",
-    email: "jiro.suzuki@example.com",
-    status: APPLICATION_STATUS.REJECTED,
-    created_at: "2025-04-15T11:45:00",
-    updated_at: "2025-04-17T16:30:00",
-    resume_url: "https://example.com/resume/3",
-    message: "ものづくりに情熱があります。御社で学びたいです。"
-  },
-  {
-    application_id: "app004",
-    user_id: "user004",
-    event_id: "event003",
-    first_name: "恵",
-    last_name: "高橋",
-    email: "megumi.takahashi@example.com",
-    status: APPLICATION_STATUS.WITHDRAW,
-    created_at: "2025-04-12T09:00:00",
-    updated_at: "2025-04-13T10:45:00",
-    resume_url: "https://example.com/resume/4",
-    message: "チームでの作業が好きです。インターンで成長したいです。"
-  },
-];
-
-// ダミーイベントデータ
-const DUMMY_EVENTS = [
-  {
-    event_id: "event001",
-    title: "夏季インターンシップ（プログラミング）",
-    start_date: "2025-07-01T09:00:00",
-    end_date: "2025-07-15T17:00:00",
-    event_type: "インターンシップ",
-    location: "東京本社"
-  },
-  {
-    event_id: "event002",
-    title: "秋季インターンシップ（ものづくり）",
-    start_date: "2025-09-01T09:00:00",
-    end_date: "2025-09-30T17:00:00",
-    event_type: "インターンシップ",
-    location: "大阪工場"
-  },
-  {
-    event_id: "event003",
-    title: "会社説明会",
-    start_date: "2025-06-15T13:00:00",
-    end_date: "2025-06-15T16:00:00",
-    event_type: "説明会",
-    location: "オンライン"
-  },
-];
-
 export default function Applicants() {
   const containerRef = useRef(null);
   const tableWrapperRef = useRef(null);
@@ -113,7 +29,6 @@ export default function Applicants() {
   const [filterStatus, setFilterStatus] = useState('');
   const [filterEvent, setFilterEvent] = useState('');
   const [events, setEvents] = useState([]);
-  const [useDummyData, setUseDummyData] = useState(false);
 
   // 応募者データと関連イベントデータを取得
   useEffect(() => {
@@ -122,36 +37,50 @@ export default function Applicants() {
       setError(null);
       try {
         // 応募者一覧を取得
-        const applicantsResponse = await fetch('/api/applications');
+        const applicantsResponse = await fetch('http://localhost:1880/applications');
         
         if (!applicantsResponse.ok) {
           throw new Error('応募者データの取得に失敗しました');
         }
         
         const applicantsData = await applicantsResponse.json();
-        setApplicants(applicantsData);
+        
+        // データが配列かどうかを確認
+        if (Array.isArray(applicantsData)) {
+          setApplicants(applicantsData);
+        } else if (applicantsData && Array.isArray(applicantsData.applications)) {
+          setApplicants(applicantsData.applications);
+        } else if (applicantsData && Array.isArray(applicantsData.data)) {
+          setApplicants(applicantsData.data);
+        } else {
+          console.warn('APIから期待される配列形式のデータが返されませんでした:', applicantsData);
+          setApplicants([]);
+        }
         
         // イベント一覧を取得（フィルター用）
-        const eventsResponse = await fetch('/api/events');
+        const eventsResponse = await fetch('http://localhost:1880/event');
         
         if (!eventsResponse.ok) {
           throw new Error('イベントデータの取得に失敗しました');
         }
         
         const eventsData = await eventsResponse.json();
-        setEvents(eventsData);
         
-        // 通信成功したので、ダミーデータフラグをリセット
-        setUseDummyData(false);
+        // イベントデータも配列チェック
+        if (Array.isArray(eventsData)) {
+          setEvents(eventsData);
+        } else if (eventsData && Array.isArray(eventsData.events)) {
+          setEvents(eventsData.events);
+        } else if (eventsData && Array.isArray(eventsData.data)) {
+          setEvents(eventsData.data);
+        } else {
+          console.warn('イベントAPIから期待される配列形式のデータが返されませんでした:', eventsData);
+          setEvents([]);
+        }
         
       } catch (err) {
         console.error('データ取得エラー:', err);
         setError(`データの取得中にエラーが発生しました: ${err.message}`);
-        
-        // エラー時はダミーデータを使用
-        setApplicants(DUMMY_APPLICANTS);
-        setEvents(DUMMY_EVENTS);
-        setUseDummyData(true);
       } finally {
         setIsLoading(false);
       }
@@ -178,30 +107,25 @@ export default function Applicants() {
     setError(null);
     
     try {
-      if (useDummyData) {
-        // ダミーデータの場合はローカルで処理
-        setTimeout(() => {
-          // ローカルの状態を更新
-          setApplicants(applicants.map(app => 
-            app.application_id === applicationId 
-              ? { ...app, status: newStatus, updated_at: new Date().toISOString() } 
-              : app
-          ));
-          
-          setIsLoading(false);
-          handleClose();
-          alert(`応募者のステータスを「${newStatus}」に更新しました (ダミーデータ)`);
-        }, 500);
-        
-        return;
+      // 現在の応募者データを取得
+      const currentApplicant = applicants.find(app => app.application_id === applicationId);
+      if (!currentApplicant) {
+        throw new Error('応募者データが見つかりません');
       }
       
-      const response = await fetch(`/api/applications/${applicationId}/status`, {
-        method: 'PUT',
+      // 更新されたデータを作成
+      const updatedApplicant = {
+        ...currentApplicant,
+        status: newStatus,
+        updated_at: new Date().toISOString()
+      };
+      
+      const response = await fetch('http://localhost:1880/application', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify(updatedApplicant)
       });
       
       if (!response.ok) {
@@ -209,15 +133,24 @@ export default function Applicants() {
         throw new Error(errorData.detail || 'ステータス更新に失敗しました');
       }
       
-      // 成功したら応募者データを更新
+      // 成功したら全リストを再取得（POST /applicationは全リストを返すため）
       const updatedData = await response.json();
       
-      // ローカルの状態を更新
-      setApplicants(applicants.map(app => 
-        app.application_id === applicationId 
-          ? { ...app, status: newStatus, updated_at: new Date().toISOString() } 
-          : app
-      ));
+      // レスポンスデータの配列チェック
+      if (Array.isArray(updatedData)) {
+        setApplicants(updatedData);
+      } else if (updatedData && Array.isArray(updatedData.applications)) {
+        setApplicants(updatedData.applications);
+      } else if (updatedData && Array.isArray(updatedData.data)) {
+        setApplicants(updatedData.data);
+      } else {
+        // ローカルでの更新をフォールバック
+        setApplicants(applicants.map(app => 
+          app.application_id === applicationId 
+            ? { ...app, status: newStatus, updated_at: new Date().toISOString() } 
+            : app
+        ));
+      }
       
       alert(`応募者のステータスを「${newStatus}」に更新しました`);
       
@@ -239,53 +172,6 @@ export default function Applicants() {
   // 拒否処理
   const handleReject = (applicationId) => {
     handleUpdateStatus(applicationId, APPLICATION_STATUS.REJECTED);
-  };
-  
-  // ダミーデータへの切り替え処理
-  const handleSwitchToDummy = () => {
-    setApplicants(DUMMY_APPLICANTS);
-    setEvents(DUMMY_EVENTS);
-    setUseDummyData(true);
-  };
-  
-  // データ再取得処理
-  const handleRefresh = () => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        // 応募者一覧を取得
-        const applicantsResponse = await fetch('/api/applications');
-        
-        if (!applicantsResponse.ok) {
-          throw new Error('応募者データの取得に失敗しました');
-        }
-        
-        const applicantsData = await applicantsResponse.json();
-        setApplicants(applicantsData);
-        
-        // イベント一覧を取得（フィルター用）
-        const eventsResponse = await fetch('/api/events');
-        
-        if (!eventsResponse.ok) {
-          throw new Error('イベントデータの取得に失敗しました');
-        }
-        
-        const eventsData = await eventsResponse.json();
-        setEvents(eventsData);
-        
-        // 通信成功したので、ダミーデータフラグをリセット
-        setUseDummyData(false);
-        
-      } catch (err) {
-        console.error('データ取得エラー:', err);
-        setError(`データの取得中にエラーが発生しました: ${err.message}`);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchData();
   };
   
   // フィルター適用
@@ -322,20 +208,6 @@ export default function Applicants() {
       
       {error && <div className={styles.errorMessage}>{error}</div>}
       
-      {/* ダミーデータ使用中の表示 */}
-      {useDummyData && (
-        <div className={styles.dummyDataNotice}>
-          <span>ダミーデータを使用中</span>
-          <button 
-            className={styles.refreshButton}
-            onClick={handleRefresh}
-            disabled={isLoading}
-          >
-            {isLoading ? '読み込み中...' : 'データを再取得'}
-          </button>
-        </div>
-      )}
-      
       <div className={styles.filtersContainer}>
         <div className={styles.filterControl}>
           <label>ステータス:</label>
@@ -364,18 +236,6 @@ export default function Applicants() {
             ))}
           </select>
         </div>
-        
-        {/* ダミーデータ切替ボタン */}
-        {!useDummyData && (
-          <div className={styles.actionButtons}>
-            <button 
-              className={styles.dummyButton}
-              onClick={handleSwitchToDummy}
-            >
-              ダミーデータに切替
-            </button>
-          </div>
-        )}
       </div>
       
       <div ref={tableWrapperRef} className={styles.tableWrapper}>

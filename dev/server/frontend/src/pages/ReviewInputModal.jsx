@@ -10,8 +10,15 @@ export default function ReviewInputModal({
   users,
   events
 }) {
+  // 決め打ちのレビュアーリスト
+  const reviewerOptions = [
+    { id: "hr_manager", name: "田中 美咲（人事部長）" },
+    { id: "dept_manager", name: "佐藤 拓也（技術部門長）" },
+    { id: "factory_manager", name: "鈴木 健太（工場長）" }
+  ];
+
   const [formData, setFormData] = useState({
-    reviewer_id: "", // 自分自身のユーザーID
+    reviewer_id: "", // レビュアーを選択式
     reviewee_id: "",
     event_id: "",
     rating: 3, // デフォルト評価: 3/5
@@ -89,9 +96,9 @@ export default function ReviewInputModal({
               className={styles.formSelect}
             >
               <option value="">-- レビュアーを選択 --</option>
-              {users && users.map(user => (
-                <option key={user.user_id} value={user.user_id}>
-                  {user.last_name} {user.first_name}
+              {reviewerOptions.map(option => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
                 </option>
               ))}
             </select>

@@ -36,28 +36,61 @@ export default function Reviews() {
       
       try {
         // レビューデータを取得
-        const reviewsResponse = await fetch('/api/reviews');
+        const reviewsResponse = await fetch('http://localhost:1880/api/reviews');
         if (!reviewsResponse.ok) {
           throw new Error('レビューデータの取得に失敗しました');
         }
         const reviewsData = await reviewsResponse.json();
-        setReviews(reviewsData);
+        
+        // データが配列かどうかを確認
+        if (Array.isArray(reviewsData)) {
+          setReviews(reviewsData);
+        } else if (reviewsData && Array.isArray(reviewsData.reviews)) {
+          setReviews(reviewsData.reviews);
+        } else if (reviewsData && Array.isArray(reviewsData.data)) {
+          setReviews(reviewsData.data);
+        } else {
+          console.warn('レビューAPIから期待される配列形式のデータが返されませんでした:', reviewsData);
+          setReviews([]);
+        }
         
         // イベントデータを取得
-        const eventsResponse = await fetch('/api/events');
+        const eventsResponse = await fetch('http://localhost:1880/event');
         if (!eventsResponse.ok) {
           throw new Error('イベントデータの取得に失敗しました');
         }
         const eventsData = await eventsResponse.json();
-        setEvents(eventsData);
+        
+        // イベントデータも配列チェック
+        if (Array.isArray(eventsData)) {
+          setEvents(eventsData);
+        } else if (eventsData && Array.isArray(eventsData.events)) {
+          setEvents(eventsData.events);
+        } else if (eventsData && Array.isArray(eventsData.data)) {
+          setEvents(eventsData.data);
+        } else {
+          console.warn('イベントAPIから期待される配列形式のデータが返されませんでした:', eventsData);
+          setEvents([]);
+        }
         
         // ユーザーデータを取得
-        const usersResponse = await fetch('/api/users');
+        const usersResponse = await fetch('http://localhost:1880/api/users');
         if (!usersResponse.ok) {
           throw new Error('ユーザーデータの取得に失敗しました');
         }
         const usersData = await usersResponse.json();
-        setUsers(usersData);
+        
+        // ユーザーデータも配列チェック
+        if (Array.isArray(usersData)) {
+          setUsers(usersData);
+        } else if (usersData && Array.isArray(usersData.users)) {
+          setUsers(usersData.users);
+        } else if (usersData && Array.isArray(usersData.data)) {
+          setUsers(usersData.data);
+        } else {
+          console.warn('ユーザーAPIから期待される配列形式のデータが返されませんでした:', usersData);
+          setUsers([]);
+        }
         
       } catch (err) {
         console.error('データ取得エラー:', err);
@@ -70,10 +103,16 @@ export default function Reviews() {
     fetchData();
   }, []);
 
-  // ユーザー名を取得する関数
+  // ユーザー名を取得する関数（役職付きの場合は役職も表示）
   const getUserName = (userId) => {
     const user = users.find(u => u.user_id === userId);
-    return user ? `${user.last_name} ${user.first_name}` : '不明なユーザー';
+    if (!user) return '不明なユーザー';
+    
+    const fullName = `${user.last_name} ${user.first_name}`;
+    if (user.user_type === 'employee' && user.position) {
+      return `${fullName}（${user.position}）`;
+    }
+    return fullName;
   };
   
   // イベント名を取得する関数
@@ -102,7 +141,7 @@ export default function Reviews() {
     setError(null);
     
     try {
-      const response = await fetch('/api/reviews', {
+      const response = await fetch('http://localhost:1880/api/reviews', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -122,9 +161,31 @@ export default function Reviews() {
         throw new Error(errorData.detail || 'レビュー送信に失敗しました');
       }
       
-      // 成功したらレビューデータを再取得
-      const newReview = await response.json();
-      setReviews([...reviews, newReview]);
+      // 成功したら全レビューリストを取得（POST /api/reviewsは全レビューを返すため）
+      const updatedReviews = await response.json();
+      
+      // レスポンスデータの配列チェック
+      if (Array.isArray(updatedReviews)) {
+        setReviews(updatedReviews);
+      } else if (updatedReviews && Array.isArray(updatedReviews.reviews)) {
+        setReviews(updatedReviews.reviews);
+      } else if (updatedReviews && Array.isArray(updatedReviews.data)) {
+        setReviews(updatedReviews.data);
+      } else {
+        // フォールバック: 新しいレビューを現在のリストに追加
+        const newReview = {
+          review_id: `review_${Date.now()}`,
+          reviewer_id: reviewData.reviewer_id,
+          reviewee_id: selectedUser.user_id,
+          event_id: selectedEvent.event_id,
+          rating: reviewData.rating,
+          comment: reviewData.comment,
+          advice: reviewData.advice,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        setReviews([...reviews, newReview]);
+      }
       
       alert('レビューが送信されました');
       handleCloseModal();

@@ -88,15 +88,30 @@ export default function EventRegistration() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/events');
+      const response = await fetch('http://localhost:1880/event');
       if (!response.ok) {
         throw new Error('イベントの取得に失敗しました');
       }
       const data = await response.json();
-      setEvents(data);
+      
+      // データが配列かどうかを確認
+      if (Array.isArray(data)) {
+        setEvents(data);
+      } else if (data && Array.isArray(data.events)) {
+        // dataオブジェクトの中にeventsプロパティがある場合
+        setEvents(data.events);
+      } else if (data && Array.isArray(data.data)) {
+        // dataオブジェクトの中にdataプロパティがある場合
+        setEvents(data.data);
+      } else {
+        // 期待される構造でない場合
+        console.warn('APIから期待される配列形式のデータが返されませんでした:', data);
+        setEvents([]);
+      }
     } catch (err) {
       setError('イベントの取得中にエラーが発生しました: ' + err.message);
       console.error(err);
+      setEvents([]); // エラー時は空配列をセット
     } finally {
       setIsLoading(false);
     }
@@ -256,8 +271,8 @@ export default function EventRegistration() {
       };
       
       const url = editMode 
-        ? `/api/events/${formData.event_id}` 
-        : '/api/events';
+        ? `http://localhost:1880/event/${formData.event_id}` 
+        : 'http://localhost:1880/event';
       
       const method = editMode ? 'PUT' : 'POST';
       
@@ -337,7 +352,7 @@ export default function EventRegistration() {
       setError(null);
       
       try {
-        const response = await fetch(`/api/events/${id}`, {
+        const response = await fetch(`http://localhost:1880/event/${id}`, {
           method: 'DELETE'
         });
         
@@ -393,7 +408,7 @@ export default function EventRegistration() {
 
   // カレンダーのタイル内容をカスタマイズ
   const tileContent = ({ date, view }) => {
-    if (view === 'month') {
+    if (view === 'month' && Array.isArray(events)) {
       const dateStr = formatDateYMD(date);
       const found = events.some(e => formatDateYMD(new Date(e.start_date)) === dateStr);
       
@@ -410,6 +425,8 @@ export default function EventRegistration() {
 
   // タイルのクラス名をカスタマイズ
   const tileClassName = ({ date }) => {
+    if (!Array.isArray(events)) return undefined;
+    
     const dateStr = formatDateYMD(date);
     const found = events.some(e => formatDateYMD(new Date(e.start_date)) === dateStr);
     return found ? styles.eventTile : undefined;
@@ -417,7 +434,7 @@ export default function EventRegistration() {
 
   // 日付に関連するイベントを取得
   const getEventsForDate = (dateStr) => {
-    if (!dateStr) return [];
+    if (!dateStr || !Array.isArray(events)) return [];
     return events.filter(event => formatDateYMD(new Date(event.start_date)) === dateStr);
   };
 

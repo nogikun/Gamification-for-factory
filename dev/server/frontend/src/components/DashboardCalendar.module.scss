@@ -155,3 +155,53 @@
     max-height: none;
   }
 }
+
+// ローディングインジケーター
+.loadingIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #666;
+  
+  p {
+    margin-top: 16px;
+    font-size: 0.9rem;
+    color: #666;
+  }
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #ff9800;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// エラーメッセージ
+.errorMessage {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+}
+
+// 空状態
+.noEvents {
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  padding: 20px;
+  font-style: italic;
+}

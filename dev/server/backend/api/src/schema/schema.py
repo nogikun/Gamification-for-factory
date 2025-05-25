@@ -14,6 +14,22 @@ class EventIdModel(BaseModel):
     """
     event_id: str = Field(..., description="イベントの一意なID")
 
+class Applicant(BaseModel):
+    """
+    申請者モデル - 申請者の基本情報を定義します
+    """
+    applicant_id: str = Field(..., description="申請者の一意なID")
+    company_id: str = Field(..., description="会社の一意なID")
+    event_id: str = Field(..., description="イベントの一意なID")
+    name: str = Field(..., description="申請者の名前")
+    phone_num: str = Field(..., description="申請者の電話番号")
+    email: str = Field(..., description="申請者のメールアドレス")
+    birthdate: Optional[date] = Field(None, description="申請者の生年月日")
+    address: Optional[str] = Field(None, description="申請者の住所")
+    phone: Optional[str] = Field(None, description="申請者の電話番号")
+    qualifications: Optional[List[str]] = Field(None, description="申請者の資格リスト")
+    applied_at: datetime = Field(default_factory=datetime.now, description="申請日時")
+
 class Event(BaseModel):
     """
     イベントモデル - イベントの基本情報を定義します

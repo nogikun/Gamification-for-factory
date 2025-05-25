@@ -16,6 +16,8 @@ anyio==4.9.0
     # via starlette
 click==8.1.8
     # via uvicorn
+colorama==0.4.6
+    # via click
 exceptiongroup==1.2.2
     # via anyio
 fastapi==0.115.12

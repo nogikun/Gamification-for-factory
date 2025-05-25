@@ -5,7 +5,7 @@ import uvicorn
 from typing import Dict, List
 
 # local imports
-from src.schema.schema import Event, DateModel, EventIdModel
+from src.schema.schema import Event, DateModel, EventIdModel, Applicant
 from src.demo.generator import EventGenerator
 
 # パスを追加してsrcディレクトリをインポート可能にする
@@ -82,6 +82,21 @@ async def get_event(event_id_model: EventIdModel) -> Event:
 		image=None,
     )
     return event
+
+@app.post("/demo/join-event")
+async def join_event(applicant: Applicant, event_id_model: EventIdModel) -> Dict[str, str]:
+    """
+    デモ用イベント参加エンドポイント - 申請者が指定されたイベントに参加する処理を行います
+    """
+    # 本来はデータベースに申請者情報を保存する処理が必要
+    # ここではサンプルの成功メッセージを返す
+
+    # 申請者情報をログに出力（デバッグ用）
+    print(f"Applicant: {applicant.json()}")
+    print(f"Event ID: {event_id_model.event_id}")
+
+    return {"message": "Successfully joined the event"}
+  
 
 # スクリプトとして直接実行された場合、Uvicornサーバーを起動
 if __name__ == "__main__":

@@ -17,14 +17,14 @@ const EventPage: React.FC = () => {
             <IonHeader>
                 <IonToolbar>
                     {/* <IonTitle>Tab 1</IonTitle> */}
-                    <DateTile
+                    {/* <DateTile
                         selectedDate="2025-05-05"
                         termDays={2}
                         spaceBetween='20px'
                         horizonMargin='7px'
                         marginTop= {isPlatform('ios') ? '15px' : isPlatform('android') ? '50px' : '15px'}
                         marginBottom='15px'
-                    />
+                    /> */}
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
@@ -54,12 +54,8 @@ const EventPage: React.FC = () => {
                     textAlign: 'center',
                 }}>
                     <Event
-                        backgroundColor="#000000"
-                        color="#ffffff"
-                        endpoint="/demo/get-event"
                         event_id="123"
                         onClick={() => {}}
-                        primary
                     />
                 </div>
 

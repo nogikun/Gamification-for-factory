@@ -16,11 +16,13 @@ const meta = {
     tags: ['autodocs'],
     // More on argTypes: https://storybook.js.org/docs/api/argtypes
     argTypes: {
-        color: { control: 'color' },            // ボタンの色
-        backgroundColor: { control: 'color' },  // ボタンの背景色
+        // EventPropsに存在するプロパティのみ
     },
     // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
-    args: { onClick: fn() },
+    args: { 
+        onClick: fn(),
+        event_id: "11" // Default event_id for all stories, can be overridden in specific stories
+    },
 } satisfies Meta<typeof Event>;
 
 export default meta;
@@ -29,8 +31,6 @@ type Story = StoryObj<typeof meta>;
 // Story - 基本的なボタンのストーリー
 export const Primary : Story ={
     args: {
-        primary: true,
-        backgroundColor: "#000000",
-        color: "#ffffff"
+        event_id: "11" // 必要なevent_idのみ
     },
 };

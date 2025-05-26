@@ -1,6 +1,7 @@
 import os, sys
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 import uvicorn
 from typing import Dict, List
 from sqlalchemy import create_engine, Column, Integer, String, Date, DateTime
@@ -13,12 +14,13 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from src.schema.schema import Event, DateModel
 from src.demo.generator import EventGenerator
 
+load_dotenv()  # .envファイルから環境変数を読み込む
+
 # --- データベース設定 ---
 # PostgreSQL 接続文字列。必要に応じて 'your_user', 'your_password', 'your_host', 'your_port', 'your_database' を置き換えてください。
 # 例: "postgresql+asyncpg://user:password@localhost:5432/mydatabase"
-DATABASE_URL = ""
 
-
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # パスを追加してsrcディレクトリをインポート可能にする
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -75,6 +77,28 @@ async def get_event(target_date: DateModel) -> List[Event]:
     engine = create_async_engine(DATABASE_URL, echo=True) # ここが非同期接続の肝です
     # セッションファクトリを作成
     AsyncSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
+    
+    # Eventモデルを定義（SQLで取得したデータをマッピングするため）
+    test_event = Event(
+		event_id="event_1",
+		company_id="company_1",
+		event_type="type_1",
+		title="Sample Event",
+		description="This is a sample event description.",
+		start_time="2023-10-01T10:00:00",
+		end_time="2023-10-01T12:00:00",
+		location="Tokyo",
+		reward="5000円",
+		required_qualifications=["資格1", "資格2"],
+		max_participants=10,
+		created_at="2023-10-01T09:00:00",
+		updated_at="2023-10-01T09:00:00",
+		tags=["tag1", "tag2"],
+		image=None,
+	)
+    return [
+		test_event
+	]
     
 # スクリプトとして直接実行された場合、Uvicornサーバーを起動
 if __name__ == "__main__":

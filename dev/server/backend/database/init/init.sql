@@ -153,7 +153,7 @@ VALUES (
 CREATE TYPE user_type_enum AS ENUM ('参加者', '企業');
 
 -- テーブル作成
-CREATE TABLE users (
+CREATE TABLE user (
     user_id UUID PRIMARY KEY,
     user_type user_type_enum,
     user_name VARCHAR(50),

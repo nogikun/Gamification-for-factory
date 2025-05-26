@@ -43,3 +43,20 @@ INSERT INTO applicant (
 ) VALUES (
     '石田', '省吾', 'ishida@gmail.com', '012000000000', '大阪', '2000-03-21', '漢検5級'
 );
+
+-- reviews用デモデータの挿入
+INSERT INTO reviews (
+    reviewer_id,
+    reviewee_id,
+    event_id,
+    rating,
+    comment,
+    advice,
+) VALUES (
+    gen_random_uuid(),                     -- reviewer_id（評価者）
+    gen_random_uuid(),                     -- reviewee_id（評価対象）
+    gen_random_uuid(),                     -- event_id（イベント）
+    5,
+    '積極的に取り組み、周囲との連携も良好でした。',
+    '今後も自信を持って挑戦し続けてください。'
+);

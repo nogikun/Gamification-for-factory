@@ -51,3 +51,19 @@ CREATE TABLE events (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,     -- 更新日時
     tags JSON                                           -- タグ・ジャンル
 );
+
+--------------------------------------------------
+--   TABLE NAME: reviews
+-- DESCRIPTIONS: レビュー情報を格納するテーブル
+--------------------------------------------------
+CREATE TABLE reviews (
+    review_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),  -- 評価ID（主キー）
+    reviewer_id UUID NOT NULL,                              -- 評価者のユーザーID（外部キー）
+    reviewee_id UUID NOT NULL,                              -- 評価対象のユーザーID（外部キー）
+    event_id UUID NOT NULL,                                 -- 評価に紐づくイベントID（外部キー）
+    rating INTEGER CHECK (rating BETWEEN 1 AND 5),          -- 評価スコア（1〜5点などを想定）
+    comment TEXT,                                           -- コメント
+    advice TEXT,                                            -- アドバイス
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- 作成日時
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP          -- 更新日時
+);

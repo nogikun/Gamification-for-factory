@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from typing import Dict, List
+import base64
 
 # local imports
 from src.schema.schema import Event, DateModel, EventIdModel, Applicant
@@ -62,7 +63,10 @@ async def get_event(event_id_model: EventIdModel) -> Event:
 	"""
     # 本来はデータベースからイベント情報を取得する処理が必要
     # ここではサンプルデータを返す
-
+    image_path = "src/demo/images/thumbnail_a.png"  # サンプル画像のパス
+    with open(image_path, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+        
 	# 結果を代入
     event = Event(
         event_id=event_id_model.event_id,
@@ -73,13 +77,13 @@ async def get_event(event_id_model: EventIdModel) -> Event:
 		start_time="2023-10-01T10:00:00Z",
 		end_time="2023-10-01T12:00:00Z",
 		location="Tokyo, Japan",
-		reward="100 points",
+		reward="7,000 円",
 		required_qualifications=["qualification_001"],
 		max_participants=100,
 		created_at="2023-09-01T10:00:00Z",
 		updated_at="2023-09-01T10:00:00Z",
 		tags=["tag1", "tag2"],
-		image=None,
+		image= encoded_string  # Base64エンコードされた画像データを設定
     )
     return event
 

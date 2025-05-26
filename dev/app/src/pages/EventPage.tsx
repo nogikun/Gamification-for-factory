@@ -55,6 +55,7 @@ const EventPage: React.FC = () => {
                 }}>
                     <Event
                         event_id="123"
+                        zIndex={0}
                         onClick={() => {}}
                     />
                 </div>

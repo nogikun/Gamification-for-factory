@@ -88,12 +88,14 @@ function fetchData(selectedEventId: string, host: string, port?: string, endpoin
 // コンポーネントの型定義
 export interface EventProps {
   event_id?: string;
+  zIndex?: number; // Storybookでのargs用
   onClick?: () => void;
 }
 
 // コンポーネントの定義(props値を受け取る)
 export const Event = ({
     event_id,
+    zIndex = 1, // Storybookでのargs用、デフォルト値を設定
     onClick // フォーム表示ロジックで利用方法を再検討
 }: EventProps) => {
     // router
@@ -277,218 +279,226 @@ export const Event = ({
     };
 
     return (
-        <ThemeProvider theme={muiTheme}>
-            <Paper elevation={3} sx={{ p: 2, margin: 'auto', maxWidth: 700, flexGrow: 1 }}>
-                <Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, mb: 2 }}>
-                    <CardMedia
-                        component="img"
-                        sx={{ width: { xs: '100%', md: 200 }, height: { xs: 200, md: 'auto' }, objectFit: 'cover' }}
-                        image={eventData.image || 'https://via.placeholder.com/200'} // フォールバック画像
-                        alt={eventData.title}
-                    />
-                    <CardContent sx={{ flex: 1 }}>
-                        <Typography gutterBottom variant="h5" component="div">
-                            {eventData.title}
-                        </Typography>
-                        {eventData.tags && eventData.tags.length > 0 && (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
-                                {eventData.tags.map((tag) => (
-                                    <Chip key={tag} label={tag} size="small" sx={{ backgroundColor: getTagColor(tag), color: '#fff' }} />
-                                ))}
-                            </Box>
-                        )}
-                        <Typography variant="subtitle1" color="text.secondary" component="div" sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                            <BusinessIcon sx={{ mr: 1 }} /> {eventData.company_id} {/* 仮 */}
-                        </Typography>
-                        <Typography variant="subtitle1" color="text.secondary" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
-                            <PaymentsIcon sx={{ mr: 1 }} /> {eventData.reward}
-                        </Typography>
-                    </CardContent>
-                </Card>
+        <div style={{ zIndex: zIndex, position: 'relative' }}>
+            <ThemeProvider theme={muiTheme}>
+                {/* イベントカード */}
+                <Paper elevation={3} sx={{ p: 2, margin: 'auto', maxWidth: 700, flexGrow: 1 }}>
+                    <Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, mb: 2 }}>
+                        <CardMedia
+                            component="img"
+                            sx={{ width: { xs: '100%', md: 200 }, height: { xs: 200, md: 'auto' }, objectFit: 'cover' }}
+                            image={eventData.image ? `data:image;base64,${eventData.image}` : 'https://via.placeholder.com/200'}
+                            alt={eventData.title}
+                        />
+                        <CardContent sx={{ flex: 1 }}>
+                            <Typography gutterBottom variant="h5" component="div">
+                                {eventData.title}
+                            </Typography>
+                            {eventData.tags && eventData.tags.length > 0 && (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
+                                    {eventData.tags.map((tag) => (
+                                        <Chip key={tag} label={tag} size="small" sx={{ backgroundColor: getTagColor(tag), color: '#fff' }} />
+                                    ))}
+                                </Box>
+                            )}
+                            <Typography variant="subtitle1" color="text.secondary" component="div" sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                                <BusinessIcon sx={{ mr: 1 }} /> {eventData.company_id} {/* 仮 */}
+                            </Typography>
+                            <Typography variant="subtitle1" color="text.secondary" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+                                <PaymentsIcon sx={{ mr: 1 }} /> {eventData.reward}
+                            </Typography>
+                        </CardContent>
+                    </Card>
 
-                <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                    <InfoIcon sx={{ mr: 1 }} /> イベント詳細
-                </Typography>
-                <Typography variant="body1" paragraph>
-                    {eventData.description}
-                </Typography>
+                    <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                        <InfoIcon sx={{ mr: 1 }} /> イベント詳細
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                        {eventData.description}
+                    </Typography>
 
-                <TableContainer component={Paper} sx={{ mb: 2 }} variant="outlined">
-                    <Table aria-label="event details table">
-                        <TableBody>
-                            <TableRow>
-                                <TableCell component="th" scope="row" sx={{ width: '30%', fontWeight: 'bold' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <CalendarTodayIcon sx={{ mr: 1 }} /> 期間
-                                    </Box>
-                                </TableCell>
-                                <TableCell>{formatDate(eventData.start_time)} - {formatDate(eventData.end_time)}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <LocationOnIcon sx={{ mr: 1 }} /> 場所
-                                    </Box>
-                                </TableCell>
-                                <TableCell>{eventData.location}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <PeopleIcon sx={{ mr: 1 }} /> 募集人数
-                                    </Box>
-                                </TableCell>
-                                <TableCell>{eventData.max_participants}名</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <SchoolIcon sx={{ mr: 1 }} /> 資格要件
-                                    </Box>
-                                </TableCell>
-                                <TableCell>
-                                    {eventData.required_qualifications && eventData.required_qualifications.length > 0 ? (
-                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                            {eventData.required_qualifications.map((qualification) => (
-                                                <Chip 
-                                                    key={qualification} 
-                                                    label={qualification} 
-                                                    size="small" 
-                                                    icon={<CheckCircleOutlineIcon />} 
-                                                    variant="outlined"
-                                                />
-                                            ))}
+                    <TableContainer component={Paper} sx={{ mb: 2 }} variant="outlined">
+                        <Table aria-label="event details table">
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell component="th" scope="row" sx={{ width: '30%', fontWeight: 'bold' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <CalendarTodayIcon sx={{ mr: 1 }} /> 期間
                                         </Box>
-                                    ) : (
-                                        <Typography variant="body2" color="text.secondary">特になし</Typography>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                    </TableCell>
+                                    <TableCell>{formatDate(eventData.start_time)} - {formatDate(eventData.end_time)}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <LocationOnIcon sx={{ mr: 1 }} /> 場所
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>{eventData.location}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <PeopleIcon sx={{ mr: 1 }} /> 募集人数
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>{eventData.max_participants}名</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <SchoolIcon sx={{ mr: 1 }} /> 資格要件
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>
+                                        {eventData.required_qualifications && eventData.required_qualifications.length > 0 ? (
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                {eventData.required_qualifications.map((qualification) => (
+                                                    <Chip 
+                                                        key={qualification} 
+                                                        label={qualification} 
+                                                        size="small" 
+                                                        icon={<CheckCircleOutlineIcon />} 
+                                                        variant="outlined"
+                                                    />
+                                                ))}
+                                            </Box>
+                                        ) : (
+                                            <Typography variant="body2" color="text.secondary">特になし</Typography>
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
 
-                {/* フォーム表示部分 */} 
-                {showForm && (
-                    <Box component="form" sx={{ mt: 2, mb: 2, p: 2, border: '1px solid grey', borderRadius: 1 }}>
-                        <Typography variant="h6" gutterBottom>参加申し込みフォーム</Typography>
-                        <TextField
-                            fullWidth
-                            label="姓"
-                            name="lastName"
-                            value={formData.lastName}
-                            onChange={handleFormInputChange}
-                            margin="normal"
-                        />
-                        <TextField
-                            fullWidth
-                            label="名"
-                            name="firstName"
-                            value={formData.firstName}
-                            onChange={handleFormInputChange}
-                            margin="normal"
-                        />
-                        <TextField
-                            fullWidth
-                            label="メールアドレス"
-                            name="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={handleFormInputChange}
-                            margin="normal"
-                        />
-                        <TextField
-                            fullWidth
-                            label="電話番号"
-                            name="phoneNumber"
-                            type="tel"
-                            value={formData.phoneNumber}
-                            onChange={handleFormInputChange}
-                            margin="normal"
-                        />
-                        <TextField
-                            fullWidth
-                            label="生年月日"
-                            name="birthDate"
-                            type="date"
-                            value={formData.birthDate}
-                            onChange={handleFormInputChange}
-                            margin="normal"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
-                        <TextField
-                            fullWidth
-                            label="住所"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleFormInputChange}
-                            margin="normal"
-                        />
-                        <TextField
-                            fullWidth
-                            label="資格・スキル"
-                            name="licenses"
-                            value={formData.licenses}
-                            onChange={handleFormInputChange}
-                            margin="normal"
-                            multiline
-                            rows={3}
-                        />
-                        <TextField
-                            fullWidth
-                            label="応募動機"
-                            name="motivation"
-                            value={formData.motivation}
-                            onChange={handleFormInputChange}
-                            margin="normal"
-                            multiline
-                            rows={4}
-                        />
-                        <Button 
-                            variant="contained" 
-                            color="secondary" 
-                            onClick={handleFormSubmit}
-                            sx={{ 
-                                mt: 2,
-                                padding: '10px 20px', // 上下のpaddingを10px、左右のpaddingを20pxに設定
-                                borderRadius: '25px', // 高さに応じて調整 (例: padding 10px * 2 + フォントサイズ等)
-                                fontSize: '1.1rem' // 少しフォントサイズを大きくする
-                            }}
-                        >
-                            申し込む
-                        </Button>
-                    </Box>
-                )}
-                
-                {/* 「イベントに参加する」ボタン / フォーム表示時は非表示にする */} 
-                {!showForm && (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                        <Button 
-                            variant="contained" 
-                            color="primary" 
-                            size="large" 
-                            onClick={handleApplyButtonClick} // フォーム表示用の関数に変更
-                            sx={{ 
-                                borderRadius: '50px',
-                                height: 'auto',
-                                paddingTop: '10px',
-                                paddingBottom: '10px',
-                            }}
-                        >
-                            イベントに参加する
-                        </Button>
-                    </Box>
-                )}
-            </Paper>
+                    {/* フォーム表示部分 */} 
+                    {showForm && (
+                        <Box component="form" sx={{ mt: 2, mb: 2, p: 2, border: '1px solid grey', borderRadius: 1 }}>
+                            <Typography variant="h6" gutterBottom>参加申し込みフォーム</Typography>
+                            <TextField
+                                fullWidth
+                                label="姓"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleFormInputChange}
+                                margin="normal"
+                            />
+                            <TextField
+                                fullWidth
+                                label="名"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleFormInputChange}
+                                margin="normal"
+                            />
+                            <TextField
+                                fullWidth
+                                label="メールアドレス"
+                                name="email"
+                                type="email"
+                                value={formData.email}
+                                onChange={handleFormInputChange}
+                                margin="normal"
+                            />
+                            <TextField
+                                fullWidth
+                                label="電話番号"
+                                name="phoneNumber"
+                                type="tel"
+                                value={formData.phoneNumber}
+                                onChange={handleFormInputChange}
+                                margin="normal"
+                            />
+                            <TextField
+                                sx={{ 
+                                    '& .MuiInputBase-root': { // TextFieldのルート要素（枠線や背景を含む部分）
+                                        height: '56px', // heightを指定
+                                    },
+                                }}
+                                fullWidth
+                                label="生年月日"
+                                name="birthDate"
+                                type="date"
+                                value={formData.birthDate}
+                                onChange={handleFormInputChange}
+                                margin="normal"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                            <TextField
+                                fullWidth
+                                label="住所"
+                                name="address"
+                                value={formData.address}
+                                onChange={handleFormInputChange}
+                                margin="normal"
+                            />
+                            <TextField
+                                fullWidth
+                                label="資格・スキル"
+                                name="licenses"
+                                value={formData.licenses}
+                                onChange={handleFormInputChange}
+                                margin="normal"
+                                multiline
+                                rows={3}
+                            />
+                            <TextField
+                                fullWidth
+                                label="応募動機"
+                                name="motivation"
+                                value={formData.motivation}
+                                onChange={handleFormInputChange}
+                                margin="normal"
+                                multiline
+                                rows={4}
+                            />
+                            <Button 
+                                variant="contained" 
+                                color="secondary" 
+                                onClick={handleFormSubmit}
+                                sx={{ 
+                                    mt: 2,
+                                    padding: '10px 20px', // 上下のpaddingを10px、左右のpaddingを20pxに設定
+                                    borderRadius: '25px', // 高さに応じて調整 (例: padding 10px * 2 + フォントサイズ等)
+                                    fontSize: '1.1rem' // 少しフォントサイズを大きくする
+                                }}
+                            >
+                                申し込む
+                            </Button>
+                        </Box>
+                    )}
+                    
+                    {/* 「イベントに参加する」ボタン / フォーム表示時は非表示にする */} 
+                    {!showForm && (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                            <Button 
+                                variant="contained" 
+                                color="primary" 
+                                size="large" 
+                                onClick={handleApplyButtonClick} // フォーム表示用の関数に変更
+                                sx={{ 
+                                    borderRadius: '50px',
+                                    height: 'auto',
+                                    paddingTop: '10px',
+                                    paddingBottom: '10px',
+                                }}
+                            >
+                                イベントに参加する
+                            </Button>
+                        </Box>
+                    )}
+                </Paper>
 
-            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-                <AlertComponent onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-                    {snackbarMessage}
-                </AlertComponent>
-            </Snackbar>
-        </ThemeProvider>
+                <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+                    <AlertComponent onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                        {snackbarMessage}
+                    </AlertComponent>
+                </Snackbar>
+            </ThemeProvider>
+        </div>
     );
 };
 

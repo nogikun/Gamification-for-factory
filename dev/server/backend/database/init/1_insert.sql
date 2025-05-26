@@ -161,6 +161,7 @@ CREATE TABLE "user" (
     login_time TIMESTAMP,                           -- 最終ログイン日時
     ai_advice TEXT                                   -- AIによるアドバイス
 );
+
 -- ユーザー1：参加者
 INSERT INTO "user" (user_id, user_type, user_name, created_at, login_time, ai_advice)
 VALUES (
@@ -183,7 +184,7 @@ VALUES (
     '参加者のスキルに対する評価が一貫しており、信頼されています。'
 );
 
--- ユーザー3：参加者（アドバイスなし）
+-- ユーザー3：参加者（アドバイスありに変更）
 INSERT INTO "user" (user_id, user_type, user_name, created_at, login_time, ai_advice)
 VALUES (
     '33333333-3333-3333-3333-333333333333',
@@ -191,17 +192,17 @@ VALUES (
     '佐藤 花子',
     '2025-03-10 14:20:00',
     '2025-05-21 12:00:00',
-    NULL
+    '受け答えが丁寧で、好印象を与えていました。'
 );
 
--- ユーザー4：企業（ログイン履歴なし）
+-- ユーザー4：企業（ログイン履歴追加）
 INSERT INTO "user" (user_id, user_type, user_name, created_at, login_time, ai_advice)
 VALUES (
     '44444444-4444-4444-4444-444444444444',
     '企業',
     '人材ラボ株式会社',
     '2025-01-05 11:00:00',
-    NULL,
+    '2025-05-22 16:30:00',
     '新しいイベントに積極的に参加しています。'
 );
 

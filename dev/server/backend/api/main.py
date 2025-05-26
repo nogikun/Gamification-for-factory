@@ -3,10 +3,22 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from typing import Dict, List
+from sqlalchemy import create_engine, Column, Integer, String, Date, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.future import select # 非同期操作のために select をインポート
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 # local imports
 from src.schema.schema import Event, DateModel
 from src.demo.generator import EventGenerator
+
+# --- データベース設定 ---
+# PostgreSQL 接続文字列。必要に応じて 'your_user', 'your_password', 'your_host', 'your_port', 'your_database' を置き換えてください。
+# 例: "postgresql+asyncpg://user:password@localhost:5432/mydatabase"
+DATABASE_URL = ""
+
+
 
 # パスを追加してsrcディレクトリをインポート可能にする
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -42,10 +54,10 @@ async def health_check() -> Dict[str, str]:
     """
     ヘルスチェックエンドポイント - サービスのヘルス状態を確認します
     """
-    return {"status": "healthy"}
+    return {"status": "healthy!"}
 
 @app.post("/demo/get-events")
-async def get_event(target_date: DateModel) -> List[Event]:
+async def demo_get_event(target_date: DateModel) -> List[Event]:
     """
     デモ用イベント取得エンドポイント - 指定された日付のイベントリストを返します
     """
@@ -55,6 +67,15 @@ async def get_event(target_date: DateModel) -> List[Event]:
         raise HTTPException(status_code=404, detail="Events not found")
     return generate_event_data
 
+@app.post("/get-events")
+async def get_event(target_date: DateModel) -> List[Event]:
+    """
+    イベント取得エンドポイント - 指定された日付のイベントリストを返します
+    """# 非同期エンジンを作成
+    engine = create_async_engine(DATABASE_URL, echo=True) # ここが非同期接続の肝です
+    # セッションファクトリを作成
+    AsyncSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
+    
 # スクリプトとして直接実行された場合、Uvicornサーバーを起動
 if __name__ == "__main__":
     uvicorn.run(

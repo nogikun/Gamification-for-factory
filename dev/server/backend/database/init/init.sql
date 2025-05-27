@@ -145,17 +145,17 @@ VALUES (
     '2025-05-02 15:30:00'  -- 特定の日時を指定
 );
 
--- ENUMの定義（先に実行）
+-- ENUM型の定義（事前に行う）
 CREATE TYPE user_type_enum AS ENUM ('参加者', '企業');
 
 -- テーブル作成
-CREATE TABLE "user" (
-    user_id UUID PRIMARY KEY,                       -- ユーザーID（主キー）
-    user_type user_type_enum,                       -- ユーザータイプ（ENUM）
-    user_name VARCHAR(50),                          -- ユーザー名・企業名
-    created_at TIMESTAMP,                           -- 作成日時
-    login_time TIMESTAMP,                           -- 最終ログイン日時
-    ai_advice TEXT                                   -- AIによるアドバイス
+CREATE TABLE user (
+    user_id UUID PRIMARY KEY,
+    user_type user_type_enum,
+    user_name VARCHAR(50),
+    created_at TIMESTAMP,
+    login_time TIMESTAMP,
+    ai_advice TEXT
 );
 
 -- ユーザー1：参加者

@@ -1,25 +1,4 @@
 -- テストテーブルの作成
-CREATE TYPE event_type_enum AS ENUM ('インターンシップ', '説明会');
-
-CREATE TABLE events (
-    event_id SERIAL PRIMARY KEY,
-    company_id UUID NOT NULL,
-    event_type event_type_enum,
-    title VARCHAR(255) NOT NULL,
-    image BYTEA,
-    description TEXT,
-    start_date TIMESTAMP,
-    end_date TIMESTAMP,
-    location VARCHAR(255),
-    reward VARCHAR(100),
-    required_qualifications TEXT,
-    available_spots INTEGER,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-
-<<<<<<< Updated upstream
 CREATE TYPE event_type AS ENUM ('インターンシップ', '説明会');
 
 CREATE TABLE events (
@@ -80,16 +59,6 @@ INSERT INTO events (
 -- 10
 (gen_random_uuid(), '説明会', '大手企業の最新働き方紹介セミナー', NULL, 'テレワークやフレックス制度などの紹介', '2025-05-23 11:00', '2025-05-23 13:00', 'YouTube配信', '', '', 300, '["働き方", "説明会", "制度"]');
 
-=======
--- テストデータの挿入
-INSERT INTO test (name, description) VALUES ('550e8400-e29b-41d4-a716-446655440000', 'インターンシップ', 
-'夏季エンジニアインターン2025', NULL, '実際の業務に近い開発体験ができます。', '2025-08-01 10:00:00', '2025-08-15 18:00:00', '東京本社', 
-'日給1万円', 'プログラミング経験1年以上', 5, NOW(), NOW(), 'これはテストデータです');
-INSERT INTO test (name, description) VALUES ('550e8400-e29b-41d4-a716-446655440001', '説明会', '新卒向け会社説明会', 
-NULL, '弊社のカルチャーや働き方をご紹介します。', '2025-05-10 14:00:00', '2025-05-10 16:00:00', 'オンライン（Zoom）',
- NULL, NULL, 100, NOW(), NOW(), '別のテストデータです');
->>>>>>> Stashed changes
-
 CREATE TABLE applications (
     application_id UUID PRIMARY KEY,
     user_id UUID REFERENCES users(user_id), -- usersテーブルのuser_idを参照
@@ -149,17 +118,17 @@ VALUES (
     '2025-05-02 15:30:00'  -- 特定の日時を指定
 );
 
--- ENUM型の定義（事前に行う）
+-- ENUMの定義（先に実行）
 CREATE TYPE user_type_enum AS ENUM ('参加者', '企業');
 
 -- テーブル作成
-CREATE TABLE user (
-    user_id UUID PRIMARY KEY,
-    user_type user_type_enum,
-    user_name VARCHAR(50),
-    created_at TIMESTAMP,
-    login_time TIMESTAMP,
-    ai_advice TEXT
+CREATE TABLE "user" (
+    user_id UUID PRIMARY KEY,                       -- ユーザーID（主キー）
+    user_type user_type_enum,                       -- ユーザータイプ（ENUM）
+    user_name VARCHAR(50),                          -- ユーザー名・企業名
+    created_at TIMESTAMP,                           -- 作成日時
+    login_time TIMESTAMP,                           -- 最終ログイン日時
+    ai_advice TEXT                                   -- AIによるアドバイス
 );
 
 -- ユーザー1：参加者

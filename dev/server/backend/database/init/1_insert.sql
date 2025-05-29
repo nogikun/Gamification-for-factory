@@ -1,25 +1,4 @@
 -- テストテーブルの作成
-CREATE TYPE event_type_enum AS ENUM ('インターンシップ', '説明会');
-
-CREATE TABLE events (
-    event_id SERIAL PRIMARY KEY,
-    company_id UUID NOT NULL,
-    event_type event_type_enum,
-    title VARCHAR(255) NOT NULL,
-    image BYTEA,
-    description TEXT,
-    start_date TIMESTAMP,
-    end_date TIMESTAMP,
-    location VARCHAR(255),
-    reward VARCHAR(100),
-    required_qualifications TEXT,
-    available_spots INTEGER,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-
-<<<<<<< Updated upstream
 CREATE TYPE event_type AS ENUM ('インターンシップ', '説明会');
 
 CREATE TABLE events (
@@ -79,16 +58,6 @@ INSERT INTO events (
 (gen_random_uuid(), 'インターンシップ', '2Daysハッカソンチャレンジ', NULL, 'チームでアイデアを形にする短期集中型', '2025-05-21 09:00', '2025-05-22 18:00', '渋谷Lab', '20000円', 'プログラミング経験', 12, '["ハッカソン", "開発", "チーム"]'),
 -- 10
 (gen_random_uuid(), '説明会', '大手企業の最新働き方紹介セミナー', NULL, 'テレワークやフレックス制度などの紹介', '2025-05-23 11:00', '2025-05-23 13:00', 'YouTube配信', '', '', 300, '["働き方", "説明会", "制度"]');
-
-=======
--- テストデータの挿入
-INSERT INTO test (name, description) VALUES ('550e8400-e29b-41d4-a716-446655440000', 'インターンシップ', 
-'夏季エンジニアインターン2025', NULL, '実際の業務に近い開発体験ができます。', '2025-08-01 10:00:00', '2025-08-15 18:00:00', '東京本社', 
-'日給1万円', 'プログラミング経験1年以上', 5, NOW(), NOW(), 'これはテストデータです');
-INSERT INTO test (name, description) VALUES ('550e8400-e29b-41d4-a716-446655440001', '説明会', '新卒向け会社説明会', 
-NULL, '弊社のカルチャーや働き方をご紹介します。', '2025-05-10 14:00:00', '2025-05-10 16:00:00', 'オンライン（Zoom）',
- NULL, NULL, 100, NOW(), NOW(), '別のテストデータです');
->>>>>>> Stashed changes
 
 CREATE TABLE applications (
     application_id UUID PRIMARY KEY,

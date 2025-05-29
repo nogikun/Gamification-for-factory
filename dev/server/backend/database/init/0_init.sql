@@ -51,3 +51,33 @@ CREATE TABLE events (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,     -- 更新日時
     tags JSON                                           -- タグ・ジャンル
 );
+
+--------------------------------------------------
+--   TABLE NAME: applications
+-- DESCRIPTIONS: イベントへの応募状態（ステータス）を管理する。
+--------------------------------------------------
+CREATE TABLE applications (
+    application_id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(user_id), -- usersテーブルのuser_idを参照
+    event_id UUID REFERENCES events(event_id), -- eventsテーブルのevent_idを参照
+    status VARCHAR(50),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+--------------------------------------------------
+--   TABLE NAME: user
+-- DESCRIPTIONS: ユーザー情報を管理する。
+--------------------------------------------------
+-- ENUMの定義（先に実行）
+CREATE TYPE user_type_enum AS ENUM ('参加者', '企業');
+
+-- テーブル作成
+CREATE TABLE "user" (
+    user_id UUID PRIMARY KEY,                       -- ユーザーID（主キー）
+    user_type user_type_enum,                       -- ユーザータイプ（ENUM）
+    user_name VARCHAR(50),                          -- ユーザー名・企業名
+    created_at TIMESTAMP,                           -- 作成日時
+    login_time TIMESTAMP,                           -- 最終ログイン日時
+    ai_advice TEXT                                   -- AIによるアドバイス
+);

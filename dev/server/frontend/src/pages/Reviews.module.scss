@@ -1,0 +1,340 @@
+@use '../styles/variables' as *;
+
+.reviews {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 32px 24px 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  border: 1px solid var(--bg-sidebar);
+}
+
+.reviews__title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 40px;
+}
+
+.tableActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.addButton {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.18s;
+  display: flex;
+  align-items: center;
+  
+  &:hover {
+    background: #0d47a1;
+  }
+}
+
+.reviews__table {
+  width: 100%;
+  min-width: 900px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.reviews__table th, .reviews__table td {
+  padding: 12px 16px;
+  min-height: 48px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.reviews__table th {
+  background: #f5f6fa;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+}
+
+.reviews__table td {
+  &:nth-child(1), &:nth-child(2) {
+    width: 15%;
+  }
+  
+  &:nth-child(3) {
+    width: 20%;
+  }
+  
+  &:nth-child(4) {
+    width: 10%;
+  }
+  
+  &:nth-child(5) {
+    width: 25%;
+  }
+  
+  &:nth-child(6) {
+    width: 10%;
+  }
+  
+  &:nth-child(7) {
+    width: 8%;
+    text-align: center;
+  }
+}
+
+.ratingCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ratingStars {
+  color: #FFB300;
+  font-size: 1rem;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.ratingNumber {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.eventCell, .commentCell {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reviews__table tr:hover {
+  background: #f7fafd;
+}
+
+.errorMessage {
+  background: #ffebee;
+  border-left: 4px solid #ef5350;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  color: #c62828;
+}
+
+.loadingIndicator {
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+}
+
+.noData {
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+  font-style: italic;
+}
+
+.inputBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.18s;
+  margin: 0;
+}
+
+.inputBtn:hover {
+  background: #0d47a1;
+}
+
+// モーダルスタイル
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalContent {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 24px 20px 24px;
+  min-width: 440px;
+  max-width: 500px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.13);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalTitle {
+  font-size: 1.3rem;
+  color: #1976d2;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.formField {
+  margin-bottom: 16px;
+  
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #444;
+  }
+}
+
+.formSelect {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #cfd8dc;
+  font-size: 1rem;
+  color: #333;
+  background: #fff;
+  margin-bottom: 4px;
+  
+  &:focus {
+    outline: none;
+    border-color: #1976d2;
+  }
+  
+  &:disabled {
+    background: #f5f5f5;
+    opacity: 0.7;
+  }
+}
+
+.ratingInput {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.ratingLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.ratingRadio {
+  margin-right: 4px;
+}
+
+.ratingText {
+  font-size: 1rem;
+}
+
+.ratingPreview {
+  color: #FFB300;
+  font-size: 1.2rem;
+  margin-top: 4px;
+  letter-spacing: 2px;
+}
+
+.reviewTextarea {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  padding: 10px 12px;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 80px;
+  
+  &:focus {
+    outline: none;
+    border-color: #1976d2;
+  }
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.submitBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.18s;
+  font-weight: 600;
+  
+  &:hover {
+    background: #0d47a1;
+  }
+}
+
+.closeBtn {
+  background: #eee;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.18s;
+  
+  &:hover {
+    background: #ccc;
+  }
+}
+
+@media (max-width: 600px) {
+  .modalContent {
+    min-width: 0;
+    width: 92vw;
+    padding: 24px 16px 16px;
+  }
+  
+  .reviews__table th, .reviews__table td {
+    padding: 8px 6px;
+    font-size: 0.9rem;
+  }
+  
+  .reviews__table {
+    min-width: 650px;
+  }
+  
+  .reviews {
+    padding: 24px 12px 32px;
+  }
+  
+  .ratingInput {
+    gap: 8px;
+  }
+}

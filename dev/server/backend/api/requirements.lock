@@ -20,10 +20,14 @@ asyncpg==0.30.0
     # via api
 click==8.1.8
     # via uvicorn
+colorama==0.4.6
+    # via click
 exceptiongroup==1.2.2
     # via anyio
 fastapi==0.115.12
     # via api
+greenlet==3.2.2
+    # via sqlalchemy
 h11==0.14.0
     # via uvicorn
 idna==3.10

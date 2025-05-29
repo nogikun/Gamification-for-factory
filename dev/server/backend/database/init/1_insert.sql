@@ -51,7 +51,7 @@ INSERT INTO reviews (
     event_id,
     rating,
     comment,
-    advice,
+    advice
 ) VALUES (
     gen_random_uuid(),                     -- reviewer_id（評価者）
     gen_random_uuid(),                     -- reviewee_id（評価対象）

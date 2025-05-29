@@ -75,6 +75,7 @@ async def get_event(target_date: DateModel) -> List[Event]:
     イベント取得エンドポイント - 指定された日付のイベントリストを返します
     """# 非同期エンジンを作成
     engine = create_async_engine(DATABASE_URL, echo=True) # ここが非同期接続の肝です
+    
     # セッションファクトリを作成
     AsyncSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
     

@@ -37,7 +37,7 @@ export default function Applicants() {
       setError(null);
       try {
         // 応募者一覧を取得
-        const applicantsResponse = await fetch('http://localhost:1880/applications');
+        const applicantsResponse = await fetch('http://localhost:8000/applications');
         
         if (!applicantsResponse.ok) {
           throw new Error('応募者データの取得に失敗しました');
@@ -58,7 +58,7 @@ export default function Applicants() {
         }
         
         // イベント一覧を取得（フィルター用）
-        const eventsResponse = await fetch('http://localhost:1880/event');
+        const eventsResponse = await fetch('http://localhost:8000/event');
         
         if (!eventsResponse.ok) {
           throw new Error('イベントデータの取得に失敗しました');
@@ -120,7 +120,7 @@ export default function Applicants() {
         updated_at: new Date().toISOString()
       };
       
-      const response = await fetch('http://localhost:1880/application', {
+      const response = await fetch('http://localhost:8000/application', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

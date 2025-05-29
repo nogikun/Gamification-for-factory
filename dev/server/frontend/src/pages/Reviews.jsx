@@ -36,7 +36,7 @@ export default function Reviews() {
       
       try {
         // レビューデータを取得
-        const reviewsResponse = await fetch('http://localhost:1880/api/reviews');
+        const reviewsResponse = await fetch('http://localhost:8000/api/reviews');
         if (!reviewsResponse.ok) {
           throw new Error('レビューデータの取得に失敗しました');
         }
@@ -55,7 +55,7 @@ export default function Reviews() {
         }
         
         // イベントデータを取得
-        const eventsResponse = await fetch('http://localhost:1880/event');
+        const eventsResponse = await fetch('http://localhost:8000/event');
         if (!eventsResponse.ok) {
           throw new Error('イベントデータの取得に失敗しました');
         }
@@ -74,7 +74,7 @@ export default function Reviews() {
         }
         
         // ユーザーデータを取得
-        const usersResponse = await fetch('http://localhost:1880/api/users');
+        const usersResponse = await fetch('http://localhost:8000/api/users');
         if (!usersResponse.ok) {
           throw new Error('ユーザーデータの取得に失敗しました');
         }
@@ -141,7 +141,7 @@ export default function Reviews() {
     setError(null);
     
     try {
-      const response = await fetch('http://localhost:1880/api/reviews', {
+      const response = await fetch('http://localhost:8000/api/reviews', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

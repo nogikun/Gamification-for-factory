@@ -88,7 +88,7 @@ export default function EventRegistration() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:1880/event');
+      const response = await fetch('http://localhost:8000/event');
       if (!response.ok) {
         throw new Error('イベントの取得に失敗しました');
       }
@@ -271,8 +271,8 @@ export default function EventRegistration() {
       };
       
       const url = editMode 
-        ? `http://localhost:1880/event/${formData.event_id}` 
-        : 'http://localhost:1880/event';
+        ? `http://localhost:8000/event/${formData.event_id}` 
+        : 'http://localhost:8000/event';
       
       const method = editMode ? 'PUT' : 'POST';
       
@@ -352,7 +352,7 @@ export default function EventRegistration() {
       setError(null);
       
       try {
-        const response = await fetch(`http://localhost:1880/event/${id}`, {
+        const response = await fetch(`http://localhost:8000/event/${id}`, {
           method: 'DELETE'
         });
         

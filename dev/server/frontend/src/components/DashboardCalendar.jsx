@@ -20,8 +20,8 @@ export default function DashboardCalendar() {
       
       try {
         const [eventsResponse, usersResponse] = await Promise.all([
-          fetch('http://localhost:1880/event'),
-          fetch('http://localhost:1880/api/users')
+          fetch('http://localhost:8000/event'),
+          fetch('http://localhost:8000/api/users')
         ]);
 
         let eventsData = [];

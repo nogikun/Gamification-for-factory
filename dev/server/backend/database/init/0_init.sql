@@ -1,3 +1,6 @@
+-- データベースを作成
+CREATE DATABASE gamification;
+
 -- uuid-ossp 拡張機能を有効にする
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 

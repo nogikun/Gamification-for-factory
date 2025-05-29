@@ -19,88 +19,29 @@
   color: #222;
 }
 
-.apiUrlSection {
+.dataActions {
   margin-bottom: 24px;
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  
-  label {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 12px;
-    font-size: 0.95rem;
-    color: #444;
-  }
-}
-
-.apiUrlInputGroup {
   display: flex;
-  gap: 8px;
-  margin-top: 4px;
+  justify-content: flex-end;
 }
 
-.apiUrlInput {
-  flex: 1;
-  padding: 8px;
+.refreshButton {
+  padding: 8px 16px;
   border-radius: 6px;
-  border: 1px solid var(--bg-sidebar);
-  background: #fff;
-  color: var(--text-main);
-  font-size: 0.95rem;
-  
-  &:focus-visible {
-    border: 1.5px solid var(--accent);
-    outline: none;
-  }
-}
-
-.apiActions {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.resetButton, 
-.refreshButton, 
-.dummyButton {
-  padding: 6px 12px;
-  border-radius: 4px;
   font-size: 0.9rem;
   cursor: pointer;
-  border: 1px solid #ccc;
-  background: #fff;
+  border: 1px solid #90caf9;
+  background: #e3f2fd;
+  color: #1976d2;
   transition: all 0.2s;
   
   &:hover:not(:disabled) {
-    background: #f0f0f0;
+    background: #bbdefb;
   }
   
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-  }
-}
-
-.refreshButton {
-  background: #e3f2fd;
-  border-color: #90caf9;
-  color: #1976d2;
-  
-  &:hover:not(:disabled) {
-    background: #bbdefb;
-  }
-}
-
-.dummyButton {
-  background: #fff8e1;
-  border-color: #ffe082;
-  color: #ff8f00;
-  
-  &:hover:not(:disabled) {
-    background: #ffecb3;
   }
 }
 
@@ -158,17 +99,6 @@
     border-left: 4px solid #42a5f5;
     color: #0d47a1;
   }
-}
-
-.dummyDataNotice {
-  background: #fff8e1;
-  border: 1px dashed #ffb300;
-  border-radius: 4px;
-  padding: 8px 12px;
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #ff8f00;
 }
 
 .companyEdit__form {
@@ -251,7 +181,7 @@
     border-radius: 0;
   }
   
-  .apiActions {
-    flex-direction: column;
+  .dataActions {
+    justify-content: center;
   }
 }

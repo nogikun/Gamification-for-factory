@@ -51,3 +51,20 @@ CREATE TABLE events (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,     -- 更新日時
     tags JSON                                           -- タグ・ジャンル
 );
+
+--------------------------------------------------
+--   TABLE NAME: company
+-- DESCRIPTIONS: 会社の基本情報を管理するテーブル
+--------------------------------------------------
+CREATE TABLE company (
+    user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),    -- ユーザーID（主キー）
+    company_name VARCHAR(50) NOT NULL,                      -- 企業名
+    mail_address TEXT NOT NULL,                             -- メールアドレス
+    phone_number VARCHAR(50),                               -- 電話番号
+    address TEXT NOT NULL,                                  -- 住所
+    capital INTEGER,                                        -- 資本金
+    employees INTEGER,                                      -- 従業員数
+    establishment_date TIMESTAMP,                           -- 設立日
+    overview TEXT,                                          -- 会社概要
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP          -- 更新日時
+)

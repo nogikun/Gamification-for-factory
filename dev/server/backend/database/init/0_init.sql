@@ -68,3 +68,16 @@ CREATE TABLE company (
     overview TEXT,                                          -- 会社概要
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP          -- 更新日時
 )
+
+--------------------------------------------------
+--   TABLE NAME: player
+-- DESCRIPTIONS: ゲームの進行に必要な情報を管理するテーブル
+--------------------------------------------------
+CREATE TABLE player (
+    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    level INTEGER NOT NULL,
+    experience INTEGER NOT NULL,
+    skill_data JSON NOT NULL,
+    item_data JSON NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)

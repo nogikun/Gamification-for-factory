@@ -1,24 +1,3 @@
--- テストテーブルの作成
-CREATE TYPE event_type AS ENUM ('インターンシップ', '説明会');
-
-CREATE TABLE events (
-    event_id SERIAL PRIMARY KEY,                              -- イベントID（主キー）
-    company_id UUID NOT NULL,                                 -- 企業ID（外部キー）
-    event_type event_type NOT NULL,                           -- イベントのタイプ（列挙型）
-    title VARCHAR(255) NOT NULL,                              -- イベントのタイトル
-    image BYTEA,                                              -- イベントサムネイル（base64エンコード済のバイナリ）
-    description TEXT,                                         -- イベントの説明
-    start_date TIMESTAMP NOT NULL,                            -- 開始日時
-    end_date TIMESTAMP NOT NULL,                              -- 終了日時
-    location VARCHAR(255),                                    -- 場所
-    reward VARCHAR(100),                                      -- 報酬（円）
-    required_qualifications TEXT,                             -- 必要資格
-    available_spots INTEGER,                                  -- 募集人数
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,           -- 作成日時
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,           -- 更新日時
-    tags JSON                                                 -- タグ・ジャンル
-);
-
 -- テストデータの挿入
 INSERT INTO test (name, description) VALUES ('テスト項目1', 'これはテストデータです');
 INSERT INTO test (name, description) VALUES ('テスト項目2', '別のテストデータです');
@@ -59,14 +38,7 @@ INSERT INTO events (
 -- 10
 (gen_random_uuid(), '説明会', '大手企業の最新働き方紹介セミナー', NULL, 'テレワークやフレックス制度などの紹介', '2025-05-23 11:00', '2025-05-23 13:00', 'YouTube配信', '', '', 300, '["働き方", "説明会", "制度"]');
 
-CREATE TABLE applications (
-    application_id UUID PRIMARY KEY,
-    user_id UUID REFERENCES users(user_id), -- usersテーブルのuser_idを参照
-    event_id UUID REFERENCES events(event_id), -- eventsテーブルのevent_idを参照
-    status VARCHAR(50),
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
-);
+--applicationsダミーデータ
 -- ダミーデータ1
 INSERT INTO applications (application_id, user_id, event_id, status, created_at, updated_at)
 VALUES (
@@ -118,19 +90,7 @@ VALUES (
     '2025-05-02 15:30:00'  -- 特定の日時を指定
 );
 
--- ENUMの定義（先に実行）
-CREATE TYPE user_type_enum AS ENUM ('参加者', '企業');
-
--- テーブル作成
-CREATE TABLE "user" (
-    user_id UUID PRIMARY KEY,                       -- ユーザーID（主キー）
-    user_type user_type_enum,                       -- ユーザータイプ（ENUM）
-    user_name VARCHAR(50),                          -- ユーザー名・企業名
-    created_at TIMESTAMP,                           -- 作成日時
-    login_time TIMESTAMP,                           -- 最終ログイン日時
-    ai_advice TEXT                                   -- AIによるアドバイス
-);
-
+--userダミーデータ
 -- ユーザー1：参加者
 INSERT INTO "user" (user_id, user_type, user_name, created_at, login_time, ai_advice)
 VALUES (

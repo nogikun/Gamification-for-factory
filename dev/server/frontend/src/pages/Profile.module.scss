@@ -1,0 +1,122 @@
+@use '../styles/variables' as *;
+
+.profile {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 32px 24px;
+  max-width: 520px;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  border: 1px solid var(--bg-sidebar);
+}
+.profile__title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+.profile__form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    input, select {
+      margin-top: 4px;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid var(--bg-sidebar);
+      background: var(--bg-base);
+      color: var(--text-main);
+      font-size: 1rem;
+      transition: border 0.2s;
+      &:focus-visible {
+        border: 1.5px solid var(--accent);
+        outline: none;
+      }
+    }
+    select {
+      background: var(--bg-base);
+    }
+    textarea {
+      min-height: 80px;
+      margin-top: 4px;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid var(--bg-sidebar);
+      background: var(--bg-base);
+      color: var(--text-main);
+      font-size: 1rem;
+      resize: vertical;
+      transition: border 0.2s;
+      &:focus-visible {
+        border: 1.5px solid var(--accent);
+        outline: none;
+      }
+    }
+  }
+}
+.profile__logoUpload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+.profile__logoImg {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--bg-sidebar);
+}
+.profile__logoPlaceholder {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  border: 1px dashed var(--bg-sidebar);
+}
+.profile__logoBtn {
+  background: var(--accent);
+  color: var(--text-main);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover, &:focus-visible {
+    background: var(--accent-hover);
+  }
+}
+.profile__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  justify-content: flex-end;
+  button {
+    background: var(--accent);
+    color: var(--text-main);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    &:hover, &:focus-visible {
+      background: var(--accent-hover);
+    }
+  }
+}

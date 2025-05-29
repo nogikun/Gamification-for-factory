@@ -57,7 +57,7 @@ INSERT INTO company (
     overview,
     updated_at
 )VALUES(
-    gen_random_uuid(),
+    uuid_generate_v4(),
     '株式会社A',
     'A@gmail.com',
     '080-1234-5678',

@@ -7,6 +7,7 @@ import Applicants from "./pages/Applicants";
 import Reviews from "./pages/Reviews";
 import Notifications from "./pages/Notifications";
 import CompanyEdit from "./pages/CompanyEdit";
+import Debug from "./pages/Debug";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="reviews" element={<Reviews />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="company" element={<CompanyEdit />} />
+          <Route path="debug" element={<Debug />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Route>
       </Routes>

@@ -38,11 +38,37 @@ INSERT INTO events (
 (gen_random_uuid(), '説明会', '大手企業の最新働き方紹介セミナー', NULL, 'テレワークやフレックス制度などの紹介', '2025-05-23 11:00', '2025-05-23 13:00', 'YouTube配信', '', '', 300, '["働き方", "説明会", "制度"]');
 
 -- applicant用デモデータの挿入
-INSERT INTO applicant (
-    last_name, first_name, mail_address, phone_number, address, birth_date, license
-) VALUES (
-    '石田', '省吾', 'ishida@gmail.com', '012000000000', '大阪', '2000-03-21', '漢検5級'
-);
+-- 既存のユーザーデータを保持（変数に格納）
+DO $$
+DECLARE
+    user_id1 UUID;
+    event_id1 INTEGER;
+    company_id1 UUID;
+BEGIN
+    -- applicantテーブルにデータを挿入し、IDを取得
+    INSERT INTO applicant (
+        last_name, first_name, mail_address, phone_number, address, birth_date, license
+    ) VALUES (
+        '山田', '太郎', 'yamada@example.com', '090-1234-5678', '東京都渋谷区', '1998-05-15', '基本情報技術者'
+    ) RETURNING user_id INTO user_id1;
+    
+    -- テスト用に既存のapplicantも保持
+    INSERT INTO applicant (
+        last_name, first_name, mail_address, phone_number, address, birth_date, license
+    ) VALUES (
+        '石田', '省吾', 'ishida@gmail.com', '012000000000', '大阪', '2000-03-21', '漢検5級'
+    );
+
+    -- eventsテーブルから最初のイベントIDを取得
+    SELECT event_id INTO event_id1 FROM events LIMIT 1;
+    
+    -- applicationsテーブルにテストデータを挿入
+    INSERT INTO applications (
+        event_id, user_id, status, message
+    ) VALUES (
+        event_id1, user_id1, '未対応', 'このインターンシップに非常に興味があります。ぜひ参加させてください。'
+    );
+END $$;
 
 -- company用デモデータの挿入
 INSERT INTO company (

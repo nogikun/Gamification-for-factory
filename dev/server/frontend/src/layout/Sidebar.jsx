@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { ChartLineUp, CalendarPlus, Users, Star, Bell, SignOut, Buildings } from "phosphor-react";
+import { ChartLineUp, CalendarPlus, Users, Star, Bell, SignOut, Buildings, Bug } from "phosphor-react";
 import styles from "./Sidebar.module.scss";
 
 const nav = [
@@ -48,10 +48,14 @@ export default function Sidebar({ open, onClose }) {
         </ul>
       </nav>
       <div className={styles["sidebar__footer"]}>
-        <button className={styles["sidebar__link"]} tabIndex={0}>
-          <SignOut size={20} className={styles["sidebar__icon"]} />
-          <span className={styles["sidebar__label"]}>ログアウト</span>
-        </button>
+        <NavLink 
+          to="/debug" 
+          className={styles["sidebar__link"]} 
+          tabIndex={0}
+        >
+          <Bug size={20} className={styles["sidebar__icon"]} />
+          <span className={styles["sidebar__label"]}>デバッグ</span>
+        </NavLink>
       </div>
       {/* モバイル時: サイドバー外クリックで閉じる用途 */}
       {open && (

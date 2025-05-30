@@ -4,7 +4,7 @@ from datetime import datetime, date
 import base64
 import json
 import uuid
-from ..models import EventTypeEnum # 修正: ..models (親ディレクトリのmodels)
+from ..models import EventTypeEnum, ApplicationStatusEnum # 修正: ApplicationStatusEnumを追加
 
 class DateModel(BaseModel):
     """
@@ -76,3 +76,69 @@ class Event(EventBase):
                  data.tags = json.dumps(data.tags, ensure_ascii=False)
 
         return data
+
+# 応募者モデル
+class ApplicantBase(BaseModel):
+    last_name: str
+    first_name: str
+    mail_address: Optional[str] = None
+    phone_number: Optional[str] = None
+    address: Optional[str] = None
+    birth_date: Optional[datetime] = None
+    license: Optional[str] = None
+
+class ApplicantCreate(ApplicantBase):
+    pass
+
+class ApplicantUpdate(ApplicantBase):
+    last_name: Optional[str] = None
+    first_name: Optional[str] = None
+
+class Applicant(ApplicantBase):
+    user_id: uuid.UUID
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# 応募モデル
+class ApplicationBase(BaseModel):
+    event_id: int
+    user_id: uuid.UUID
+    message: Optional[str] = None
+
+class ApplicationCreate(ApplicationBase):
+    pass
+
+class ApplicationUpdate(BaseModel):
+    status: str
+    processed_by: Optional[uuid.UUID] = None
+
+class ApplicationResponse(ApplicationBase):
+    application_id: int
+    status: str
+    applied_at: datetime
+    processed_at: Optional[datetime] = None
+    processed_by: Optional[uuid.UUID] = None
+
+    class Config:
+        from_attributes = True
+
+    @model_validator(mode='before')
+    @classmethod
+    def convert_sqlalchemy_application(cls, data: Any) -> Any:
+        if hasattr(data, '_sa_instance_state'):
+            # ステータスを文字列に変換
+            if isinstance(data.status, ApplicationStatusEnum):
+                data.status = data.status.value
+        return data
+
+# 応募者一覧用の拡張モデル（応募情報とイベント情報、応募者情報を含む）
+class ApplicationDetail(ApplicationResponse):
+    event_title: Optional[str] = None
+    event_type: Optional[str] = None
+    event_start_date: Optional[datetime] = None
+    event_end_date: Optional[datetime] = None
+    applicant_name: Optional[str] = None
+    applicant_email: Optional[str] = None
+    applicant_phone: Optional[str] = None

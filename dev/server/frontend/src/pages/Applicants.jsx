@@ -3,12 +3,11 @@ import ApplicantDetailDrawer from "./ApplicantDetailDrawer";
 import styles from "./Applicants.module.scss";
 import { usePageAnimation } from "../hooks/usePageAnimation";
 
-// ステータスの定義
+// ステータスの定義（バックエンドのapplication_statusに合わせる）
 const APPLICATION_STATUS = {
-  PENDING: "保留中",
+  PENDING: "未対応",
   APPROVED: "承認",
-  REJECTED: "不承認",
-  WITHDRAW: "辞退",
+  REJECTED: "否認",
 };
 
 export default function Applicants() {
@@ -107,25 +106,22 @@ export default function Applicants() {
     setError(null);
     
     try {
-      // 現在の応募者データを取得
-      const currentApplicant = applicants.find(app => app.application_id === applicationId);
-      if (!currentApplicant) {
-        throw new Error('応募者データが見つかりません');
-      }
+      // 現在のログインユーザーID（実装環境で適宜取得）
+      const currentUserId = "11111111-1111-1111-1111-111111111111"; // テスト用固定UUID
       
-      // 更新されたデータを作成
-      const updatedApplicant = {
-        ...currentApplicant,
+      // 更新データを作成
+      const updateData = {
         status: newStatus,
-        updated_at: new Date().toISOString()
+        processed_by: currentUserId
       };
       
-      const response = await fetch('http://localhost:8000/application', {
-        method: 'POST',
+      // PUT リクエストでステータス更新
+      const response = await fetch(`http://localhost:8000/applications/${applicationId}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedApplicant)
+        body: JSON.stringify(updateData)
       });
       
       if (!response.ok) {
@@ -133,26 +129,21 @@ export default function Applicants() {
         throw new Error(errorData.detail || 'ステータス更新に失敗しました');
       }
       
-      // 成功したら全リストを再取得（POST /applicationは全リストを返すため）
-      const updatedData = await response.json();
+      // 成功したら更新された応募データを取得
+      const updatedApplication = await response.json();
       
-      // レスポンスデータの配列チェック
-      if (Array.isArray(updatedData)) {
-        setApplicants(updatedData);
-      } else if (updatedData && Array.isArray(updatedData.applications)) {
-        setApplicants(updatedData.applications);
-      } else if (updatedData && Array.isArray(updatedData.data)) {
-        setApplicants(updatedData.data);
-      } else {
-        // ローカルでの更新をフォールバック
-        setApplicants(applicants.map(app => 
-          app.application_id === applicationId 
-            ? { ...app, status: newStatus, updated_at: new Date().toISOString() } 
-            : app
-        ));
-      }
+      // 応募一覧を更新（該当するアプリケーションのみ更新）
+      setApplicants(applicants.map(app => 
+        app.application_id === applicationId 
+          ? { ...app, ...updatedApplication } 
+          : app
+      ));
       
+      // 成功メッセージ
       alert(`応募者のステータスを「${newStatus}」に更新しました`);
+      
+      // データを再取得して最新の状態を反映
+      fetchData();
       
     } catch (err) {
       console.error('ステータス更新エラー:', err);
@@ -161,6 +152,23 @@ export default function Applicants() {
     } finally {
       setIsLoading(false);
       handleClose();
+    }
+  };
+
+  // 応募データを再取得
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('http://localhost:8000/applications');
+      if (!response.ok) {
+        throw new Error('応募データの再取得に失敗しました');
+      }
+      const data = await response.json();
+      setApplicants(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('データ再取得エラー:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -182,7 +190,7 @@ export default function Applicants() {
     }
     
     // イベントでフィルター
-    if (filterEvent && app.event_id !== filterEvent) {
+    if (filterEvent && app.event_id !== parseInt(filterEvent)) {
       return false;
     }
     
@@ -248,44 +256,43 @@ export default function Applicants() {
             <thead className={styles.tableHead}>
               <tr>
                 <th>氏名</th>
-                <th>メールアドレス</th>
                 <th>イベント</th>
                 <th>ステータス</th>
                 <th>応募日時</th>
-                <th>最終更新</th>
+                <th>メッセージ</th>
                 <th>操作</th>
               </tr>
             </thead>
             <tbody>
-              {filteredApplicants.map(applicant => {
-                // 関連するイベント情報を取得
-                const relatedEvent = events.find(e => e.event_id === applicant.event_id);
-                
-                return (
-                  <tr key={applicant.application_id}>
-                    <td>{applicant.last_name} {applicant.first_name}</td>
-                    <td>{applicant.email}</td>
-                    <td>{relatedEvent ? relatedEvent.title : '不明なイベント'}</td>
-                    <td>
-                      <span className={`${styles.statusBadge} ${styles[applicant.status]}`}>
-                        {applicant.status}
-                      </span>
-                    </td>
-                    <td>{new Date(applicant.created_at).toLocaleString('ja-JP')}</td>
-                    <td>{new Date(applicant.updated_at).toLocaleString('ja-JP')}</td>
-                    <td>
-                      <div className={styles.actionBtns}>
-                        <button 
-                          className={styles.detailBtn}
-                          onClick={() => handleDetail(applicant.application_id)}
-                        >
-                          詳細
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+              {filteredApplicants.map(applicant => (
+                <tr key={applicant.application_id}>
+                  <td>{applicant.applicant_name || '名前なし'}</td>
+                  <td>{applicant.event_title || '不明なイベント'}</td>
+                  <td>
+                    <span className={`${styles.statusBadge} ${styles[applicant.status]}`}>
+                      {applicant.status}
+                    </span>
+                  </td>
+                  <td>{new Date(applicant.applied_at).toLocaleString('ja-JP')}</td>
+                  <td className={styles.messageCell}>
+                    {applicant.message ? 
+                      (applicant.message.length > 30 ? 
+                        `${applicant.message.substring(0, 30)}...` : 
+                        applicant.message) : 
+                      'メッセージなし'}
+                  </td>
+                  <td>
+                    <div className={styles.actionBtns}>
+                      <button 
+                        className={styles.detailBtn}
+                        onClick={() => handleDetail(applicant.application_id)}
+                      >
+                        詳細
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         )}

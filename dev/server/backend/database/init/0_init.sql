@@ -70,4 +70,22 @@ CREATE TABLE company (
     establishment_date TIMESTAMP,                           -- 設立日
     overview TEXT,                                          -- 会社概要
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP          -- 更新日時
-)
+);
+
+--------------------------------------------------
+--   TABLE NAME: applications
+-- DESCRIPTIONS: イベントへの応募情報を管理するテーブル
+--------------------------------------------------
+CREATE TYPE application_status AS ENUM ('未対応', '承認', '否認');
+CREATE TABLE applications (
+    application_id SERIAL PRIMARY KEY,                 -- 応募ID（主キー）
+    event_id INTEGER NOT NULL,                         -- イベントID（外部キー）
+    user_id UUID NOT NULL,                             -- ユーザーID（外部キー）
+    status application_status NOT NULL DEFAULT '未対応', -- 応募状態
+    message TEXT,                                      -- 応募メッセージ
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    -- 応募日時
+    processed_at TIMESTAMP,                            -- 処理日時
+    processed_by UUID,                                 -- 処理者ID（企業側ユーザー）
+    FOREIGN KEY (event_id) REFERENCES events(event_id),
+    FOREIGN KEY (user_id) REFERENCES applicant(user_id)
+);

@@ -74,10 +74,10 @@ CREATE TABLE company (
 -- DESCRIPTIONS: ゲームの進行に必要な情報を管理するテーブル
 --------------------------------------------------
 CREATE TABLE player (
-    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    level INTEGER NOT NULL,
-    experience INTEGER NOT NULL,
-    skill_data JSON NOT NULL,
-    item_data JSON NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),     -- ユーザーID（主キー）
+    level INTEGER NOT NULL,                                 -- レベル
+    experience INTEGER NOT NULL,                            -- 経験値
+    skill_data JSON NOT NULL,                               -- スキルデータ
+    item_data JSON NOT NULL,                                -- 保有中のアイテム
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP          -- 更新日時
 )

@@ -12,10 +12,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, join
 
 # local imports
-from src.schema.schema import Event as EventSchema, EventCreate, EventUpdate, DateModel, ApplicationResponse, ApplicationUpdate, ApplicationDetail, ApplicationCreate, ApplicantCreate, Applicant as ApplicantSchema # 追加
-from src.models import Event as EventModel, EventTypeEnum, Application as ApplicationModel, Applicant as ApplicantModel, ApplicationStatusEnum # ApplicationModelを追加
-from src.database import get_db, Base, get_engine # get_engine をインポート
+from src.schema.schema import Event as EventSchema, EventCreate, EventUpdate, DateModel, ApplicationResponse, ApplicationUpdate, ApplicationDetail, ApplicationCreate, ApplicantCreate, Applicant as ApplicantSchema, ReviewCreate, Review as ReviewSchema, ReviewDetail # ReviewRequestCreate, ReviewRequest等を削除
+from src.models import Event as EventModel, EventTypeEnum, Application as ApplicationModel, Applicant as ApplicantModel, ApplicationStatusEnum, Review as ReviewModel # ReviewRequestModelを削除
+from src.database import get_db, Base, get_engine, reset_reviews_table # reset_reviews_tableを追加
 # from src.demo.generator import EventGenerator # デモジェネレータはDB連携に伴い一旦コメントアウト
+
+# reviewsテーブルをリセット
+reset_reviews_table()
 
 # データベーステーブルを作成 (存在しない場合のみ)
 Base.metadata.create_all(bind=get_engine())
@@ -281,6 +284,150 @@ def create_application(db: Session, application_data: ApplicationCreate) -> Appl
     db.refresh(db_application)
     return db_application
 
+# レビューを作成する関数
+def create_review(db: Session, review_data: ReviewCreate) -> ReviewModel:
+    # 応募が存在するか確認
+    application = db.query(ApplicationModel).filter(ApplicationModel.application_id == review_data.application_id).first()
+    if not application:
+        raise HTTPException(status_code=404, detail="指定された応募が見つかりません")
+    
+    # レビューを作成
+    db_review = ReviewModel(
+        application_id=review_data.application_id,
+        reviewer_id=review_data.reviewer_id,
+        rating=review_data.rating,
+        comment=review_data.comment
+    )
+    
+    db.add(db_review)
+    db.commit()
+    db.refresh(db_review)
+    return db_review
+
+# レビュー一覧を取得する関数
+def get_reviews(db: Session, skip: int = 0, limit: int = 100) -> List[Dict]:
+    # レビュー、応募情報、イベント情報、応募者情報を結合して取得
+    query = (
+        db.query(
+            ReviewModel,
+            ApplicationModel.application_id,
+            EventModel.title.label("event_title"),
+            ApplicantModel.last_name.label("applicant_last_name"),
+            ApplicantModel.first_name.label("applicant_first_name")
+        )
+        .join(ApplicationModel, ReviewModel.application_id == ApplicationModel.application_id)
+        .join(EventModel, ApplicationModel.event_id == EventModel.event_id)
+        .join(ApplicantModel, ApplicationModel.user_id == ApplicantModel.user_id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+    
+    # 結果をディクショナリのリストに変換
+    results = []
+    for row in query:
+        review = row[0]  # ReviewModelオブジェクト
+        
+        # ReviewDetailモデルに合わせてデータを整形
+        review_dict = {
+            "review_id": review.review_id,
+            "application_id": review.application_id,
+            "reviewer_id": review.reviewer_id,
+            "rating": review.rating,
+            "comment": review.comment,
+            "created_at": review.created_at,
+            "updated_at": review.updated_at,
+            "event_title": row.event_title,
+            "applicant_name": f"{row.applicant_last_name} {row.applicant_first_name}"
+        }
+        results.append(review_dict)
+    
+    return results
+
+# 応募者を更新する関数
+def update_applicant(db: Session, user_id: uuid.UUID, applicant_data: ApplicantCreate) -> Optional[ApplicantModel]:
+    # 既存のユーザーを取得
+    applicant = db.query(ApplicantModel).filter(ApplicantModel.user_id == user_id).first()
+    if not applicant:
+        return None
+    
+    # 更新対象のフィールドを設定
+    for key, value in applicant_data.model_dump(exclude_unset=True).items():
+        setattr(applicant, key, value)
+    
+    # 更新日時を更新
+    applicant.updated_at = datetime.utcnow()
+    
+    db.add(applicant)
+    db.commit()
+    db.refresh(applicant)
+    return applicant
+
+# 応募者を削除する関数
+def delete_applicant(db: Session, user_id: uuid.UUID) -> bool:
+    applicant = db.query(ApplicantModel).filter(ApplicantModel.user_id == user_id).first()
+    if not applicant:
+        return False
+    
+    db.delete(applicant)
+    db.commit()
+    return True
+
+# 応募を更新する関数
+def update_application(db: Session, application_id: int, application_data: ApplicationCreate) -> Optional[ApplicationModel]:
+    # 既存の応募を取得
+    application = db.query(ApplicationModel).filter(ApplicationModel.application_id == application_id).first()
+    if not application:
+        return None
+    
+    # 更新対象のフィールドを設定
+    for key, value in application_data.model_dump(exclude_unset=True).items():
+        setattr(application, key, value)
+    
+    db.add(application)
+    db.commit()
+    db.refresh(application)
+    return application
+
+# 応募を削除する関数
+def delete_application(db: Session, application_id: int) -> bool:
+    application = db.query(ApplicationModel).filter(ApplicationModel.application_id == application_id).first()
+    if not application:
+        return False
+    
+    db.delete(application)
+    db.commit()
+    return True
+
+# レビューを更新する関数
+def update_review(db: Session, review_id: int, review_data: ReviewCreate) -> Optional[ReviewModel]:
+    # 既存のレビューを取得
+    review = db.query(ReviewModel).filter(ReviewModel.review_id == review_id).first()
+    if not review:
+        return None
+    
+    # 更新対象のフィールドを設定
+    for key, value in review_data.model_dump(exclude_unset=True).items():
+        setattr(review, key, value)
+    
+    # 更新日時を更新
+    review.updated_at = datetime.utcnow()
+    
+    db.add(review)
+    db.commit()
+    db.refresh(review)
+    return review
+
+# レビューを削除する関数
+def delete_review(db: Session, review_id: int) -> bool:
+    review = db.query(ReviewModel).filter(ReviewModel.review_id == review_id).first()
+    if not review:
+        return False
+    
+    db.delete(review)
+    db.commit()
+    return True
+
 # --- イベント関連エンドポイント (DB連携版) --- #
 
 @app.post("/event", response_model=EventSchema, status_code=201)
@@ -371,12 +518,65 @@ async def create_application_api(application_data: ApplicationCreate, db: Sessio
         print(f"Error creating application: {e}")
         raise HTTPException(status_code=500, detail=f"Error creating application: {str(e)}")
 
-# --- デモ用エンドポイント (既存) --- #
-# @app.post("/demo/get-events")
-# async def get_demo_event(target_date: DateModel, db: Session = Depends(get_db)) -> List[EventSchema]:
-#     print(f"Demo event request for date: {target_date.target_date}")
-    # ここでデモデータをDBに投入するか、既存のDBデータを利用するか検討
-    # return [] # 一旦空を返す
+# --- レビュー関連エンドポイント --- #
+@app.post("/review", response_model=ReviewSchema, status_code=201)
+async def create_review_api(review_data: ReviewCreate, db: Session = Depends(get_db)) -> ReviewSchema:
+    try:
+        print(f"Received review data: {review_data}")
+        created_review = create_review(db=db, review_data=review_data)
+        return ReviewSchema.model_validate(created_review)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(f"Error creating review: {e}")
+        raise HTTPException(status_code=500, detail=f"Error creating review: {str(e)}")
+
+@app.get("/reviews", response_model=List[ReviewDetail])
+async def get_reviews_api(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> List[ReviewDetail]:
+    reviews = get_reviews(db, skip=skip, limit=limit)
+    return [ReviewDetail.model_validate(review) for review in reviews]
+
+@app.put("/applicant/{user_id}", response_model=ApplicantSchema)
+async def update_applicant_api(user_id: uuid.UUID, applicant_data: ApplicantCreate, db: Session = Depends(get_db)) -> ApplicantSchema:
+    updated_applicant = update_applicant(db, user_id=user_id, applicant_data=applicant_data)
+    if updated_applicant is None:
+        raise HTTPException(status_code=404, detail="Applicant not found")
+    return ApplicantSchema.model_validate(updated_applicant)
+
+@app.delete("/applicant/{user_id}", status_code=204)
+async def delete_applicant_api(user_id: uuid.UUID, db: Session = Depends(get_db)):
+    success = delete_applicant(db, user_id=user_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Applicant not found")
+    return
+
+@app.put("/application/{application_id}", response_model=ApplicationResponse)
+async def update_application_api(application_id: int, application_data: ApplicationCreate, db: Session = Depends(get_db)) -> ApplicationResponse:
+    updated_application = update_application(db, application_id=application_id, application_data=application_data)
+    if updated_application is None:
+        raise HTTPException(status_code=404, detail="Application not found")
+    return ApplicationResponse.model_validate(updated_application)
+
+@app.delete("/application/{application_id}", status_code=204)
+async def delete_application_api(application_id: int, db: Session = Depends(get_db)):
+    success = delete_application(db, application_id=application_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Application not found")
+    return
+
+@app.put("/review/{review_id}", response_model=ReviewSchema)
+async def update_review_api(review_id: int, review_data: ReviewCreate, db: Session = Depends(get_db)) -> ReviewSchema:
+    updated_review = update_review(db, review_id=review_id, review_data=review_data)
+    if updated_review is None:
+        raise HTTPException(status_code=404, detail="Review not found")
+    return ReviewSchema.model_validate(updated_review)
+
+@app.delete("/review/{review_id}", status_code=204)
+async def delete_review_api(review_id: int, db: Session = Depends(get_db)):
+    success = delete_review(db, review_id=review_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Review not found")
+    return
 
 # スクリプトとして直接実行された場合、Uvicornサーバーを起動
 if __name__ == "__main__":

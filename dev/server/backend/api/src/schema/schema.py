@@ -4,7 +4,7 @@ from datetime import datetime, date
 import base64
 import json
 import uuid
-from ..models import EventTypeEnum, ApplicationStatusEnum # 修正: ApplicationStatusEnumを追加
+from ..models import EventTypeEnum, ApplicationStatusEnum, ReviewStatusEnum # ReviewStatusEnumを追加
 
 class DateModel(BaseModel):
     """
@@ -142,3 +142,30 @@ class ApplicationDetail(ApplicationResponse):
     applicant_name: Optional[str] = None
     applicant_email: Optional[str] = None
     applicant_phone: Optional[str] = None
+
+# レビューモデル
+class ReviewBase(BaseModel):
+    application_id: int
+    reviewer_id: uuid.UUID
+    rating: float
+    comment: Optional[str] = None
+
+class ReviewCreate(ReviewBase):
+    pass
+
+class ReviewUpdate(BaseModel):
+    rating: Optional[float] = None
+    comment: Optional[str] = None
+
+class Review(ReviewBase):
+    review_id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# レビュー詳細モデル（関連情報を含む）
+class ReviewDetail(Review):
+    event_title: Optional[str] = None
+    applicant_name: Optional[str] = None

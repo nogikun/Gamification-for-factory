@@ -25,8 +25,34 @@
 
 .tableActions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 24px;
+  align-items: center;
+}
+
+.filterContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filterLabel {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.filterSelect {
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+  font-size: 0.9rem;
+  min-width: 140px;
+  
+  &:focus {
+    outline: none;
+    border-color: #1976d2;
+  }
 }
 
 .addButton {
@@ -163,6 +189,79 @@
 
 .inputBtn:hover {
   background: #0d47a1;
+}
+
+// 企業レビュータグ
+.companyReviewTag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 8px;
+  background-color: #5c6bc0;
+  color: white;
+}
+
+// 採用候補タグ
+.hiringTag {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-left: 8px;
+  background-color: #4caf50;
+  color: white;
+}
+
+// レビュータイプ選択スタイル
+.reviewTypeSelector {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+
+.reviewTypeOption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 5px;
+  background: #f5f6fa;
+  transition: background-color 0.2s, color 0.2s;
+  
+  &:hover {
+    background: #e3f2fd;
+  }
+  
+  input {
+    margin: 0;
+  }
+  
+  span {
+    font-weight: 500;
+  }
+}
+
+// チェックボックススタイル
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-top: 8px;
+  
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+  
+  span {
+    font-weight: 500;
+  }
 }
 
 // モーダルスタイル
@@ -314,6 +413,13 @@
   }
 }
 
+.formHint {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
 @media (max-width: 600px) {
   .modalContent {
     min-width: 0;
@@ -336,5 +442,24 @@
   
   .ratingInput {
     gap: 8px;
+  }
+  
+  .reviewTypeSelector {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .tableActions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .filterContainer {
+    width: 100%;
+  }
+  
+  .filterSelect {
+    flex-grow: 1;
   }
 }

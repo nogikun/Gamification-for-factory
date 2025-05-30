@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text, Enum as SAEnum, ForeignKey, JSON, LargeBinary, UUID
+from sqlalchemy import Column, Integer, String, DateTime, Text, Enum as SAEnum, ForeignKey, JSON, LargeBinary, UUID, Float
 from sqlalchemy.sql import func
 from .database import Base
 from datetime import datetime
@@ -15,6 +15,11 @@ class ApplicationStatusEnum(enum.Enum):
     PENDING = "未対応"
     APPROVED = "承認"
     REJECTED = "否認"
+
+# レビューステータスEnum
+class ReviewStatusEnum(enum.Enum):
+    REQUESTED = "依頼中"
+    COMPLETED = "完了"
 
 class Event(Base):
     __tablename__ = "events"
@@ -70,4 +75,29 @@ class Applicant(Base):
     address = Column(Text, nullable=True)
     birth_date = Column(DateTime, nullable=True)
     license = Column(Text, nullable=True)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+# レビューリクエストモデル
+class ReviewRequest(Base):
+    __tablename__ = "review_requests"
+    __table_args__ = {"schema": "public"}
+    
+    review_request_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    application_id = Column(Integer, ForeignKey("applications.application_id"), nullable=False)
+    requested_by = Column(UUID(as_uuid=True), nullable=False)
+    requested_at = Column(DateTime, server_default=func.now())
+    request_message = Column(Text, nullable=True)
+    status = Column(SAEnum(ReviewStatusEnum), nullable=False, default=ReviewStatusEnum.REQUESTED)
+    
+# レビューモデル
+class Review(Base):
+    __tablename__ = "reviews"
+    __table_args__ = {"schema": "public"}
+    
+    review_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    application_id = Column(Integer, ForeignKey("applications.application_id"), nullable=False)
+    reviewer_id = Column(UUID(as_uuid=True), nullable=False)
+    rating = Column(Float, nullable=False)
+    comment = Column(Text, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now()) 

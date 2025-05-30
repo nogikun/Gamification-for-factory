@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import DashboardCalendar from "../components/DashboardCalendar";
 import styles from "./Dashboard.module.scss";
 import { UserPlus, CalendarCheck, HourglassMedium } from "phosphor-react";
+import { apiRequest } from "../config";
 
 const Dashboard = () => {
   const location = useLocation();

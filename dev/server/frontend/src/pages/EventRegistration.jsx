@@ -5,6 +5,7 @@ import 'react-calendar/dist/Calendar.css';
 import styles from "./EventRegistration.module.scss";
 import { usePageAnimation } from "../hooks/usePageAnimation";
 import { Pencil, Trash, Upload } from "phosphor-react";
+import { apiRequest } from "../config";
 
 const jaWeekdays = ['日', '月', '火', '水', '木', '金', '土'];
 

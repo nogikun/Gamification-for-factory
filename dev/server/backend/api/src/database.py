@@ -1,36 +1,54 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
 # .envファイルから環境変数を読み込む (存在する場合)
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@postgres:5432/gamification")
+# DATABASE_URLが設定されている場合はそれを優先
+if os.getenv("DATABASE_URL"):
+    DATABASE_URL = os.getenv("DATABASE_URL")
+else:
+    # 環境変数からDB設定を取得 (なければデフォルト値を使用)
+    DB_USER = os.getenv("DB_USER", "postgres")
+    DB_PASSWORD = os.getenv("DB_PASSWORD", "postgres")
+    DB_HOST = os.getenv("DB_HOST", "postgres")  # デフォルトをpostgresに変更
+    DB_PORT = os.getenv("DB_PORT", "5432")
+    DB_NAME = os.getenv("DB_NAME", "gamification")
 
-# エンジンとセッションを遅延初期化
-engine = None
-SessionLocal = None
+    # SQLAlchemyのDB URL
+    DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
-def get_engine():
-    global engine
-    if engine is None:
-        engine = create_engine(DATABASE_URL)
-    return engine
+print(f"Connecting to database: {DATABASE_URL}")
 
-def get_session_local():
-    global SessionLocal
-    if SessionLocal is None:
-        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=get_engine())
-    return SessionLocal
+# データベースエンジンの作成
+engine = create_engine(DATABASE_URL)
 
+# セッションの作成
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# ベースクラスの作成
 Base = declarative_base()
 
-# DBセッションを取得するための依存関数
+# 依存性注入用の関数
 def get_db():
-    SessionLocal = get_session_local()
     db = SessionLocal()
     try:
         yield db
     finally:
-        db.close() 
+        db.close()
+
+# エンジンを取得する関数（外部から呼び出し可能）
+def get_engine():
+    return engine
+
+# テーブルをリセットする関数
+def reset_reviews_table():
+    from sqlalchemy import text
+    with engine.connect() as conn:
+        # reviewsテーブルが存在すれば削除
+        conn.execute(text("DROP TABLE IF EXISTS public.reviews CASCADE"))
+        # 新しい構造で再作成はmodels.pyで行われる
+        conn.commit() 

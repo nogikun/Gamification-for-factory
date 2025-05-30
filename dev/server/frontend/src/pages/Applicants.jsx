@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ApplicantDetailDrawer from "./ApplicantDetailDrawer";
 import styles from "./Applicants.module.scss";
 import { usePageAnimation } from "../hooks/usePageAnimation";
+import { apiRequest } from "../config";
 
 // ステータスの定義（バックエンドのapplication_statusに合わせる）
 const APPLICATION_STATUS = {

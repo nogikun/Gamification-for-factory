@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Notifications.module.scss";
 import { usePageAnimation } from "../hooks/usePageAnimation";
+import { apiRequest } from "../config";
 
 export default function Notifications() {
   const containerRef = useRef(null);

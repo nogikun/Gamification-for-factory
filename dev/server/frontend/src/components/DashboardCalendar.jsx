@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import styles from "./DashboardCalendar.module.scss";
+import { apiRequest } from "../config";
 
 const jaWeekdays = ['日', '月', '火', '水', '木', '金', '土'];
 

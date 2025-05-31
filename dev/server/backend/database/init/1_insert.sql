@@ -222,10 +222,10 @@ INSERT INTO applicant (
 -- participants用テストデータの挿入
 INSERT INTO participants (
     event_id,
-    -- user_id,
+    user_id,
     status
     ) VALUES (
         1,
-        -- 'abcd1234',
+        '11111111-1111-1111-1111-111111111111',
         '参加中'
         );

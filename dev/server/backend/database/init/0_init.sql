@@ -90,7 +90,7 @@ CREATE TABLE applications (
 CREATE TYPE user_type_enum AS ENUM ('参加者', '企業');
 
 -- テーブル作成
-CREATE TABLE "user" (
+CREATE TABLE users (
     user_id UUID PRIMARY KEY,                       -- ユーザーID（主キー）
     user_type user_type_enum,                       -- ユーザータイプ（ENUM）
     user_name VARCHAR(50),                          -- ユーザー名・企業名

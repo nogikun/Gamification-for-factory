@@ -10,6 +10,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.future import select # 非同期操作のために select をインポート
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
+from sqlalchemy.future import select
+from src.db.models import EventModel  # ← SQLAlchemyのモデル
+
 # local imports
 from src.schema.schema import Event, DateModel
 from src.demo.generator import EventGenerator
@@ -71,35 +74,21 @@ async def demo_get_event(target_date: DateModel) -> List[Event]:
 
 @app.post("/get-events")
 async def get_event(target_date: DateModel) -> List[Event]:
-    """
-    イベント取得エンドポイント - 指定された日付のイベントリストを返します
-    """# 非同期エンジンを作成
-    engine = create_async_engine(DATABASE_URL, echo=True) # ここが非同期接続の肝です
-    
-    # セッションファクトリを作成
-    AsyncSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
-    
-    # Eventモデルを定義（SQLで取得したデータをマッピングするため）
-    test_event = Event(
-		event_id="event_1",
-		company_id="company_1",
-		event_type="type_1",
-		title="Sample Event",
-		description="This is a sample event description.",
-		start_time="2023-10-01T10:00:00",
-		end_time="2023-10-01T12:00:00",
-		location="Tokyo",
-		reward="5000円",
-		required_qualifications=["資格1", "資格2"],
-		max_participants=10,
-		created_at="2023-10-01T09:00:00",
-		updated_at="2023-10-01T09:00:00",
-		tags=["tag1", "tag2"],
-		image=None,
-	)
-    return [
-		test_event
-	]
+    engine = create_async_engine(DATABASE_URL, echo=True)
+    AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+
+    async with AsyncSessionLocal() as session:
+        try:
+            stmt = select(EventModel).where(EventModel.start_time.cast(Date) == target_date.date)
+            result = await session.execute(stmt)
+            events = result.scalars().all()
+            return new_func(events)
+        except Exception as e:
+            print(f"Error: {e}")
+            raise HTTPException(status_code=500, detail=str(e))
+
+def new_func(events):
+    return [Event.from_orm(event) for event in events]
     
 # スクリプトとして直接実行された場合、Uvicornサーバーを起動
 if __name__ == "__main__":

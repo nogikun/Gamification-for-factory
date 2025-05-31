@@ -13,12 +13,12 @@ class Event(BaseModel):
     event_type: str
     title: str
     description: str
-    start_time: datetime
-    end_time: datetime
+    start_date: datetime
+    end_date: datetime
     location: str
     reward: str
-    required_qualifications: List[str]
-    max_participants: int
+    required_qualifications: str
+    available_spots: int
     created_at: datetime
     updated_at: datetime
     tags: List[str]

@@ -10,24 +10,11 @@ services:
       - "./backend/api:/app"
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/gamification
     depends_on:
       - postgres
     restart: unless-stopped
-
-  # ワーカー - 非同期処理を担当
-  worker:
-    build:
-      context: ./backend/worker
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/gamification
-    depends_on:
-      - postgres
-      - api
-    restart: unless-stopped
-
+    networks:
+      - default
 
   # PostgreSQLデータベース - ユーザーや企業情報の保存
   postgres:
@@ -39,6 +26,8 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
+    networks:
+      - default
 
   # フロントエンド - Reactアプリケーション
   frontend:
@@ -50,6 +39,8 @@ services:
     depends_on:
       - api
     restart: unless-stopped
+    networks:
+      - default
 
   adminer:
     image: adminer
@@ -61,6 +52,12 @@ services:
       - 5050:8080
     depends_on:
       - postgres
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
 
 volumes:
   postgres-data:

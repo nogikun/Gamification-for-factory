@@ -5,7 +5,7 @@ from PIL import Image
 import io
 
 # local imports
-from src.schema.schema import Event, DateModel
+from ..schema.fastapi.schema import Event, DateModel
 
 class EventGenerator:
     def __init__(self):
@@ -65,7 +65,7 @@ class EventGenerator:
         """
         
         # target_dateからdatetimeオブジェクトを生成
-        event_date = datetime.combine(target_date.target_date, datetime.min.time())
+        event_date = datetime.combine(target_date.date, datetime.min.time())
         
         # ランダムな時間（9時〜17時）を設定
         start_hour = randint(9, 16)
@@ -88,12 +88,12 @@ class EventGenerator:
             "event_type": self.event_types[event_type_index],
             "title": self.event_titles[event_type_index],
             "description": self.event_descriptions[event_type_index],
-            "start_time": event_start,
-            "end_time": event_end,
+            "start_date": event_start,
+            "end_date": event_end,
             "location": choice(self.event_locations),
             "reward": reward_str,  # 文字列として報酬を設定
-            "required_qualifications": sample(self.required_qualifications, k=randint(1, 3)),
-            "max_participants": randint(5, 20),
+            "required_qualifications": ",".join(sample(self.required_qualifications, k=randint(1, 3))),
+            "available_spots": randint(5, 20),  # 参加可能人数
             "created_at": datetime.now(),
             "updated_at": datetime.now(),
             "tags": sample(self.event_types, k=randint(1, 3)),

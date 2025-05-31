@@ -14,10 +14,6 @@ annotated-types==0.7.0
     # via pydantic
 anyio==4.9.0
     # via starlette
-async-timeout==5.0.1
-    # via asyncpg
-asyncpg==0.30.0
-    # via api
 click==8.1.8
     # via uvicorn
 colorama==0.4.6
@@ -33,6 +29,8 @@ h11==0.14.0
 idna==3.10
     # via anyio
 pillow==11.2.1
+    # via api
+psycopg2-binary==2.9.10
     # via api
 pydantic==2.11.4
     # via api

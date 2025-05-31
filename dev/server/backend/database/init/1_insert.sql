@@ -170,3 +170,51 @@ INSERT INTO company (
     '製造企業',
     CURRENT_TIMESTAMP
 );
+
+-- company用デモデータの挿入
+INSERT INTO company (
+    user_id,
+    company_name,
+    mail_address,
+    phone_number,
+    address,
+    capital,
+    employees,
+    establishment_date,
+    overview,
+    updated_at
+)VALUES(
+    uuid_generate_v4(),
+    '株式会社A',
+    'A@gmail.com',
+    '080-1234-5678',
+    '大阪府大阪市中央区',
+    10000000,
+    50,
+    '2025-05-01 00:00:00',
+    '製造企業',
+    CURRENT_TIMESTAMP
+);
+
+-- applicant用デモデータの挿入
+INSERT INTO applicant (
+    user_id,
+    last_name,
+    first_name,
+    mail_address,
+    phone_number,
+    address,
+    birth_date,
+    license,
+    updated_at
+) VALUES (
+    uuid_generate_v4(),
+    '山田',
+    '太郎',
+    'A@example.com',
+    '080-1234-5678',
+    '東京都新宿区',
+    '2000-01-01 00:00:00',
+    '普通自動車免許',
+    CURRENT_TIMESTAMP
+);

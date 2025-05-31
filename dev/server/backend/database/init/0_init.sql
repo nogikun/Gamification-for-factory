@@ -88,7 +88,6 @@ CREATE TABLE applications (
 --------------------------------------------------
 -- ENUMの定義（先に実行）
 CREATE TYPE user_type_enum AS ENUM ('参加者', '企業');
-
 -- テーブル作成
 CREATE TABLE users (
     user_id UUID PRIMARY KEY,                       -- ユーザーID（主キー）

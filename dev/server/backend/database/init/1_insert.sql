@@ -228,4 +228,45 @@ INSERT INTO participants (
         1,
         '11111111-1111-1111-1111-111111111111',
         '参加中'
-        );
+);
+
+-- player用デモデータの挿入
+INSERT INTO player (
+    user_id,
+    level,
+    experience,
+    skill_data,
+    item_data,
+    updated_at
+) VALUES (
+    gen_random_uuid(),
+    5,
+    10,
+    '{
+        "skill_data":[
+            {
+                "skill_label":"",
+                "skill_level":0,
+                "skill_exp":0
+            },
+            {
+                "skill_label":"",
+                "skill_level":0,
+                "skill_exp":0
+            }
+        ]
+    }',
+    '{
+        "items":[
+            {
+                "item_id":"",
+                "durability":0
+            },
+            {
+                "item_id":"",
+                "durability":0
+            }
+        ]
+    }',
+    CURRENT_TIMESTAMP
+);

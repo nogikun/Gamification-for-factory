@@ -1,6 +1,7 @@
--- test用デモデータの挿入
+-- テストデータの挿入
 INSERT INTO test (name, description) VALUES ('テスト項目1', 'これはテストデータです');
 INSERT INTO test (name, description) VALUES ('テスト項目2', '別のテストデータです');
+
 -- eventsテストデータの挿入
 INSERT INTO events (
     company_id,
@@ -37,11 +38,112 @@ INSERT INTO events (
 -- 10
 (gen_random_uuid(), '説明会', '大手企業の最新働き方紹介セミナー', NULL, 'テレワークやフレックス制度などの紹介', '2025-05-23 11:00', '2025-05-23 13:00', 'YouTube配信', '', '', 300, '["働き方", "説明会", "制度"]');
 
--- applicant用デモデータの挿入
-INSERT INTO applicant (
-    last_name, first_name, mail_address, phone_number, address, birth_date, license
-) VALUES (
-    '石田', '省吾', 'ishida@gmail.com', '012000000000', '大阪', '2000-03-21', '漢検5級'
+--applicationsダミーデータ
+-- ダミーデータ1
+INSERT INTO applications (application_id, user_id, event_id, status, created_at, updated_at)
+VALUES (
+    gen_random_uuid(),  -- application_id
+    gen_random_uuid(),  -- user_id (実際には存在するusersテーブルのIDを指定)
+    gen_random_uuid(),  -- event_id (実際には存在するeventsテーブルのIDを指定)
+    '未対応',            -- status
+    NOW() - INTERVAL '3 days', -- created_at (3日前のタイムスタンプ)
+    NOW() - INTERVAL '3 days'  -- updated_at (3日前のタイムスタンプ)
+);
+-- ダミーデータ2
+INSERT INTO applications (application_id, user_id, event_id, status, created_at, updated_at)
+VALUES (
+    gen_random_uuid(),
+    gen_random_uuid(),
+    gen_random_uuid(),
+    '承認',
+    NOW() - INTERVAL '2 days',
+    NOW() - INTERVAL '1 day' -- updated_at (1日前に更新)
+);
+-- ダミーデータ3
+INSERT INTO applications (application_id, user_id, event_id, status, created_at, updated_at)
+VALUES (
+    gen_random_uuid(),
+    gen_random_uuid(),
+    gen_random_uuid(),
+    '拒否',
+    NOW() - INTERVAL '5 days',
+    NOW() - INTERVAL '5 days'
+);
+-- ダミーデータ4 (別のステータスの例)
+INSERT INTO applications (application_id, user_id, event_id, status, created_at, updated_at)
+VALUES (
+    gen_random_uuid(),
+    gen_random_uuid(),
+    gen_random_uuid(),
+    '処理中',
+    NOW() - INTERVAL '10 hours',
+    NOW() - INTERVAL '2 hours'
+);
+-- ダミーデータ5
+INSERT INTO applications (application_id, user_id, event_id, status, created_at, updated_at)
+VALUES (
+    gen_random_uuid(),
+    gen_random_uuid(),
+    gen_random_uuid(),
+    '承認',
+    '2025-05-01 10:00:00', -- 特定の日時を指定
+    '2025-05-02 15:30:00'  -- 特定の日時を指定
+);
+
+--userダミーデータ
+-- ユーザー1：参加者
+INSERT INTO users (user_id, user_type, user_name, created_at, login_time, ai_advice)
+VALUES (
+    '11111111-1111-1111-1111-111111111111',
+    '参加者',
+    '田中 太郎',
+    '2025-05-01 10:00:00',
+    '2025-05-22 08:30:00',
+    'ポジティブな姿勢が高評価でした。今後は質問への具体性を意識しましょう。'
+);
+
+-- ユーザー2：企業
+INSERT INTO users (user_id, user_type, user_name, created_at, login_time, ai_advice)
+VALUES (
+    '22222222-2222-2222-2222-222222222222',
+    '企業',
+    '株式会社テック未来',
+    '2025-04-15 09:00:00',
+    '2025-05-20 17:45:00',
+    '参加者のスキルに対する評価が一貫しており、信頼されています。'
+);
+
+-- ユーザー3：参加者（アドバイスありに変更）
+INSERT INTO users (user_id, user_type, user_name, created_at, login_time, ai_advice)
+VALUES (
+    '33333333-3333-3333-3333-333333333333',
+    '参加者',
+    '佐藤 花子',
+    '2025-03-10 14:20:00',
+    '2025-05-21 12:00:00',
+    '受け答えが丁寧で、好印象を与えていました。'
+);
+
+-- ユーザー4：企業（ログイン履歴追加）
+INSERT INTO users (user_id, user_type, user_name, created_at, login_time, ai_advice)
+VALUES (
+    '44444444-4444-4444-4444-444444444444',
+    '企業',
+    '人材ラボ株式会社',
+    '2025-01-05 11:00:00',
+    '2025-05-22 16:30:00',
+    '新しいイベントに積極的に参加しています。'
+);
+
+-- ユーザー5：参加者
+INSERT INTO users (user_id, user_type, user_name, created_at, login_time, ai_advice)
+VALUES (
+    '55555555-5555-5555-5555-555555555555',
+    '参加者',
+    '山田 一郎',
+    '2025-05-10 08:00:00',
+    '2025-05-22 09:15:00',
+    '自己分析がしっかりできており、志望動機に説得力がありました。'
 );
 
 -- company用デモデータの挿入
@@ -66,5 +168,53 @@ INSERT INTO company (
     50,
     '2025-05-01 00:00:00',
     '製造企業',
+    CURRENT_TIMESTAMP
+);
+
+-- company用デモデータの挿入
+INSERT INTO company (
+    user_id,
+    company_name,
+    mail_address,
+    phone_number,
+    address,
+    capital,
+    employees,
+    establishment_date,
+    overview,
+    updated_at
+)VALUES(
+    uuid_generate_v4(),
+    '株式会社A',
+    'A@gmail.com',
+    '080-1234-5678',
+    '大阪府大阪市中央区',
+    10000000,
+    50,
+    '2025-05-01 00:00:00',
+    '製造企業',
+    CURRENT_TIMESTAMP
+);
+
+-- applicant用デモデータの挿入
+INSERT INTO applicant (
+    user_id,
+    last_name,
+    first_name,
+    mail_address,
+    phone_number,
+    address,
+    birth_date,
+    license,
+    updated_at
+) VALUES (
+    uuid_generate_v4(),
+    '山田',
+    '太郎',
+    'A@example.com',
+    '080-1234-5678',
+    '東京都新宿区',
+    '2000-01-01 00:00:00',
+    '普通自動車免許',
     CURRENT_TIMESTAMP
 );

@@ -35,21 +35,16 @@ app = FastAPI(
     version="0.1.0"
 )
 
-# CORSミドルウェアをアプリケーションに追加
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # すべてのオリジンからのアクセスを許可する場合は["*"]とします
+    allow_origins=["http://localhost:5173"],  # 開発用フロントエンド
     allow_credentials=True,
-    allow_methods=["*"],  # すべてのHTTPメソッドを許可する場合は["*"]とします
-    allow_headers=["*"],  # すべてのヘッダーを許可する場合は["*"]とします
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-
 
 @app.get("/")
 async def root() -> Dict[str, str]:
-    """
-    ルートエンドポイント - APIの基本情報を返します
-    """
     return {"message": "Gamification for factory API"}
 
 @app.get("/health")
@@ -133,6 +128,6 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=3000,
-        reload=True  # 開発中はホットリロードを有効にする
+        port=8000,
+        reload=True
     )

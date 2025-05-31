@@ -78,26 +78,28 @@
   border-radius: 12px;
   font-size: 0.8rem;
   font-weight: 500;
-  
-  &.保留中 {
-    background-color: #fff3e0;
-    color: #e65100;
-  }
-  
-  &.承認 {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-  }
-  
-  &.不承認 {
-    background-color: #ffebee;
-    color: #c62828;
-  }
-  
-  &.辞退 {
-    background-color: #f5f5f5;
-    color: #616161;
-  }
+}
+
+.未対応 {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.承認 {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.否認 {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.messageCell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .detailBtn {

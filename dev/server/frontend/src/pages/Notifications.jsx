@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Notifications.module.scss";
 import { usePageAnimation } from "../hooks/usePageAnimation";
+import { apiRequest } from "../config";
 
 export default function Notifications() {
   const containerRef = useRef(null);
@@ -28,10 +29,10 @@ export default function Notifications() {
       try {
         // 並列で全てのAPIからデータを取得
         const [eventsResponse, applicationsResponse, reviewsResponse, usersResponse] = await Promise.all([
-          fetch('http://localhost:1880/event'),
-          fetch('http://localhost:1880/applications'),
-          fetch('http://localhost:1880/api/reviews'),
-          fetch('http://localhost:1880/api/users')
+          fetch('http://localhost:8000/event'),
+          fetch('http://localhost:8000/applications'),
+          fetch('http://localhost:8000/api/reviews'),
+          fetch('http://localhost:8000/api/users')
         ]);
 
         // レスポンスのエラーチェック

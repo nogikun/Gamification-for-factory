@@ -10,12 +10,12 @@ export default function ReviewInputModal({
   users,
   events
 }) {
-  // 決め打ちのレビュアーリスト
-  const reviewerOptions = [
-    { id: "hr_manager", name: "田中 美咲（人事部長）" },
-    { id: "dept_manager", name: "佐藤 拓也（技術部門長）" },
-    { id: "factory_manager", name: "鈴木 健太（工場長）" }
-  ];
+  // 企業レビュー用の固定オプション
+  const companyOption = { 
+    id: "00000000-0000-0000-0000-000000000099", 
+    name: "企業",
+    isCompany: true 
+  };
 
   const [formData, setFormData] = useState({
     reviewer_id: "", // レビュアーを選択式
@@ -25,17 +25,49 @@ export default function ReviewInputModal({
     comment: "",
     advice: ""
   });
+
+  // レビュアーの候補を取得する関数
+  const getReviewerOptions = () => {
+    if (!users || users.length === 0) return [];
+    return users;
+  };
+
+  // 評価対象者の候補を取得する関数（レビュアーと同じユーザーは選択不可）
+  const getRevieweeOptions = () => {
+    if (!users || users.length === 0) return [];
+    
+    // 選択されたレビュアーのIDを取得
+    const selectedReviewerId = formData.reviewer_id;
+    
+    // レビュアーと異なるユーザーのみをフィルタリング
+    return users.filter(user => user.user_id !== selectedReviewerId);
+  };
   
   // モーダルが開いたときに選択されたユーザーとイベントを設定
   useEffect(() => {
     if (open) {
+      // 選択されたユーザーが応募者の場合、評価対象者を企業に設定
+      const isSelectedUserApplicant = selectedUser && selectedUser.user_type === 'applicant';
+      
       setFormData(prev => ({
         ...prev,
-        reviewee_id: selectedUser ? selectedUser.user_id : "",
-        event_id: selectedEvent ? selectedEvent.event_id : ""
+        reviewee_id: isSelectedUserApplicant ? companyOption.id : (selectedUser ? selectedUser.user_id : ""),
+        event_id: selectedEvent ? selectedEvent.event_id : "",
+        // 詳細ボタンからの場合、レビュアーID情報も引き継ぐ
+        reviewer_id: isSelectedUserApplicant ? selectedUser.user_id : (prev.reviewer_id || "")
       }));
     }
-  }, [open, selectedUser, selectedEvent]);
+  }, [open, selectedUser, selectedEvent]); 
+
+  // レビュアーが変更されたときに、評価対象者が同じだった場合はリセット
+  useEffect(() => {
+    if (formData.reviewer_id && formData.reviewer_id === formData.reviewee_id) {
+      setFormData(prev => ({
+        ...prev,
+        reviewee_id: ""
+      }));
+    }
+  }, [formData.reviewer_id]);
 
   if (!open) return null;
   
@@ -62,6 +94,11 @@ export default function ReviewInputModal({
       return;
     }
     
+    if (formData.reviewer_id === formData.reviewee_id) {
+      alert('レビュアーと評価対象者に同じユーザーは選択できません');
+      return;
+    }
+    
     if (!formData.event_id) {
       alert('イベントを選択してください');
       return;
@@ -80,6 +117,19 @@ export default function ReviewInputModal({
     });
   };
 
+  // 選択されたユーザーが応募者かどうかを判定
+  const isApplicantReviewing = selectedUser && selectedUser.user_type === 'applicant';
+  
+  // レビュアーオプション（応募者がレビューする場合は応募者自身のみ）
+  const currentReviewerOptions = isApplicantReviewing 
+    ? [{ id: selectedUser.user_id, name: `${selectedUser.last_name} ${selectedUser.first_name}` }]
+    : getReviewerOptions();
+  
+  // 評価対象者オプション（応募者がレビューする場合は企業のみ、それ以外はレビュアー以外のユーザー）
+  const revieweeOptions = isApplicantReviewing 
+    ? [companyOption] // 応募者が評価する場合は企業のみ
+    : getRevieweeOptions();
+
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
@@ -94,11 +144,12 @@ export default function ReviewInputModal({
               onChange={handleChange}
               required
               className={styles.formSelect}
+              disabled={isApplicantReviewing} // 応募者がレビューする場合は固定
             >
               <option value="">-- レビュアーを選択 --</option>
-              {reviewerOptions.map(option => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
+              {currentReviewerOptions.map(user => (
+                <option key={user.user_id || user.id || 'empty'} value={user.user_id || user.id || ''}>
+                  {user.isCompany ? '企業' : `${user.last_name} ${user.first_name}`}
                 </option>
               ))}
             </select>
@@ -112,15 +163,18 @@ export default function ReviewInputModal({
               onChange={handleChange}
               required
               className={styles.formSelect}
-              disabled={selectedUser !== null}
+              disabled={selectedUser !== null || isApplicantReviewing} // 応募者がレビューする場合は固定
             >
               <option value="">-- 評価対象者を選択 --</option>
-              {users && users.map(user => (
-                <option key={user.user_id} value={user.user_id}>
-                  {user.last_name} {user.first_name}
+              {revieweeOptions.map(user => (
+                <option key={user.user_id || user.id || 'empty'} value={user.user_id || user.id || ''}>
+                  {user.isCompany ? '企業' : `${user.last_name} ${user.first_name}`}
                 </option>
               ))}
             </select>
+            {formData.reviewer_id && !formData.reviewee_id && (
+              <p className={styles.formHint}>※レビュアーと同じユーザーは選択できません</p>
+            )}
           </div>
           
           <div className={styles.formField}>
@@ -135,7 +189,7 @@ export default function ReviewInputModal({
             >
               <option value="">-- イベントを選択 --</option>
               {events && events.map(event => (
-                <option key={event.event_id} value={event.event_id}>
+                <option key={event.event_id || 'empty'} value={event.event_id || ''}>
                   {event.title}
                 </option>
               ))}

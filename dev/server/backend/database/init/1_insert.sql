@@ -145,3 +145,28 @@ VALUES (
     '2025-05-22 09:15:00',
     '自己分析がしっかりできており、志望動機に説得力がありました。'
 );
+
+-- company用デモデータの挿入
+INSERT INTO company (
+    user_id,
+    company_name,
+    mail_address,
+    phone_number,
+    address,
+    capital,
+    employees,
+    establishment_date,
+    overview,
+    updated_at
+)VALUES(
+    uuid_generate_v4(),
+    '株式会社A',
+    'A@gmail.com',
+    '080-1234-5678',
+    '大阪府大阪市中央区',
+    10000000,
+    50,
+    '2025-05-01 00:00:00',
+    '製造企業',
+    CURRENT_TIMESTAMP
+);

@@ -1,0 +1,127 @@
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.18);
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
+}
+.drawer {
+  background: #fff;
+  width: 380px;
+  max-width: 90vw;
+  height: 100vh;
+  box-shadow: -2px 0 20px rgba(0,0,0,0.09);
+  padding: 32px 28px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+h2 {
+  font-size: 1.3rem;
+  margin-bottom: 24px;
+  color: #1976d2;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 12px;
+}
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 16px;
+  padding-left: 6px;
+  border-left: 3px solid #1976d2;
+}
+.detailSection {
+  margin-bottom: 28px;
+}
+.detailField {
+  margin-bottom: 12px;
+  font-size: 1.04em;
+  display: flex;
+  flex-wrap: wrap;
+  span {
+    display: inline-block;
+    min-width: 100px;
+    color: #888;
+    margin-right: 8px;
+    font-weight: 600;
+    font-size: 0.9em;
+  }
+}
+.statusBadge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 20px;
+  background: #f5f5f5;
+  color: #555;
+}
+.status_未対応 {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+.status_承認 {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.status_拒否 {
+  background: #ffebee;
+  color: #c62828;
+}
+.status_選考中 {
+  background: #fff8e1;
+  color: #f57f17;
+}
+.status_面接待ち {
+  background: #ede7f6;
+  color: #512da8;
+}
+.status_合格 {
+  background: #e0f7fa;
+  color: #00838f;
+}
+.buttonRow {
+  margin-top: auto;
+  display: flex;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+.approve {
+  background: #1abc9c;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  &:hover {
+    background: #16a085;
+  }
+}
+.reject {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  &:hover {
+    background: #c0392b;
+  }
+}
+.close {
+  background: #fff;
+  color: #1976d2;
+  border: 1px solid #1976d2;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  &:hover {
+    background: #f5f9ff;
+  }
+}

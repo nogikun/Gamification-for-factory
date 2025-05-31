@@ -1,0 +1,18 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.main {
+  margin-left: $sidebar-width;
+  padding-top: $topbar-height;
+  padding: 32px 24px 24px 24px;
+  width: calc(100% - #{$sidebar-width});
+  min-height: calc(100vh - #{$topbar-height});
+  background: $bg-base;
+  color: $text-main;
+  transition: margin-left 0.3s, width 0.3s;
+  @include mq-mobile {
+    margin-left: 0;
+    width: 100%;
+    padding: 24px 8px 8px 8px;
+  }
+}

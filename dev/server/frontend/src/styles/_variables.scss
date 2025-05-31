@@ -1,0 +1,30 @@
+// Color Palette
+// === ダークテーマ ===
+$accent: #0d47a1;
+$accent-hover: #1565c0;
+$bg-base: #121212;
+$bg-surface: #181818;
+$bg-sidebar: #181818;
+$bg-topbar: #1e1e1e;
+$text-main: #f5f5f5;
+$text-secondary: #aaaaaa;
+$hover-bg: rgba(255,255,255,0.08);
+
+// === ホワイトテーマ ===
+$white-bg-base: #f7f7f7;
+$white-bg-surface: #fff;
+$white-bg-sidebar: #fff;
+$white-bg-topbar: #f5f8fa;
+$white-text-main: #232323;
+$white-text-secondary: #757575;
+$white-hover-bg: rgba(13,71,161,0.07);
+
+// Layout
+$sidebar-width: 220px;
+$topbar-height: 56px;
+
+// Typography
+$font-main: 'Inter', 'Noto Sans JP', sans-serif;
+
+// Breakpoints
+$breakpoint-mobile: 768px;

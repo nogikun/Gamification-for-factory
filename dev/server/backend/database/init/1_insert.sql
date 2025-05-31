@@ -47,8 +47,10 @@ INSERT INTO applicant (
 -- participants用テストデータの挿入
 INSERT INTO participants (
     event_id,
+    -- user_id,
     status
     ) VALUES (
         1,
+        -- 'abcd1234',
         '参加中'
         );

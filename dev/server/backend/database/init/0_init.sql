@@ -108,8 +108,7 @@ CREATE TABLE participants (
     status TEXT CHECK (status IN ('申請中', '参加中', '終了')),       -- 参加状態（申請中、参加中、終了）
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                 -- 作成日時 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP                  -- 更新日時
-    );
-)
+);
 
 --------------------------------------------------
 --   TABLE NAME: player
@@ -122,4 +121,4 @@ CREATE TABLE player (
     skill_data JSON NOT NULL,                               -- スキルデータ
     item_data JSON NOT NULL,                                -- 保有中のアイテム
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP          -- 更新日時
-)
+);

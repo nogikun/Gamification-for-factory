@@ -218,3 +218,14 @@ INSERT INTO applicant (
     '普通自動車免許',
     CURRENT_TIMESTAMP
 );
+
+-- participants用テストデータの挿入
+INSERT INTO participants (
+    event_id,
+    user_id,
+    status
+    ) VALUES (
+        1,
+        '11111111-1111-1111-1111-111111111111',
+        '参加中'
+        );

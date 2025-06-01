@@ -51,7 +51,7 @@ def migrate_reviews_table():
             conn.execute(text("""
             CREATE TABLE public.reviews (
                 review_id SERIAL PRIMARY KEY,
-                application_id INTEGER REFERENCES applications(application_id),
+                application_id UUID REFERENCES applications(application_id),
                 reviewer_id UUID NOT NULL,
                 rating FLOAT NOT NULL,
                 comment TEXT,

@@ -150,7 +150,7 @@ const Tab4: React.FC = () => {
 
                 <HostServerCard
                     host="http://localhost"
-                    port="8000"
+                    port="3000"
                     width="100%"
                     height="300px"
                 />

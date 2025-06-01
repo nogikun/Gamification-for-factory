@@ -8,7 +8,7 @@ def final_test():
     json_data = json.dumps(data).encode('utf-8')
     
     req = urllib.request.Request(
-        "http://localhost:8000/get-events",
+        "http://localhost:3000/get-events",
         data=json_data,
         headers={"Content-Type": "application/json"},
         method='POST'

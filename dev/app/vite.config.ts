@@ -29,6 +29,13 @@ export default defineConfig({
   },
   server: {
     host: true,
+    proxy: { // ★ プロキシ設定
+      '/api': { // '/api' で始まるリクエストをプロキシする
+        target: 'http://localhost:3000', // あなたのAPIサーバーのURL
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // '/api' を削除してリクエスト
+      }
+    }
   },
   resolve: {
     alias: {

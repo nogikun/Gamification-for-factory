@@ -20,7 +20,7 @@ test_data = {
 
 # POSTリクエストを送信
 response = requests.post(
-    "http://localhost:8000/join-event",
+    "http://localhost:3000/join-event",
     json=test_data,
     headers={"Content-Type": "application/json"}
 )

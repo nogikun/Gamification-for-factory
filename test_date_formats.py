@@ -4,7 +4,7 @@ import json
 
 def test_different_date_formats():
     """異なる日付形式で /get-events エンドポイントをテストします"""
-    url = "http://localhost:8000/get-events"
+    url = "http://localhost:3000/get-events"
     headers = {"Content-Type": "application/json"}
     
     # 様々な日付形式をテスト

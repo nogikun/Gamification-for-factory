@@ -49,10 +49,10 @@ const Dashboard = () => {
       try {
         // 並列で全てのAPIからデータを取得
         const [eventsResponse, applicationsResponse, reviewsResponse, usersResponse] = await Promise.all([
-          fetch('http://localhost:8000/event'),
-          fetch('http://localhost:8000/applications'),
-          fetch('http://localhost:8000/api/reviews'),
-          fetch('http://localhost:8000/api/users')
+          fetch('http://localhost:3000/event'),
+          fetch('http://localhost:3000/applications'),
+          fetch('http://localhost:3000/api/reviews'),
+          fetch('http://localhost:3000/api/users')
         ]);
 
         // レスポンスチェック

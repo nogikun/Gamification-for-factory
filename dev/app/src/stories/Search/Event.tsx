@@ -71,20 +71,32 @@ interface EventData {
 async function fetchEventById(eventId: string, host: string, port?: string): Promise<EventData> {
     const endpoint = `/event/${eventId}`;
     const url = port ? `${host}:${port}${endpoint}` : `${host}${endpoint}`;
+    console.log('Requesting URL:', url); // ★ リクエストURLをコンソールに出力
     const response = await fetch(url, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
     });
-    if (!response.ok) {
+
+    // レスポンスヘッダーとステータスコードの確認
+    const contentType = response.headers.get("content-type");
+    if (!response.ok || !contentType || !contentType.includes("application/json")) {
         let errorDetail = `HTTP error! status: ${response.status}`;
+        if (contentType && !contentType.includes("application/json")) {
+            errorDetail += `. Expected application/json but received ${contentType}`;
+        }
         try {
-            const errorData = await response.json();
-            if (errorData && errorData.detail) {
-                errorDetail = typeof errorData.detail === 'string' ? errorData.detail : JSON.stringify(errorData.detail);
-            }
-        } catch (e) { /* JSONパース失敗時は何もしない */ }
+            // HTMLやテキストの場合でもエラーメッセージを取得試行
+            const errorText = await response.text();
+            console.error("Server response (text):", errorText); // ログに実際のレスポンスを出力
+            // 詳細なエラーメッセージがあればそれを利用
+            // ここでは単純化のため、テキスト全体をエラー詳細に含めるか、一部を抜粋するなどの処理も可能
+            errorDetail += `. Response: ${errorText.substring(0, 100)}...`; // 長すぎる場合は一部を抜粋
+        } catch (e) {
+            // テキストの取得に失敗した場合は何もしない
+        }
         throw new Error(errorDetail);
     }
+
     return response.json();
 }
 

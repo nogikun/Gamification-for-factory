@@ -3,7 +3,7 @@ import styles from "./CompanyEdit.module.scss";
 import { usePageAnimation } from "../hooks/usePageAnimation";
 
 // APIベースURL
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = "http://localhost:3000";
 
 export default function CompanyEdit() {
   const containerRef = useRef(null);

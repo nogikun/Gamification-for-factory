@@ -12,7 +12,7 @@ print(f"Request data: {test_data}")
 # POSTリクエストを送信
 try:
     response = requests.post(
-        "http://localhost:8000/get-events",
+        "http://localhost:3000/get-events",
         json=test_data,
         headers={"Content-Type": "application/json"},
         timeout=10

@@ -5,7 +5,7 @@ import json
 
 def test_database_api():
     """実際のデータベースAPIエンドポイントをテストします"""
-    url = "http://localhost:8000/get-events"
+    url = "http://localhost:3000/get-events"
     headers = {"Content-Type": "application/json"}
     data = {"target_date": "2025-05-11"}  # データベースにサンプルデータがある日付
     

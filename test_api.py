@@ -5,7 +5,7 @@ import json
 
 def test_api():
     """APIエンドポイントをテストします"""
-    url = "http://localhost:8000/demo/get-events"
+    url = "http://localhost:3000/demo/get-events"
     headers = {"Content-Type": "application/json"}
     data = {"target_date": "2024-01-15"}
     

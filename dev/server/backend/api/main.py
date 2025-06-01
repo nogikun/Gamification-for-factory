@@ -87,7 +87,7 @@ async def health_check() -> Dict[str, str]:
 
 
 # --- CRUD関数 (リポジトリ層として分離も検討) --- #
-def get_event(db: Session, event_id: int) -> Optional[EventModel]:
+def get_event(db: Session, event_id: uuid.UUID) -> Optional[EventModel]:
     """Get a single event by ID."""
     return db.query(EventModel).filter(EventModel.event_id == event_id).first()
 
@@ -160,7 +160,7 @@ def create_event(db: Session, event_data: EventCreate) -> EventModel:
 
 def update_event(
     db: Session,
-    event_id: int,
+    event_id: uuid.UUID,
     event_data: EventUpdate
 ) -> Optional[EventModel]:
     """Update an existing event."""

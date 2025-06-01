@@ -1,6 +1,3 @@
--- データベースを作成
-CREATE DATABASE gamification;
-
 -- uuid-ossp 拡張機能を有効にする
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -20,7 +17,7 @@ CREATE TABLE test (
 -- DESCRIPTIONS: ユーザー情報を管理する。
 --------------------------------------------------
 -- ENUMの定義（先に実行）
-CREATE TYPE user_type_enum AS ENUM ('参加者', '企業');
+CREATE TYPE user_type_enum AS ENUM ('APPLICANT', 'COMPANY');
 -- テーブル作成
 CREATE TABLE users (
     user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),        -- ユーザーID（主キー）
@@ -54,7 +51,7 @@ CREATE TABLE company (
 -- DESCRIPTIONS: ユーザーの基本情報を格納するテーブル
 --------------------------------------------------
 CREATE TABLE applicant (
-    user_id UUID PRIMARY KEY DEFAULT,                       -- ユーザーID（主キー）
+    user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),    -- ユーザーID（主キー）
     last_name VARCHAR(50) NOT NULL,                         -- ユーザーの姓
     first_name VARCHAR(50) NOT NULL,                        -- ユーザーの名
     mail_address TEXT,                                      -- メールアドレス
@@ -70,7 +67,7 @@ CREATE TABLE applicant (
 --   TABLE NAME: events
 -- DESCRIPTIONS: イベント情報を格納するテーブル
 --------------------------------------------------
-CREATE TYPE event_type AS ENUM ('インターンシップ', '説明会');
+CREATE TYPE event_type AS ENUM ('INTERNSHIP', 'SEMINAR');
 CREATE TABLE events (
     event_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),   -- イベントID（主キー）
     company_id UUID NOT NULL,                               -- 企業ID（外部キー）
@@ -94,12 +91,12 @@ CREATE TABLE events (
 --   TABLE NAME: applications
 -- DESCRIPTIONS: イベントへの応募情報を管理するテーブル
 --------------------------------------------------
-CREATE TYPE application_status AS ENUM ('未対応', '承認', '否認');
+CREATE TYPE application_status AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 CREATE TABLE applications (
     application_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- 応募ID（主キー）
-    event_id INTEGER NOT NULL,                                  -- イベントID（外部キー）
+    event_id UUID NOT NULL,                                     -- イベントID（外部キー）
     user_id UUID NOT NULL,                                      -- ユーザーID（外部キー）
-    status application_status NOT NULL DEFAULT '未対応',         -- 応募状態
+    status application_status NOT NULL DEFAULT 'PENDING',         -- 応募状態
     message TEXT,                                               -- 応募メッセージ
     applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,             -- 応募日時
     processed_at TIMESTAMP,                                     -- 処理日時
@@ -125,12 +122,12 @@ CREATE TABLE applications (
 --   TABLE NAME: participants
 -- DESCRIPTIONS: イベント参加者情報を管理するテーブル
 --------------------------------------------------
-CREATE TYPE participants_status AS ENUM ('申請中', '参加中', '終了');
+CREATE TYPE participants_status AS ENUM ('PENDING', 'ACTIVE', 'COMPLETED');
 CREATE TABLE participants (
     participant_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),     -- 参加者ID（主キー）
     event_id UUID REFERENCES events(event_id),                      -- イベントID（外部キー）
     user_id UUID REFERENCES users(user_id),                         -- ユーザーID（外部キー）
-    status participants_status NOT NULL DEFAULT '申請中',            -- 参加者のステータス
+    status participants_status NOT NULL DEFAULT 'PENDING',            -- 参加者のステータス
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                 -- 作成日時
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                 -- 更新日時
     FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE, -- * イベントが削除された場合、関連する参加者情報も削除（ユーザーから見える形にするなら、参加者情報は残すべき）

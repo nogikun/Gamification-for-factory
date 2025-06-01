@@ -52,7 +52,7 @@ class EventUpdate(EventBase):
     # 他のフィールドも同様にOptionalにするか検討
 
 class Event(EventBase):
-    event_id: int # DBの event_id (Integer) に対応
+    event_id: uuid.UUID # UUIDに変更
     created_at: datetime
     updated_at: datetime
 
@@ -103,7 +103,7 @@ class Applicant(ApplicantBase):
 
 # 応募モデル
 class ApplicationBase(BaseModel):
-    event_id: int
+    event_id: uuid.UUID  # UUIDに変更
     user_id: uuid.UUID
     message: Optional[str] = None
 
@@ -115,7 +115,7 @@ class ApplicationUpdate(BaseModel):
     processed_by: Optional[uuid.UUID] = None
 
 class ApplicationResponse(ApplicationBase):
-    application_id: int
+    application_id: uuid.UUID  # UUIDに変更
     status: str
     applied_at: datetime
     processed_at: Optional[datetime] = None
@@ -145,7 +145,7 @@ class ApplicationDetail(ApplicationResponse):
 
 # レビューモデル
 class ReviewBase(BaseModel):
-    application_id: int
+    application_id: uuid.UUID  # UUIDに変更
     reviewer_id: uuid.UUID
     rating: float
     comment: Optional[str] = None
@@ -158,7 +158,7 @@ class ReviewUpdate(BaseModel):
     comment: Optional[str] = None
 
 class Review(ReviewBase):
-    review_id: int
+    review_id: int  # このままでOK（ReviewはSerialタイプのまま）
     created_at: datetime
     updated_at: datetime
 

@@ -26,7 +26,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend/database/init:/docker-entrypoint-initdb.d
-      - postgres-data:/var/lib/postgresql/data
+      # - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     restart: unless-stopped

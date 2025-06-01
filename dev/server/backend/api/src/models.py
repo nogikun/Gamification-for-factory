@@ -5,6 +5,11 @@ from datetime import datetime
 import enum
 import uuid  # Pythonのuuidモジュールをインポート
 
+# 0_init.sql の user_type_enum ENUM に対応
+class UserTypeEnum(enum.Enum):
+    APPLICANT = "参加者"
+    COMPANY = "企業"
+
 # 0_init.sql の event_type ENUM に対応
 class EventTypeEnum(enum.Enum):
     INTERNSHIP = "インターンシップ"
@@ -16,6 +21,12 @@ class ApplicationStatusEnum(enum.Enum):
     APPROVED = "承認"
     REJECTED = "否認"
 
+# 0_init.sql の participants_status ENUM に対応
+class ParticipantStatusEnum(enum.Enum):
+    PENDING = "申請中"
+    ACTIVE = "参加中"
+    COMPLETED = "終了"
+
 # レビューステータスEnum
 class ReviewStatusEnum(enum.Enum):
     REQUESTED = "依頼中"
@@ -24,7 +35,7 @@ class ReviewStatusEnum(enum.Enum):
 class Event(Base):
     __tablename__ = "events"
 
-    event_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    event_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     # company_id = Column(UUID(as_uuid=True), ForeignKey("company.user_id"), nullable=False) # companyテーブルとの連携は後で検討
     company_id = Column(UUID(as_uuid=True), nullable=False) # まずは company_id をUUID型として定義
     event_type = Column(SAEnum(EventTypeEnum, name="event_type"), nullable=False)
@@ -46,8 +57,8 @@ class Event(Base):
 class Application(Base):
     __tablename__ = "applications"
     
-    application_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    event_id = Column(Integer, ForeignKey("events.event_id"), nullable=False)
+    application_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    event_id = Column(UUID(as_uuid=True), ForeignKey("events.event_id"), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("applicant.user_id"), nullable=False)
     status = Column(SAEnum(ApplicationStatusEnum, name="application_status"), nullable=False, default=ApplicationStatusEnum.PENDING)
     message = Column(Text, nullable=True)
@@ -83,7 +94,7 @@ class ReviewRequest(Base):
     __table_args__ = {"schema": "public"}
     
     review_request_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    application_id = Column(Integer, ForeignKey("applications.application_id"), nullable=False)
+    application_id = Column(UUID(as_uuid=True), ForeignKey("applications.application_id"), nullable=False)
     requested_by = Column(UUID(as_uuid=True), nullable=False)
     requested_at = Column(DateTime, server_default=func.now())
     request_message = Column(Text, nullable=True)
@@ -95,9 +106,29 @@ class Review(Base):
     __table_args__ = {"schema": "public"}
     
     review_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    application_id = Column(Integer, ForeignKey("applications.application_id"), nullable=False)
+    application_id = Column(UUID(as_uuid=True), ForeignKey("applications.application_id"), nullable=False)
     reviewer_id = Column(UUID(as_uuid=True), nullable=False)
     rating = Column(Float, nullable=False)
     comment = Column(Text, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now()) 
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+class Participant(Base):
+    __tablename__ = "participants"
+    
+    participant_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    event_id = Column(UUID(as_uuid=True), ForeignKey("events.event_id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=False)
+    status = Column(SAEnum(ParticipantStatusEnum, name="participants_status"), nullable=False, default=ParticipantStatusEnum.PENDING)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+class User(Base):
+    __tablename__ = "users"
+    
+    user_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    user_type = Column(SAEnum(UserTypeEnum, name="user_type_enum"), nullable=True)
+    user_name = Column(String(50), nullable=True)
+    created_at = Column(DateTime, nullable=True)
+    login_time = Column(DateTime, nullable=True)
+    ai_advice = Column(Text, nullable=True)

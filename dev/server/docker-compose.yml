@@ -6,12 +6,11 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     ports:
-      - "3000:3000"
+      - "8000:8000"
     volumes:
       - "./backend/api:/app"
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql+psycopg2://postgres:postgres@postgres:5432/gamification
       - HOST=0.0.0.0
       - PORT=8000
     depends_on:
@@ -28,7 +27,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend/database/init:/docker-entrypoint-initdb.d
-      - postgres-data:/var/lib/postgresql/data
+      # - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     restart: unless-stopped
@@ -53,12 +52,13 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_BASE_URL=http://localhost:8000
+      - VITE_API_BASE_URL=http://backend:8000
     volumes:
       - ./frontend:/app
       - /app/node_modules
     depends_on:
       - api
+      - postgres
     restart: unless-stopped
     networks:
       - default

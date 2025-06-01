@@ -1,11 +1,10 @@
-from random import randint, choice, random, sample
+from random import randint, choice, sample
 from datetime import datetime
 import base64
-from PIL import Image
-import io
 
 # local imports
-from ..schema.fastapi.schema import Event, DateModel
+from src.schemas.database.event import Event as EventSchema
+from src.schemas.api.base import DateModel
 
 class EventGenerator:
     def __init__(self):
@@ -59,7 +58,7 @@ class EventGenerator:
             print(f"Error: {image_path} が見つかりません。")
             return None
 
-    def generate_event_data(self, target_date: DateModel) -> Event:
+    def generate_event_data(self, target_date: DateModel) -> EventSchema:
         """
         デモ用のイベントデータを生成します
         """
@@ -99,9 +98,9 @@ class EventGenerator:
             "tags": sample(self.event_types, k=randint(1, 3)),
             "image": self.image_to_base64(choice(self.sample_images)),
         }
-        return Event(**event_data)
+        return EventSchema(**event_data)
 
-    def generate_event_data_list(self, target_date: DateModel, num_events: int = randint(5, 10)) -> list[Event]:
+    def generate_event_data_list(self, target_date: DateModel, num_events: int = randint(5, 10)) -> list[EventSchema]:
         """
         デモ用のイベントデータのリストを生成します
         """

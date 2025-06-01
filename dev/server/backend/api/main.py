@@ -1,21 +1,33 @@
-import os, sys
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-from typing import Dict, List, Optional
-import uuid
-from datetime import datetime
+"""
+Main FastAPI application for Gamification API.
+"""
 import base64
 import json
+import os
+import sys
+import uuid
+from datetime import datetime, timezone
+from typing import Dict, List, Optional
 
+import uvicorn
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from sqlalchemy import select, join
 
 # local imports
-from src.schema.schema import Event as EventSchema, EventCreate, EventUpdate, DateModel, ApplicationResponse, ApplicationUpdate, ApplicationDetail, ApplicationCreate, ApplicantCreate, Applicant as ApplicantSchema, ReviewCreate, Review as ReviewSchema, ReviewDetail # ReviewRequestCreate, ReviewRequest等を削除
-from src.models import Event as EventModel, EventTypeEnum, Application as ApplicationModel, Applicant as ApplicantModel, ApplicationStatusEnum, Review as ReviewModel # ReviewRequestModelを削除
-from src.database import get_db, Base, get_engine, reset_reviews_table # reset_reviews_tableを追加
-# from src.demo.generator import EventGenerator # デモジェネレータはDB連携に伴い一旦コメントアウト
+from src.database import Base, get_db, get_engine, reset_reviews_table
+from src.models import (Applicant as ApplicantModel,
+                        Application as ApplicationModel,
+                        ApplicationStatusEnum, Event as EventModel,
+                        EventTypeEnum, Review as ReviewModel)
+from src.schema.schema import (
+    ApplicantCreate, Applicant as ApplicantSchema,
+    ApplicationCreate,
+    ApplicationDetail,
+    ApplicationResponse, ApplicationUpdate,
+    Event as EventSchema, EventCreate, EventUpdate,
+    Review as ReviewSchema, ReviewCreate,
+    ReviewDetail)
 
 # reviewsテーブルをリセット
 reset_reviews_table()
@@ -29,6 +41,7 @@ project_root = os.path.dirname(os.path.dirname(current_dir))
 if project_root not in sys.path:
     sys.path.append(project_root)
 
+
 # --- ヘルパー関数 --- #
 def get_event_type_enum(value: str) -> EventTypeEnum:
     """日本語の値からEventTypeEnumを取得する"""
@@ -37,12 +50,14 @@ def get_event_type_enum(value: str) -> EventTypeEnum:
             return enum_member
     raise ValueError(f"Invalid event_type value: {value}")
 
+
 def get_application_status_enum(value: str) -> ApplicationStatusEnum:
     """日本語の値からApplicationStatusEnumを取得する"""
     for enum_member in ApplicationStatusEnum:
         if enum_member.value == value:
             return enum_member
     raise ValueError(f"Invalid application_status value: {value}")
+
 
 app = FastAPI(
     title="Gamification API",
@@ -58,39 +73,62 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 async def root() -> Dict[str, str]:
+    """Root endpoint."""
     return {"message": "Gamification for factory API"}
+
 
 @app.get("/health")
 async def health_check() -> Dict[str, str]:
+    """Health check endpoint."""
     return {"status": "healthy"}
 
-# --- CRUD関数 (リポジトリ層として分離も検討) --- #
 
+# --- CRUD関数 (リポジトリ層として分離も検討) --- #
 def get_event(db: Session, event_id: int) -> Optional[EventModel]:
+    """Get a single event by ID."""
     return db.query(EventModel).filter(EventModel.event_id == event_id).first()
 
-def get_events(db: Session, skip: int = 0, limit: int = 100) -> List[EventModel]:
+
+def get_events(
+    db: Session,
+    skip: int = 0,
+    limit: int = 100
+) -> List[EventModel]:
+    """Get a list of events."""
     return db.query(EventModel).offset(skip).limit(limit).all()
 
+
 def create_event(db: Session, event_data: EventCreate) -> EventModel:
+    """Create a new event."""
     image_binary = None
     if event_data.image:
         try:
             # "data:image/png;base64," のようなプレフィックスを除去
-            header, encoded = event_data.image.split(",", 1)
+            _, encoded = event_data.image.split(",", 1)
             image_binary = base64.b64decode(encoded)
         except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Invalid image format: {e}")
-    
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid image format: {e}"
+            ) from e
+
     tags_json = None
     if event_data.tags:
         try:
-            # フロントエンドから来るのは既にJSON文字列のはずだが、念のためオブジェクトなら文字列化
-            tags_json = json.loads(event_data.tags) if isinstance(event_data.tags, str) else event_data.tags
-        except json.JSONDecodeError:
-            raise HTTPException(status_code=400, detail="Tags must be a valid JSON string")
+            # フロントエンドから来るのは既にJSON文字列のはずだが、
+            # 念のためオブジェクトなら文字列化
+            if isinstance(event_data.tags, str):
+                tags_json = json.loads(event_data.tags)
+            else:
+                tags_json = event_data.tags
+        except json.JSONDecodeError as e:
+            raise HTTPException(
+                status_code=400,
+                detail="Tags must be a valid JSON string"
+            ) from e
 
     # event_type の処理を修正
     event_type_enum = None
@@ -98,11 +136,11 @@ def create_event(db: Session, event_data: EventCreate) -> EventModel:
         try:
             event_type_enum = get_event_type_enum(event_data.event_type)
         except ValueError as e:
-            raise HTTPException(status_code=400, detail=str(e))
+            raise HTTPException(status_code=400, detail=str(e)) from e
 
     db_event = EventModel(
-        company_id=event_data.company_id, # UUIDオブジェクトをそのまま使用
-        event_type=event_type_enum, # 修正されたevent_type処理
+        company_id=event_data.company_id,  # UUIDオブジェクトをそのまま使用
+        event_type=event_type_enum,  # 修正されたevent_type処理
         title=event_data.title,
         description=event_data.description,
         start_date=event_data.start_date,
@@ -119,7 +157,13 @@ def create_event(db: Session, event_data: EventCreate) -> EventModel:
     db.refresh(db_event)
     return db_event
 
-def update_event(db: Session, event_id: int, event_data: EventUpdate) -> Optional[EventModel]:
+
+def update_event(
+    db: Session,
+    event_id: int,
+    event_data: EventUpdate
+) -> Optional[EventModel]:
+    """Update an existing event."""
     db_event = get_event(db, event_id)
     if not db_event:
         return None
@@ -128,36 +172,51 @@ def update_event(db: Session, event_id: int, event_data: EventUpdate) -> Optiona
 
     if 'image' in update_data and update_data['image']:
         try:
-            header, encoded = update_data['image'].split(",", 1)
+            _, encoded = update_data['image'].split(",", 1)
             update_data['image'] = base64.b64decode(encoded)
         except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Invalid image format for update: {e}")
-    elif 'image' in update_data and update_data['image'] is None: # 明示的に画像を削除する場合
-         update_data['image'] = None
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid image format for update: {e}"
+            ) from e
+    elif 'image' in update_data and update_data['image'] is None:
+        # 明示的に画像を削除する場合
+        update_data['image'] = None
 
     if 'tags' in update_data and update_data['tags']:
         try:
-            update_data['tags'] = json.loads(update_data['tags']) if isinstance(update_data['tags'], str) else update_data['tags']
-        except json.JSONDecodeError:
-            raise HTTPException(status_code=400, detail="Tags for update must be a valid JSON string")
-    
+            if isinstance(update_data['tags'], str):
+                update_data['tags'] = json.loads(update_data['tags'])
+            else:
+                update_data['tags'] = update_data['tags']
+        except json.JSONDecodeError as e:
+            raise HTTPException(
+                status_code=400,
+                detail="Tags for update must be a valid JSON string"
+            ) from e
+
     # event_type の処理を修正
     if 'event_type' in update_data and update_data['event_type']:
         try:
-            update_data['event_type'] = get_event_type_enum(update_data['event_type'])
+            update_data['event_type'] = get_event_type_enum(
+                update_data['event_type']
+            )
         except ValueError as e:
-            raise HTTPException(status_code=400, detail=str(e))
+            raise HTTPException(status_code=400, detail=str(e)) from e
 
     for key, value in update_data.items():
         setattr(db_event, key, value)
-    
-    db_event.updated_at = datetime.utcnow() # updated_at は手動で更新 (onupdateが効かない場合があるため)
+
+    # updated_at は手動で更新 (onupdateが効かない場合があるため)
+    db_event.updated_at = datetime.now(timezone.utc)
     db.add(db_event)
     db.commit()
     db.refresh(db_event)
     return db_event
 
+
 def delete_event(db: Session, event_id: int) -> Optional[EventModel]:
+    """Delete an event."""
     db_event = get_event(db, event_id)
     if not db_event:
         return None
@@ -165,8 +224,14 @@ def delete_event(db: Session, event_id: int) -> Optional[EventModel]:
     db.commit()
     return db_event
 
+
 # 応募一覧を取得する関数
-def get_applications(db: Session, skip: int = 0, limit: int = 100) -> List[Dict]:
+def get_applications(
+    db: Session,
+    skip: int = 0,
+    limit: int = 100
+) -> List[Dict]:
+    """Get a list of applications with event and applicant details."""
     # イベント情報と応募者情報を含む応募一覧を取得
     query = (
         db.query(
@@ -181,72 +246,102 @@ def get_applications(db: Session, skip: int = 0, limit: int = 100) -> List[Dict]
             ApplicantModel.phone_number.label("applicant_phone")
         )
         .join(EventModel, ApplicationModel.event_id == EventModel.event_id)
-        .join(ApplicantModel, ApplicationModel.user_id == ApplicantModel.user_id)
+        .join(ApplicantModel,
+              ApplicationModel.user_id == ApplicantModel.user_id)
         .offset(skip)
         .limit(limit)
         .all()
     )
-    
+
     # 結果をディクショナリのリストに変換
     results = []
     for row in query:
         application = row[0]  # ApplicationModelオブジェクト
-        
+
         # ApplicationDetailモデルに合わせてデータを整形
+        status_value = application.status
+        if isinstance(application.status, ApplicationStatusEnum):
+            status_value = application.status.value
+
+        event_type_value = row.event_type
+        if isinstance(row.event_type, EventTypeEnum):
+            event_type_value = row.event_type.value
+
         application_dict = {
             "application_id": application.application_id,
             "event_id": application.event_id,
             "user_id": application.user_id,
-            "status": application.status.value if isinstance(application.status, ApplicationStatusEnum) else application.status,
+            "status": status_value,
             "message": application.message,
             "applied_at": application.applied_at,
             "processed_at": application.processed_at,
             "processed_by": application.processed_by,
             "event_title": row.event_title,
-            "event_type": row.event_type.value if isinstance(row.event_type, EventTypeEnum) else row.event_type,
+            "event_type": event_type_value,
             "event_start_date": row.event_start_date,
             "event_end_date": row.event_end_date,
-            "applicant_name": f"{row.applicant_last_name} {row.applicant_first_name}",
+            "applicant_name":
+                f"{row.applicant_last_name} {row.applicant_first_name}",
             "applicant_email": row.applicant_mail,
             "applicant_phone": row.applicant_phone
         }
         results.append(application_dict)
-    
+
     return results
 
+
 # 応募ステータスを更新する関数
-def update_application_status(db: Session, application_id: int, data: ApplicationUpdate) -> Optional[ApplicationModel]:
-    application = db.query(ApplicationModel).filter(ApplicationModel.application_id == application_id).first()
+def update_application_status(
+    db: Session,
+    application_id: int,
+    data: ApplicationUpdate
+) -> Optional[ApplicationModel]:
+    """Update the status of an application."""
+    application = (
+        db.query(ApplicationModel)
+        .filter(ApplicationModel.application_id == application_id)
+        .first()
+    )
     if not application:
         return None
-    
+
     # ステータスをEnumに変換
     try:
         status_enum = get_application_status_enum(data.status)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    
+        raise HTTPException(status_code=400, detail=str(e)) from e
+
     application.status = status_enum
-    application.processed_at = datetime.utcnow()
+    application.processed_at = datetime.now(timezone.utc)
     application.processed_by = data.processed_by
-    
+
     db.add(application)
     db.commit()
     db.refresh(application)
     return application
 
+
 # 応募者を作成する関数
-def create_applicant(db: Session, applicant_data: ApplicantCreate) -> ApplicantModel:
+def create_applicant(
+    db: Session,
+    applicant_data: ApplicantCreate
+) -> ApplicantModel:
+    """Create a new applicant."""
     # 生年月日の処理
     birth_date = None
     if isinstance(applicant_data.birth_date, str):
         try:
-            birth_date = datetime.fromisoformat(applicant_data.birth_date.replace('Z', '+00:00'))
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid birth_date format")
+            birth_date = datetime.fromisoformat(
+                applicant_data.birth_date.replace('Z', '+00:00')
+            )
+        except ValueError as e:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid birth_date format"
+            ) from e
     else:
         birth_date = applicant_data.birth_date
-        
+
     # 応募者データを作成
     db_applicant = ApplicantModel(
         user_id=uuid.uuid4(),  # 明示的にUUIDを生成
@@ -258,39 +353,56 @@ def create_applicant(db: Session, applicant_data: ApplicantCreate) -> ApplicantM
         birth_date=birth_date,
         license=applicant_data.license
     )
-    
+
     db.add(db_applicant)
     db.commit()
     db.refresh(db_applicant)
     return db_applicant
 
+
 # 応募者一覧を取得する関数
-def get_applicants(db: Session, skip: int = 0, limit: int = 100) -> List[ApplicantModel]:
+def get_applicants(
+    db: Session,
+    skip: int = 0,
+    limit: int = 100
+) -> List[ApplicantModel]:
+    """Get a list of applicants."""
     return db.query(ApplicantModel).offset(skip).limit(limit).all()
 
+
 # 応募を作成する関数
-def create_application(db: Session, application_data: ApplicationCreate) -> ApplicationModel:
+def create_application(
+    db: Session,
+    application_data: ApplicationCreate
+) -> ApplicationModel:
+    """Create a new application."""
     # ステータスは未対応（PENDING）に設定
     db_application = ApplicationModel(
         event_id=application_data.event_id,
         user_id=application_data.user_id,
         status=ApplicationStatusEnum.PENDING,
         message=application_data.message,
-        applied_at=datetime.utcnow()
+        applied_at=datetime.now(timezone.utc)
     )
-    
+
     db.add(db_application)
     db.commit()
     db.refresh(db_application)
     return db_application
 
+
 # レビューを作成する関数
 def create_review(db: Session, review_data: ReviewCreate) -> ReviewModel:
+    """Create a new review."""
     # 応募が存在するか確認
-    application = db.query(ApplicationModel).filter(ApplicationModel.application_id == review_data.application_id).first()
+    application = (
+        db.query(ApplicationModel)
+        .filter(ApplicationModel.application_id == review_data.application_id)
+        .first()
+    )
     if not application:
         raise HTTPException(status_code=404, detail="指定された応募が見つかりません")
-    
+
     # レビューを作成
     db_review = ReviewModel(
         application_id=review_data.application_id,
@@ -298,14 +410,20 @@ def create_review(db: Session, review_data: ReviewCreate) -> ReviewModel:
         rating=review_data.rating,
         comment=review_data.comment
     )
-    
+
     db.add(db_review)
     db.commit()
     db.refresh(db_review)
     return db_review
 
+
 # レビュー一覧を取得する関数
-def get_reviews(db: Session, skip: int = 0, limit: int = 100) -> List[Dict]:
+def get_reviews(
+    db: Session,
+    skip: int = 0,
+    limit: int = 100
+) -> List[Dict]:
+    """Get a list of reviews with application, event, and applicant details."""
     # レビュー、応募情報、イベント情報、応募者情報を結合して取得
     query = (
         db.query(
@@ -315,19 +433,23 @@ def get_reviews(db: Session, skip: int = 0, limit: int = 100) -> List[Dict]:
             ApplicantModel.last_name.label("applicant_last_name"),
             ApplicantModel.first_name.label("applicant_first_name")
         )
-        .join(ApplicationModel, ReviewModel.application_id == ApplicationModel.application_id)
+        .join(
+            ApplicationModel,
+            ReviewModel.application_id == ApplicationModel.application_id)
         .join(EventModel, ApplicationModel.event_id == EventModel.event_id)
-        .join(ApplicantModel, ApplicationModel.user_id == ApplicantModel.user_id)
+        .join(
+            ApplicantModel,
+            ApplicationModel.user_id == ApplicantModel.user_id)
         .offset(skip)
         .limit(limit)
         .all()
     )
-    
+
     # 結果をディクショナリのリストに変換
     results = []
     for row in query:
         review = row[0]  # ReviewModelオブジェクト
-        
+
         # ReviewDetailモデルに合わせてデータを整形
         review_dict = {
             "review_id": review.review_id,
@@ -338,189 +460,316 @@ def get_reviews(db: Session, skip: int = 0, limit: int = 100) -> List[Dict]:
             "created_at": review.created_at,
             "updated_at": review.updated_at,
             "event_title": row.event_title,
-            "applicant_name": f"{row.applicant_last_name} {row.applicant_first_name}"
+            "applicant_name":
+                f"{row.applicant_last_name} {row.applicant_first_name}"
         }
         results.append(review_dict)
-    
+
     return results
 
+
 # 応募者を更新する関数
-def update_applicant(db: Session, user_id: uuid.UUID, applicant_data: ApplicantCreate) -> Optional[ApplicantModel]:
+def update_applicant(
+    db: Session,
+    user_id: uuid.UUID,
+    applicant_data: ApplicantCreate
+) -> Optional[ApplicantModel]:
+    """Update an existing applicant."""
     # 既存のユーザーを取得
-    applicant = db.query(ApplicantModel).filter(ApplicantModel.user_id == user_id).first()
+    applicant = (
+        db.query(ApplicantModel)
+        .filter(ApplicantModel.user_id == user_id)
+        .first()
+    )
     if not applicant:
         return None
-    
+
     # 更新対象のフィールドを設定
     for key, value in applicant_data.model_dump(exclude_unset=True).items():
         setattr(applicant, key, value)
-    
+
     # 更新日時を更新
-    applicant.updated_at = datetime.utcnow()
-    
+    applicant.updated_at = datetime.now(timezone.utc)
+
     db.add(applicant)
     db.commit()
     db.refresh(applicant)
     return applicant
 
+
 # 応募者を削除する関数
 def delete_applicant(db: Session, user_id: uuid.UUID) -> bool:
-    applicant = db.query(ApplicantModel).filter(ApplicantModel.user_id == user_id).first()
+    """Delete an applicant."""
+    applicant = (
+        db.query(ApplicantModel)
+        .filter(ApplicantModel.user_id == user_id)
+        .first()
+    )
     if not applicant:
         return False
-    
+
     db.delete(applicant)
     db.commit()
     return True
 
+
 # 応募を更新する関数
-def update_application(db: Session, application_id: int, application_data: ApplicationCreate) -> Optional[ApplicationModel]:
+def update_application(
+    db: Session,
+    application_id: int,
+    application_data: ApplicationCreate
+) -> Optional[ApplicationModel]:
+    """Update an existing application."""
     # 既存の応募を取得
-    application = db.query(ApplicationModel).filter(ApplicationModel.application_id == application_id).first()
+    application = (
+        db.query(ApplicationModel)
+        .filter(ApplicationModel.application_id == application_id)
+        .first()
+    )
     if not application:
         return None
-    
+
     # 更新対象のフィールドを設定
     for key, value in application_data.model_dump(exclude_unset=True).items():
         setattr(application, key, value)
-    
+
     db.add(application)
     db.commit()
     db.refresh(application)
     return application
 
+
 # 応募を削除する関数
 def delete_application(db: Session, application_id: int) -> bool:
-    application = db.query(ApplicationModel).filter(ApplicationModel.application_id == application_id).first()
+    """Delete an application."""
+    application = (
+        db.query(ApplicationModel)
+        .filter(ApplicationModel.application_id == application_id)
+        .first()
+    )
     if not application:
         return False
-    
+
     db.delete(application)
     db.commit()
     return True
 
+
 # レビューを更新する関数
-def update_review(db: Session, review_id: int, review_data: ReviewCreate) -> Optional[ReviewModel]:
+def update_review(
+    db: Session,
+    review_id: int,
+    review_data: ReviewCreate
+) -> Optional[ReviewModel]:
+    """Update an existing review."""
     # 既存のレビューを取得
-    review = db.query(ReviewModel).filter(ReviewModel.review_id == review_id).first()
+    review = (
+        db.query(ReviewModel)
+        .filter(ReviewModel.review_id == review_id)
+        .first()
+    )
     if not review:
         return None
-    
+
     # 更新対象のフィールドを設定
     for key, value in review_data.model_dump(exclude_unset=True).items():
         setattr(review, key, value)
-    
+
     # 更新日時を更新
-    review.updated_at = datetime.utcnow()
-    
+    review.updated_at = datetime.now(timezone.utc)
+
     db.add(review)
     db.commit()
     db.refresh(review)
     return review
 
+
 # レビューを削除する関数
 def delete_review(db: Session, review_id: int) -> bool:
-    review = db.query(ReviewModel).filter(ReviewModel.review_id == review_id).first()
+    """Delete a review."""
+    review = (
+        db.query(ReviewModel)
+        .filter(ReviewModel.review_id == review_id)
+        .first()
+    )
     if not review:
         return False
-    
+
     db.delete(review)
     db.commit()
     return True
 
-# --- イベント関連エンドポイント (DB連携版) --- #
 
+# --- イベント関連エンドポイント (DB連携版) --- #
 @app.post("/event", response_model=EventSchema, status_code=201)
-async def create_event_api(event_data: EventCreate, db: Session = Depends(get_db)) -> EventSchema:
+async def create_event_api(
+    event_data: EventCreate,
+    db: Session = Depends(get_db)
+) -> EventSchema:
+    """API endpoint to create an event."""
     try:
         # デバッグ用: 受信データを出力
         print(f"Received event_data: {event_data}")
-        print(f"company_id type: {type(event_data.company_id)}, value: {event_data.company_id}")
-        print(f"event_type type: {type(event_data.event_type)}, value: {event_data.event_type}")
-        
+        print(
+            f"company_id type: {type(event_data.company_id)}, "
+            f"value: {event_data.company_id}")
+        print(
+            f"event_type type: {type(event_data.event_type)}, "
+            f"value: {event_data.event_type}")
+
         created_event = create_event(db=db, event_data=event_data)
-        return EventSchema.model_validate(created_event) # Pydantic v2
-    except HTTPException as e: # バリデーションエラー等をキャッチ
+        return EventSchema.model_validate(created_event)  # Pydantic v2
+    except HTTPException as e:  # バリデーションエラー等をキャッチ
         raise e
     except Exception as e:
         # ここで詳細なエラーロギングを行うと良い
         print(f"Error creating event: {e}")
-        raise HTTPException(status_code=500, detail="Error creating event in database")
+        raise HTTPException(
+            status_code=500,
+            detail="Error creating event in database"
+        ) from e
+
 
 @app.get("/event", response_model=List[EventSchema])
-async def get_events_api(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> List[EventSchema]:
+async def get_events_api(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+) -> List[EventSchema]:
+    """API endpoint to get a list of events."""
     db_events = get_events(db, skip=skip, limit=limit)
     return [EventSchema.model_validate(event) for event in db_events]
 
+
 @app.get("/event/{event_id}", response_model=EventSchema)
-async def get_event_api(event_id: int, db: Session = Depends(get_db)) -> EventSchema:
+async def get_event_api(
+    event_id: int,
+    db: Session = Depends(get_db)
+) -> EventSchema:
+    """API endpoint to get a single event by ID."""
     db_event = get_event(db, event_id=event_id)
     if db_event is None:
         raise HTTPException(status_code=404, detail="Event not found")
     return EventSchema.model_validate(db_event)
 
+
 @app.put("/event/{event_id}", response_model=EventSchema)
-async def update_event_api(event_id: int, event_data: EventUpdate, db: Session = Depends(get_db)) -> EventSchema:
+async def update_event_api(
+    event_id: int,
+    event_data: EventUpdate,
+    db: Session = Depends(get_db)
+) -> EventSchema:
+    """API endpoint to update an event."""
     updated_event = update_event(db, event_id=event_id, event_data=event_data)
     if updated_event is None:
         raise HTTPException(status_code=404, detail="Event not found")
     return EventSchema.model_validate(updated_event)
 
+
 @app.delete("/event/{event_id}", status_code=204)
 async def delete_event_api(event_id: int, db: Session = Depends(get_db)):
+    """API endpoint to delete an event."""
     deleted_event = delete_event(db, event_id=event_id)
     if deleted_event is None:
         raise HTTPException(status_code=404, detail="Event not found")
-    return # No content
+    return  # No content
+
 
 # --- 応募関連エンドポイント --- #
-
 @app.get("/applications", response_model=List[ApplicationDetail])
-async def get_applications_api(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> List[ApplicationDetail]:
+async def get_applications_api(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+) -> List[ApplicationDetail]:
+    """API endpoint to get a list of applications."""
     applications = get_applications(db, skip=skip, limit=limit)
     return [ApplicationDetail.model_validate(app) for app in applications]
 
+
 @app.put("/applications/{application_id}", response_model=ApplicationResponse)
-async def update_application_status_api(application_id: int, application_data: ApplicationUpdate, db: Session = Depends(get_db)) -> ApplicationResponse:
-    updated_application = update_application_status(db, application_id=application_id, data=application_data)
+async def update_application_status_api(
+    application_id: int,
+    application_data: ApplicationUpdate,
+    db: Session = Depends(get_db)
+) -> ApplicationResponse:
+    """API endpoint to update an application's status."""
+    updated_application = update_application_status(
+        db,
+        application_id=application_id,
+        data=application_data
+    )
     if updated_application is None:
         raise HTTPException(status_code=404, detail="Application not found")
     return ApplicationResponse.model_validate(updated_application)
 
-# --- 応募者関連エンドポイント --- #
 
+# --- 応募者関連エンドポイント --- #
 @app.post("/applicant", response_model=ApplicantSchema, status_code=201)
-async def create_applicant_api(applicant_data: ApplicantCreate, db: Session = Depends(get_db)) -> ApplicantSchema:
+async def create_applicant_api(
+    applicant_data: ApplicantCreate,
+    db: Session = Depends(get_db)
+) -> ApplicantSchema:
+    """API endpoint to create an applicant."""
     try:
         print(f"Received applicant data: {applicant_data}")
-        created_applicant = create_applicant(db=db, applicant_data=applicant_data)
+        created_applicant = create_applicant(
+            db=db,
+            applicant_data=applicant_data
+        )
         return ApplicantSchema.model_validate(created_applicant)
     except HTTPException as e:
         raise e
     except Exception as e:
         print(f"Error creating applicant: {e}")
-        raise HTTPException(status_code=500, detail=f"Error creating applicant: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error creating applicant: {str(e)}"
+        ) from e
+
 
 @app.get("/applicants", response_model=List[ApplicantSchema])
-async def get_applicants_api(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> List[ApplicantSchema]:
+async def get_applicants_api(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+) -> List[ApplicantSchema]:
+    """API endpoint to get a list of applicants."""
     db_applicants = get_applicants(db, skip=skip, limit=limit)
-    return [ApplicantSchema.model_validate(applicant) for applicant in db_applicants]
+    return [ApplicantSchema.model_validate(applicant)
+            for applicant in db_applicants]
+
 
 @app.post("/application", response_model=ApplicationResponse, status_code=201)
-async def create_application_api(application_data: ApplicationCreate, db: Session = Depends(get_db)) -> ApplicationResponse:
+async def create_application_api(
+    application_data: ApplicationCreate,
+    db: Session = Depends(get_db)
+) -> ApplicationResponse:
+    """API endpoint to create an application."""
     try:
         print(f"Received application data: {application_data}")
-        created_application = create_application(db=db, application_data=application_data)
+        created_application = create_application(
+            db=db,
+            application_data=application_data
+        )
         return ApplicationResponse.model_validate(created_application)
     except HTTPException as e:
         raise e
     except Exception as e:
         print(f"Error creating application: {e}")
-        raise HTTPException(status_code=500, detail=f"Error creating application: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error creating application: {str(e)}"
+        ) from e
+
 
 # --- レビュー関連エンドポイント --- #
 @app.post("/review", response_model=ReviewSchema, status_code=201)
-async def create_review_api(review_data: ReviewCreate, db: Session = Depends(get_db)) -> ReviewSchema:
+async def create_review_api(
+    review_data: ReviewCreate,
+    db: Session = Depends(get_db)
+) -> ReviewSchema:
+    """API endpoint to create a review."""
     try:
         print(f"Received review data: {review_data}")
         created_review = create_review(db=db, review_data=review_data)
@@ -529,54 +778,109 @@ async def create_review_api(review_data: ReviewCreate, db: Session = Depends(get
         raise e
     except Exception as e:
         print(f"Error creating review: {e}")
-        raise HTTPException(status_code=500, detail=f"Error creating review: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error creating review: {str(e)}"
+        ) from e
+
 
 @app.get("/reviews", response_model=List[ReviewDetail])
-async def get_reviews_api(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> List[ReviewDetail]:
+async def get_reviews_api(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+) -> List[ReviewDetail]:
+    """API endpoint to get a list of reviews."""
     reviews = get_reviews(db, skip=skip, limit=limit)
     return [ReviewDetail.model_validate(review) for review in reviews]
 
+
 @app.put("/applicant/{user_id}", response_model=ApplicantSchema)
-async def update_applicant_api(user_id: uuid.UUID, applicant_data: ApplicantCreate, db: Session = Depends(get_db)) -> ApplicantSchema:
-    updated_applicant = update_applicant(db, user_id=user_id, applicant_data=applicant_data)
+async def update_applicant_api(
+    user_id: uuid.UUID,
+    applicant_data: ApplicantCreate,
+    db: Session = Depends(get_db)
+) -> ApplicantSchema:
+    """API endpoint to update an applicant."""
+    updated_applicant = update_applicant(
+        db,
+        user_id=user_id,
+        applicant_data=applicant_data
+    )
     if updated_applicant is None:
         raise HTTPException(status_code=404, detail="Applicant not found")
     return ApplicantSchema.model_validate(updated_applicant)
 
+
 @app.delete("/applicant/{user_id}", status_code=204)
-async def delete_applicant_api(user_id: uuid.UUID, db: Session = Depends(get_db)):
+async def delete_applicant_api(
+    user_id: uuid.UUID,
+    db: Session = Depends(get_db)
+):
+    """API endpoint to delete an applicant."""
     success = delete_applicant(db, user_id=user_id)
     if not success:
         raise HTTPException(status_code=404, detail="Applicant not found")
     return
 
+
 @app.put("/application/{application_id}", response_model=ApplicationResponse)
-async def update_application_api(application_id: int, application_data: ApplicationCreate, db: Session = Depends(get_db)) -> ApplicationResponse:
-    updated_application = update_application(db, application_id=application_id, application_data=application_data)
+async def update_application_api(
+    application_id: int,
+    application_data: ApplicationCreate,
+    db: Session = Depends(get_db)
+) -> ApplicationResponse:
+    """API endpoint to update an application."""
+    updated_application = update_application(
+        db,
+        application_id=application_id,
+        application_data=application_data
+    )
     if updated_application is None:
         raise HTTPException(status_code=404, detail="Application not found")
     return ApplicationResponse.model_validate(updated_application)
 
+
 @app.delete("/application/{application_id}", status_code=204)
-async def delete_application_api(application_id: int, db: Session = Depends(get_db)):
+async def delete_application_api(
+    application_id: int,
+    db: Session = Depends(get_db)
+):
+    """API endpoint to delete an application."""
     success = delete_application(db, application_id=application_id)
     if not success:
         raise HTTPException(status_code=404, detail="Application not found")
     return
 
+
 @app.put("/review/{review_id}", response_model=ReviewSchema)
-async def update_review_api(review_id: int, review_data: ReviewCreate, db: Session = Depends(get_db)) -> ReviewSchema:
-    updated_review = update_review(db, review_id=review_id, review_data=review_data)
+async def update_review_api(
+    review_id: int,
+    review_data: ReviewCreate,
+    db: Session = Depends(get_db)
+) -> ReviewSchema:
+    """API endpoint to update a review."""
+    updated_review = update_review(
+        db,
+        review_id=review_id,
+        review_data=review_data
+    )
     if updated_review is None:
         raise HTTPException(status_code=404, detail="Review not found")
     return ReviewSchema.model_validate(updated_review)
 
+
 @app.delete("/review/{review_id}", status_code=204)
-async def delete_review_api(review_id: int, db: Session = Depends(get_db)):
+async def delete_review_api(
+    review_id: int,
+    db: Session = Depends(get_db)
+):
+    """API endpoint to delete a review."""
     success = delete_review(db, review_id=review_id)
     if not success:
         raise HTTPException(status_code=404, detail="Review not found")
     return
+
 
 # スクリプトとして直接実行された場合、Uvicornサーバーを起動
 if __name__ == "__main__":

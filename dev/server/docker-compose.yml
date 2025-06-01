@@ -19,23 +19,6 @@ services:
     networks:
       - app-network
 
-  # ワーカー - 非同期処理を担当
-  worker:
-    build:
-      context: ./backend/worker
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql+psycopg2://postgres:postgres@postgres:5432/gamification
-    depends_on:
-      postgres:
-        condition: service_healthy
-      api:
-        condition: service_started
-    restart: unless-stopped
-    networks:
-      - app-network
-
   # PostgreSQLデータベース - ユーザーや企業情報の保存
   postgres:
     build:

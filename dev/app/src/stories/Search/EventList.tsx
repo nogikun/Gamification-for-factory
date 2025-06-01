@@ -53,7 +53,7 @@ function fetchData(targetDate: Date | string, host: string, port?: string){
     console.log("入力された日付:", targetDate);
     console.log("リクエストボディ:", requestBody);
 
-    const url = port ? `${host}:${port}/demo/get-events` : `${host}/demo/get-events`;
+    const url = port ? `${host}:${port}/get-events` : `${host}/get-events`;
     return fetch(url, {
         method: 'POST',
         headers: {
@@ -145,19 +145,19 @@ export const EventList = ({
                     backgroundColor={darkTheme ? "#333333" : "#f5f5f5"}
                     base64Image={event.image}
                     borderRadius="10px"
-                    campany={event.location.split(" ")[2]}
+                    campany={event.location ? (event.location.split(" ")[2] || event.location) : "情報なし"}
                     color={darkTheme ? "#ffffff" : "#000000"}
                     currencySymbol="¥"
-                    details={event.description}
-                    startDate={event.start_time.split('T')[0]}
-                    endDate={event.end_time.split('T')[0]}
+                    details={event.description || "詳細情報なし"}
+                    startDate={event.start_time ? event.start_time.split('T')[0] : "未定"}
+                    endDate={event.end_time ? event.end_time.split('T')[0] : "未定"}
                     height="auto"
                     onClick={() => console.log(`イベント詳細: ${event.event_id}`)}
-                    paying={Number.parseInt(event.reward.replace(/[^0-9]/g, ""), 10)}
-                    tags={event.tags.map(tag => ({
+                    paying={event.reward ? Number.parseInt(event.reward.replace(/[^0-9]/g, ""), 10) || 0 : 0}
+                    tags={event.tags && Array.isArray(event.tags) ? event.tags.map(tag => ({
                         color: getTagColor(tag),
                         label: tag
-                    }))}
+                    })) : []}
                     title={event.title}
                     width="100%"
                 />

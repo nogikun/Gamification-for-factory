@@ -1,11 +1,10 @@
-from random import randint, choice, random, sample
+from random import randint, choice, sample
 from datetime import datetime
 import base64
-from PIL import Image
-import io
 
 # local imports
-from src.schema.schema import Event, DateModel
+from src.schemas.database.event import Event as EventSchema
+from src.schemas.api.base import DateModel
 
 class EventGenerator:
     def __init__(self):
@@ -59,7 +58,7 @@ class EventGenerator:
             print(f"Error: {image_path} が見つかりません。")
             return None
 
-    def generate_event_data(self, target_date: DateModel) -> Event:
+    def generate_event_data(self, target_date: DateModel) -> EventSchema:
         """
         デモ用のイベントデータを生成します
         """
@@ -88,20 +87,20 @@ class EventGenerator:
             "event_type": self.event_types[event_type_index],
             "title": self.event_titles[event_type_index],
             "description": self.event_descriptions[event_type_index],
-            "start_time": event_start,
-            "end_time": event_end,
+            "start_date": event_start,
+            "end_date": event_end,
             "location": choice(self.event_locations),
             "reward": reward_str,  # 文字列として報酬を設定
-            "required_qualifications": sample(self.required_qualifications, k=randint(1, 3)),
-            "max_participants": randint(5, 20),
+            "required_qualifications": ",".join(sample(self.required_qualifications, k=randint(1, 3))),
+            "available_spots": randint(5, 20),  # 参加可能人数
             "created_at": datetime.now(),
             "updated_at": datetime.now(),
             "tags": sample(self.event_types, k=randint(1, 3)),
             "image": self.image_to_base64(choice(self.sample_images)),
         }
-        return Event(**event_data)
+        return EventSchema(**event_data)
 
-    def generate_event_data_list(self, target_date: DateModel, num_events: int = randint(5, 10)) -> list[Event]:
+    def generate_event_data_list(self, target_date: DateModel, num_events: int = randint(5, 10)) -> list[EventSchema]:
         """
         デモ用のイベントデータのリストを生成します
         """

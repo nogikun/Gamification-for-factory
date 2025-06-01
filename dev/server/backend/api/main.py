@@ -2,39 +2,47 @@
 Main FastAPI application for Gamification API.
 """
 import base64
-import json
 import os
 import sys
+import json
 import uuid
 import sqlalchemy
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
-import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
+import uvicorn
 
 # local imports
 from src.database import Base, get_db, get_engine, reset_reviews_table
-from src.models import (Applicant as ApplicantModel,
-                        Application as ApplicationModel,
-                        ApplicationStatusEnum, Event as EventModel,
-                        EventTypeEnum, Review as ReviewModel)
-from src.schema.schema import (
-    ApplicantCreate, Applicant as ApplicantSchema,
-    ApplicationCreate,
-    ApplicationDetail,
-    ApplicationResponse, ApplicationUpdate,
-    Event as EventSchema, EventCreate, EventUpdate,
-    Review as ReviewSchema, ReviewCreate,
-    ReviewDetail)
-
+from src.schemas.database.applicant import ApplicantCreate, Applicant as ApplicantSchema
+from src.schemas.database.event import Event as EventSchema, EventCreate, EventUpdate
+from src.schemas.database.review import Review as ReviewSchema, ReviewCreate, ReviewDetail
+from src.schemas.api.base import DateModel
+from src.demo.generator import EventGenerator
+from src.classes.db_connector import DBConnector
+from src.models import (
+    Applicant as ApplicantModel,
+    Application as ApplicationModel,
+    ApplicationStatusEnum, Event as EventModel,
+    EventTypeEnum, Review as ReviewModel
+)
+from src.schemas.database.application import (
+    ApplicationCreate, ApplicationDetail, ApplicationResponse, ApplicationUpdate
+)
 # reviewsテーブルをリセット
 reset_reviews_table()
 
 # データベーステーブルを作成 (存在しない場合のみ)
 Base.metadata.create_all(bind=get_engine())
+
+load_dotenv()  # .envファイルから環境変数を読み込む
+
+# --- データベース設定 ---
+# PostgreSQL 接続文字列。必要に応じて 'your_user', 'your_password', 'your_host', 'your_port', 'your_database' を置き換えてください。
 
 # パスを追加してsrcディレクトリをインポート可能にする
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -58,6 +66,7 @@ def get_application_status_enum(value: str) -> ApplicationStatusEnum:
         if enum_member.value == value:
             return enum_member
     raise ValueError(f"Invalid application_status value: {value}")
+sys.path.append(current_dir)  # 現在のディレクトリをパスに追加
 
 
 app = FastAPI(
@@ -69,9 +78,10 @@ app = FastAPI(
 # API Router with prefix
 api_router = APIRouter(prefix="/api")
 
+# CORSミドルウェアの設定
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000"],  # 開発用フロントエンド
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -91,7 +101,7 @@ async def health_check() -> Dict[str, str]:
 
 
 # --- CRUD関数 (リポジトリ層として分離も検討) --- #
-def get_event(db: Session, event_id: uuid.UUID) -> Optional[EventModel]:
+def get_event_by_id(db: Session, event_id: uuid.UUID) -> Optional[EventModel]:
     """Get a single event by ID."""
     return db.query(EventModel).filter(EventModel.event_id == event_id).first()
 
@@ -202,7 +212,7 @@ def update_event(
     event_data: EventUpdate
 ) -> Optional[EventModel]:
     """Update an existing event."""
-    db_event = get_event(db, event_id)
+    db_event = get_event_by_id(db, event_id)
     if not db_event:
         return None
 
@@ -255,7 +265,7 @@ def update_event(
 
 def delete_event(db: Session, event_id: uuid.UUID) -> Optional[EventModel]:
     """Delete an event."""
-    db_event = get_event(db, event_id)
+    db_event = get_event_by_id(db, event_id)
     if not db_event:
         return None
     db.delete(db_event)
@@ -684,7 +694,7 @@ async def get_event_api(
     db: Session = Depends(get_db)
 ) -> EventSchema:
     """API endpoint to get a single event by ID."""
-    db_event = get_event(db, event_id=event_id)
+    db_event = get_event_by_id(db, event_id)
     if db_event is None:
         raise HTTPException(status_code=404, detail="Event not found")
     return EventSchema.model_validate(db_event)
@@ -697,7 +707,7 @@ async def update_event_api(
     db: Session = Depends(get_db)
 ) -> EventSchema:
     """API endpoint to update an event."""
-    updated_event = update_event(db, event_id=event_id, event_data=event_data)
+    updated_event = update_event(db, event_id, event_data)
     if updated_event is None:
         raise HTTPException(status_code=404, detail="Event not found")
     return EventSchema.model_validate(updated_event)
@@ -706,7 +716,7 @@ async def update_event_api(
 @app.delete("/event/{event_id}", status_code=204)
 async def delete_event_api(event_id: uuid.UUID, db: Session = Depends(get_db)):
     """API endpoint to delete an event."""
-    deleted_event = delete_event(db, event_id=event_id)
+    deleted_event = delete_event(db, event_id)
     if deleted_event is None:
         raise HTTPException(status_code=404, detail="Event not found")
     return  # No content
@@ -933,10 +943,80 @@ async def delete_review_api(
     db: Session = Depends(get_db)
 ):
     """API endpoint to delete a review."""
-    success = delete_review(db, review_id=review_id)
+    success = delete_review(db, review_id)
     if not success:
         raise HTTPException(status_code=404, detail="Review not found")
     return
+
+
+@app.post("/demo/get-events")
+async def demo_get_event(target_date: DateModel) -> List[EventSchema]:
+    """
+    デモ用イベント取得エンドポイント - 指定された日付のイベントリストを返します
+    """
+    event_generator = EventGenerator()
+    generate_event_data = event_generator.generate_event_data_list(target_date)
+    if not generate_event_data:
+        raise HTTPException(status_code=404, detail="Events not found")
+    return generate_event_data
+
+@app.post("/get-events")
+async def get_event(target_date: DateModel) -> List[EventSchema]:
+    """
+    イベント取得エンドポイント - 指定された日付のイベントリストをデータベースから取得します
+    """
+    database_url = os.getenv("DATABASE_URL")
+    db_connector = DBConnector(
+        db_url = database_url,  # 環境変数からデータベースURLを取得
+        debug = False           # デバッグモードを有効にする
+    )
+
+    search_date = target_date.target_date
+    try:
+        # データベースから指定された日付のイベントを取得
+        events = db_connector.select_events_by_date(search_date)
+        if not events:
+            # イベントが見つからない場合は空のリストを返す
+            return []
+
+    except Exception as e:
+        print(f"データベースからイベントを取得中にエラーが発生しました: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal Server Error") from e
+
+    # イベントデータをPydanticモデルに変換
+    event_list = []
+    for event in events:
+        # tagsをJSON文字列からリストに変換
+        if isinstance(event.tags, str) and event.tags:
+            try:
+                tags = json.loads(event.tags)
+            except json.JSONDecodeError:
+                # JSONでない場合はカンマで分割してリスト化を試みる
+                tags = [t.strip() for t in event.tags.split(',') if t.strip()]
+        else:
+            tags = event.tags or []
+
+        # データ型を適切に変換してEventSchemaオブジェクトを作成
+        event_data = EventSchema(
+            event_id=str(event.event_id),  # 整数を文字列に変換
+            company_id=str(event.company_id),  # UUIDを文字列に変換
+            event_type=event.event_type,
+            title=event.title,
+            description=event.description,
+            start_date=event.start_date,
+            end_date=event.end_date,
+            location=event.location,
+            reward=event.reward,
+            required_qualifications=event.required_qualifications,
+            available_spots=event.available_spots,
+            created_at=event.created_at,
+            updated_at=event.updated_at,
+            tags=json.dumps(tags) if tags else None,  # リストをJSON文字列に変換
+            image=event.image if hasattr(event, 'image') else None # 画像が存在しない場合はNoneを設定
+        )
+        event_list.append(event_data)
+
+    return event_list
 
 
 # APIルーターをアプリケーションに追加

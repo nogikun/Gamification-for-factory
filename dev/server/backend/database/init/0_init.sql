@@ -147,3 +147,39 @@ CREATE TABLE player (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- 更新日時
     FOREIGN KEY (user_id) REFERENCES applicant(user_id) ON DELETE CASCADE -- * ユーザーが削除された場合、関連するプレイヤーデータも削除
 );
+
+--------------------------------------------------
+--   TABLE NAME: review_requests
+-- DESCRIPTIONS: レビューリクエスト情報を管理するテーブル
+--------------------------------------------------
+CREATE TYPE request_status AS ENUM ('REQUESTED', 'COMPLETED', 'CANCELLED');
+
+CREATE TABLE review_requests (
+    request_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),   -- リクエストID（主キー）
+    application_id UUID NOT NULL,                             -- 応募ID（外部キー）
+    requested_by UUID NOT NULL,                               -- リクエスト者ID（企業ユーザー）
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- リクエスト日時
+    request_message TEXT,                                     -- リクエストメッセージ
+    status request_status NOT NULL DEFAULT 'REQUESTED',        -- リクエスト状態
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,           -- 作成日時
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,           -- 更新日時
+    FOREIGN KEY (application_id) REFERENCES applications(application_id) ON DELETE CASCADE,  -- 応募が削除された場合、関連するリクエストも削除
+    FOREIGN KEY (requested_by) REFERENCES users(user_id) ON DELETE CASCADE                    -- ユーザーが削除された場合、関連するリクエストも削除
+);
+
+--------------------------------------------------
+--   TABLE NAME: reviews
+-- DESCRIPTIONS: レビュー情報を管理するテーブル
+--------------------------------------------------
+CREATE TABLE reviews (
+    review_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),    -- レビューID（主キー）
+    application_id UUID NOT NULL,                             -- 応募ID（外部キー）
+    reviewer_id UUID NOT NULL,                                -- レビュアーID（企業ユーザー）
+    rating NUMERIC(3, 1) NOT NULL,                            -- 評価点（1.0〜5.0）
+    comment TEXT,                                             -- レビューコメント
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,           -- 作成日時
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,           -- 更新日時
+    FOREIGN KEY (application_id) REFERENCES applications(application_id) ON DELETE CASCADE,  -- 応募が削除された場合、関連するレビューも削除
+    FOREIGN KEY (reviewer_id) REFERENCES users(user_id) ON DELETE CASCADE                     -- ユーザーが削除された場合、関連するレビューも削除
+);
+

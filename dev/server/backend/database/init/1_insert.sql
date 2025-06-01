@@ -63,7 +63,8 @@ INSERT INTO users (user_id, user_type, user_name, created_at, login_time, ai_adv
 VALUES 
     ('c0000001-0000-0000-0000-000000000001', 'COMPANY', '株式会社テックソリューション', '2025-04-01 09:00:00', '2025-05-21 15:30:00', NULL),
     ('c0000002-0000-0000-0000-000000000002', 'COMPANY', '株式会社イノベーション', '2025-04-02 10:00:00', '2025-05-22 14:20:00', NULL),
-    ('c0000003-0000-0000-0000-000000000003', 'COMPANY', '株式会社フューチャー', '2025-04-03 11:00:00', '2025-05-20 16:45:00', NULL);
+    ('c0000003-0000-0000-0000-000000000003', 'COMPANY', '株式会社フューチャー', '2025-04-03 11:00:00', '2025-05-20 16:45:00', NULL),
+    ('12345678-1234-1234-1234-123456789012', 'COMPANY', '株式会社サンプル', '2025-04-04 12:00:00', '2025-05-22 13:00:00', NULL);
 
 -- company用のテストデータ（eventsで参照するため先に挿入）
 INSERT INTO company (
@@ -80,7 +81,8 @@ INSERT INTO company (
 ) VALUES
     ('c0000001-0000-0000-0000-000000000001', '株式会社テックソリューション', 'tech@example.com', '03-1234-5678', '東京都渋谷区', 50000000, 100, '2020-01-01 00:00:00', 'AI・IT技術企業', CURRENT_TIMESTAMP),
     ('c0000002-0000-0000-0000-000000000002', '株式会社イノベーション', 'innovation@example.com', '06-9876-5432', '大阪府大阪市', 30000000, 80, '2019-05-15 00:00:00', 'Web開発企業', CURRENT_TIMESTAMP),
-    ('c0000003-0000-0000-0000-000000000003', '株式会社フューチャー', 'future@example.com', '052-1111-2222', '愛知県名古屋市', 100000000, 200, '2018-03-10 00:00:00', 'ゲーム開発企業', CURRENT_TIMESTAMP);
+    ('c0000003-0000-0000-0000-000000000003', '株式会社フューチャー', 'future@example.com', '052-1111-2222', '愛知県名古屋市', 100000000, 200, '2018-03-10 00:00:00', 'ゲーム開発企業', CURRENT_TIMESTAMP),
+    ('12345678-1234-1234-1234-123456789012', '株式会社サンプル', 'sample@example.com', '03-9999-8888', '東京都千代田区', 25000000, 50, '2021-06-01 00:00:00', 'サンプル企業', CURRENT_TIMESTAMP);
 
 -- eventsテストデータの挿入（company_idは実際に存在するcompany.user_idを使用）
 DO $$
@@ -266,3 +268,66 @@ INSERT INTO player (
     }',
     CURRENT_TIMESTAMP
 );
+
+-- レビュー関連テーブルのテストデータ挿入
+DO $$
+DECLARE
+    app_id1 UUID;
+    app_id2 UUID;
+BEGIN
+    -- applicationsテーブルからIDを動的に取得
+    SELECT application_id INTO app_id1 FROM applications LIMIT 1;
+    SELECT application_id INTO app_id2 FROM applications LIMIT 1 OFFSET 1;
+    
+    -- アプリケーションIDが存在する場合のみデータを挿入
+    IF app_id1 IS NOT NULL AND app_id2 IS NOT NULL THEN
+        -- review_requestsテーブルにテストデータを挿入
+        INSERT INTO review_requests (
+            application_id,
+            requested_by,
+            requested_at,
+            request_message,
+            status
+        ) VALUES
+        (
+            app_id1,
+            'c0000001-0000-0000-0000-000000000001',
+            NOW() - INTERVAL '2 days',
+            'イベント参加後のフィードバックをお願いします。',
+            'REQUESTED'
+        ),
+        (
+            app_id2,
+            'c0000001-0000-0000-0000-000000000001',
+            NOW() - INTERVAL '1 day',
+            'イベント申請に対する審査をお願いします。',
+            'COMPLETED'
+        );
+
+        -- reviewsテーブルにテストデータを挿入
+        INSERT INTO reviews (
+            application_id,
+            reviewer_id,
+            rating,
+            comment
+        ) VALUES
+        (
+            app_id1,
+            'c0000001-0000-0000-0000-000000000001',
+            4.5,
+            '積極的に参加され、良い質問をされていました。次回のイベントにもぜひ参加してください。'
+        ),
+        (
+            app_id2,
+            'c0000002-0000-0000-0000-000000000002',
+            3.8,
+            'チームでの協力が求められる場面で、リーダーシップを発揮していました。もう少し他のメンバーとの連携を意識するとさらに良くなるでしょう。'
+        );
+        
+        RAISE NOTICE 'レビューテストデータを正常に挿入しました。';
+    ELSE
+        RAISE NOTICE 'applicationsテーブルに十分なデータが存在しません。レビューデータの挿入をスキップします。';
+    END IF;
+END
+$$;
+

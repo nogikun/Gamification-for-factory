@@ -6,11 +6,12 @@ import json
 import os
 import sys
 import uuid
+import sqlalchemy
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -65,9 +66,12 @@ app = FastAPI(
     version="0.1.0"
 )
 
+# API Router with prefix
+api_router = APIRouter(prefix="/api")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # 開発用フロントエンド
+    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000"],  # 開発用フロントエンド
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -103,6 +107,25 @@ def get_events(
 
 def create_event(db: Session, event_data: EventCreate) -> EventModel:
     """Create a new event."""
+    # 最初にcompany_idが有効かどうかチェック
+    from sqlalchemy import text
+    try:
+        # companyテーブルにcompany_idが存在するか確認
+        company_exists = db.execute(
+            text("SELECT 1 FROM company WHERE user_id = :company_id"),
+            {"company_id": event_data.company_id}
+        ).fetchone()
+        if not company_exists:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Company ID {event_data.company_id} does not exist"
+            )
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error validating company_id: {e}"
+        ) from e
+            
     image_binary = None
     if event_data.image:
         try:
@@ -152,10 +175,25 @@ def create_event(db: Session, event_data: EventCreate) -> EventModel:
         image=image_binary,
         tags=tags_json
     )
-    db.add(db_event)
-    db.commit()
-    db.refresh(db_event)
-    return db_event
+    
+    try:
+        db.add(db_event)
+        db.commit()
+        db.refresh(db_event)
+        return db_event
+    except sqlalchemy.exc.IntegrityError as e:
+        db.rollback()
+        # 外部キー制約違反など、整合性エラーの場合
+        raise HTTPException(
+            status_code=400,
+            detail=f"Database integrity error: {e}. Make sure company_id is valid."
+        ) from e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create event: {e}"
+        ) from e
 
 
 def update_event(
@@ -215,7 +253,7 @@ def update_event(
     return db_event
 
 
-def delete_event(db: Session, event_id: int) -> Optional[EventModel]:
+def delete_event(db: Session, event_id: uuid.UUID) -> Optional[EventModel]:
     """Delete an event."""
     db_event = get_event(db, event_id)
     if not db_event:
@@ -293,7 +331,7 @@ def get_applications(
 # 応募ステータスを更新する関数
 def update_application_status(
     db: Session,
-    application_id: int,
+    application_id: uuid.UUID,
     data: ApplicationUpdate
 ) -> Optional[ApplicationModel]:
     """Update the status of an application."""
@@ -516,7 +554,7 @@ def delete_applicant(db: Session, user_id: uuid.UUID) -> bool:
 # 応募を更新する関数
 def update_application(
     db: Session,
-    application_id: int,
+    application_id: uuid.UUID,
     application_data: ApplicationCreate
 ) -> Optional[ApplicationModel]:
     """Update an existing application."""
@@ -539,8 +577,7 @@ def update_application(
     return application
 
 
-# 応募を削除する関数
-def delete_application(db: Session, application_id: int) -> bool:
+def delete_application(db: Session, application_id: uuid.UUID) -> bool:
     """Delete an application."""
     application = (
         db.query(ApplicationModel)
@@ -558,7 +595,7 @@ def delete_application(db: Session, application_id: int) -> bool:
 # レビューを更新する関数
 def update_review(
     db: Session,
-    review_id: int,
+    review_id: uuid.UUID,
     review_data: ReviewCreate
 ) -> Optional[ReviewModel]:
     """Update an existing review."""
@@ -585,7 +622,7 @@ def update_review(
 
 
 # レビューを削除する関数
-def delete_review(db: Session, review_id: int) -> bool:
+def delete_review(db: Session, review_id: uuid.UUID) -> bool:
     """Delete a review."""
     review = (
         db.query(ReviewModel)
@@ -643,7 +680,7 @@ async def get_events_api(
 
 @app.get("/event/{event_id}", response_model=EventSchema)
 async def get_event_api(
-    event_id: int,
+    event_id: uuid.UUID,
     db: Session = Depends(get_db)
 ) -> EventSchema:
     """API endpoint to get a single event by ID."""
@@ -655,7 +692,7 @@ async def get_event_api(
 
 @app.put("/event/{event_id}", response_model=EventSchema)
 async def update_event_api(
-    event_id: int,
+    event_id: uuid.UUID,
     event_data: EventUpdate,
     db: Session = Depends(get_db)
 ) -> EventSchema:
@@ -667,7 +704,7 @@ async def update_event_api(
 
 
 @app.delete("/event/{event_id}", status_code=204)
-async def delete_event_api(event_id: int, db: Session = Depends(get_db)):
+async def delete_event_api(event_id: uuid.UUID, db: Session = Depends(get_db)):
     """API endpoint to delete an event."""
     deleted_event = delete_event(db, event_id=event_id)
     if deleted_event is None:
@@ -689,7 +726,7 @@ async def get_applications_api(
 
 @app.put("/applications/{application_id}", response_model=ApplicationResponse)
 async def update_application_status_api(
-    application_id: int,
+    application_id: uuid.UUID,
     application_data: ApplicationUpdate,
     db: Session = Depends(get_db)
 ) -> ApplicationResponse:
@@ -738,6 +775,16 @@ async def get_applicants_api(
     db_applicants = get_applicants(db, skip=skip, limit=limit)
     return [ApplicantSchema.model_validate(applicant)
             for applicant in db_applicants]
+
+# プレフィックス付きユーザーAPI routes
+@api_router.get("/users", response_model=List[ApplicantSchema])
+async def get_api_users(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+) -> List[ApplicantSchema]:
+    """API endpoint to get a list of users with API prefix."""
+    return await get_applicants_api(skip=skip, limit=limit, db=db)
 
 
 @app.post("/application", response_model=ApplicationResponse, status_code=201)
@@ -794,6 +841,16 @@ async def get_reviews_api(
     reviews = get_reviews(db, skip=skip, limit=limit)
     return [ReviewDetail.model_validate(review) for review in reviews]
 
+# プレフィックス付きAPI routes
+@api_router.get("/reviews", response_model=List[ReviewDetail])
+async def get_api_reviews(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+) -> List[ReviewDetail]:
+    """API endpoint to get a list of reviews with API prefix."""
+    return await get_reviews_api(skip=skip, limit=limit, db=db)
+
 
 @app.put("/applicant/{user_id}", response_model=ApplicantSchema)
 async def update_applicant_api(
@@ -826,7 +883,7 @@ async def delete_applicant_api(
 
 @app.put("/application/{application_id}", response_model=ApplicationResponse)
 async def update_application_api(
-    application_id: int,
+    application_id: uuid.UUID,
     application_data: ApplicationCreate,
     db: Session = Depends(get_db)
 ) -> ApplicationResponse:
@@ -843,7 +900,7 @@ async def update_application_api(
 
 @app.delete("/application/{application_id}", status_code=204)
 async def delete_application_api(
-    application_id: int,
+    application_id: uuid.UUID,
     db: Session = Depends(get_db)
 ):
     """API endpoint to delete an application."""
@@ -855,7 +912,7 @@ async def delete_application_api(
 
 @app.put("/review/{review_id}", response_model=ReviewSchema)
 async def update_review_api(
-    review_id: int,
+    review_id: uuid.UUID,
     review_data: ReviewCreate,
     db: Session = Depends(get_db)
 ) -> ReviewSchema:
@@ -872,7 +929,7 @@ async def update_review_api(
 
 @app.delete("/review/{review_id}", status_code=204)
 async def delete_review_api(
-    review_id: int,
+    review_id: uuid.UUID,
     db: Session = Depends(get_db)
 ):
     """API endpoint to delete a review."""
@@ -880,6 +937,10 @@ async def delete_review_api(
     if not success:
         raise HTTPException(status_code=404, detail="Review not found")
     return
+
+
+# APIルーターをアプリケーションに追加
+app.include_router(api_router)
 
 
 # スクリプトとして直接実行された場合、Uvicornサーバーを起動

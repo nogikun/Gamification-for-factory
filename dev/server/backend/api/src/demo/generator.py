@@ -64,7 +64,7 @@ class EventGenerator:
         """
         
         # target_dateからdatetimeオブジェクトを生成
-        event_date = datetime.combine(target_date.date, datetime.min.time())
+        event_date = datetime.combine(target_date.target_date, datetime.min.time())
         
         # ランダムな時間（9時〜17時）を設定
         start_hour = randint(9, 16)

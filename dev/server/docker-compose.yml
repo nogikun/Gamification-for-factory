@@ -4,28 +4,21 @@ services:
     build:
       context: ./backend/api
       dockerfile: Dockerfile
+    container_name: backend
     ports:
-      - "3000:3000"
+      - "8000:8000"
+    volumes:
+      - "./backend/api:/app"
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/gamification
+      - HOST=0.0.0.0
+      - PORT=8000
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
-
-  # ワーカー - 非同期処理を担当
-  worker:
-    build:
-      context: ./backend/worker
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/gamification
-    depends_on:
-      - postgres
-      - api
-    restart: unless-stopped
-
+    networks:
+      - default
 
   # PostgreSQLデータベース - ユーザーや企業情報の保存
   postgres:
@@ -34,20 +27,41 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend/database/init:/docker-entrypoint-initdb.d
+      # - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=gamification
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
 
   # フロントエンド - Reactアプリケーション
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    container_name: frontend
     ports:
-      - "80:80"
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://backend:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - api
+      - postgres
     restart: unless-stopped
+    networks:
+      - default
 
   adminer:
     image: adminer
@@ -59,6 +73,12 @@ services:
       - 5050:8080
     depends_on:
       - postgres
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
 
 volumes:
   postgres-data:

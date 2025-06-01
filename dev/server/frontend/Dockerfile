@@ -1,4 +1,4 @@
-FROM node:18-alpine as build
+FROM node:18-alpine
 
 # 作業ディレクトリを設定
 WORKDIR /app
@@ -12,24 +12,8 @@ RUN npm ci
 # アプリケーションコードをコピー
 COPY . /app
 
-# アプリケーションのビルド
-RUN npm run build
+# Vite開発サーバーのポートを公開
+EXPOSE 5173
 
-# 本番環境用の軽量なイメージを使用
-FROM nginx:alpine
-
-# ビルド済みのファイルをnginxのHTMLディレクトリにコピー
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Nginxの設定ファイルをコピー（必要に応じて）
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Nginxのポートを公開
-EXPOSE 80
-
-# ヘルスチェック
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
-
-# Nginxを起動
-CMD ["nginx", "-g", "daemon off;"]
+# Vite開発サーバーを起動
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

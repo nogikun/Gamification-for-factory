@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useIonRouter } from '@ionic/react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useIonRouter, useIonViewWillEnter, useIonViewWillLeave } from '@ionic/react';
 
 // redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,24 +10,23 @@ import { CardComponent } from './Card';
 
 // css
 import './EventList.css'; // cssファイルのインポート
-import { use } from 'chai';
 
-// APIから返されるイベントデータの型定義
+// APIから返されるイベントデータの型定義（バックエンドスキーマに合わせて更新）
 interface EventData {
     event_id: string;
     company_id: string;
     event_type: string;
     title: string;
     description: string;
-    start_time: string;
-    end_time: string;
+    start_date: string;  // start_time から start_date に変更
+    end_date: string;    // end_time から end_date に変更
     location: string;
     reward: string;
-    required_qualifications: string[];
-    max_participants: number;
+    required_qualifications: string;  // string[] から string に変更（バックエンドに合わせて）
+    available_spots: number;  // max_participants から available_spots に変更
     created_at: string;
     updated_at: string;
-    tags: string[];
+    tags: string | string[];  // バックエンドから文字列またはstring[]で返される可能性がある
     image: string;
 }
 
@@ -53,7 +52,7 @@ function fetchData(targetDate: Date | string, host: string, port?: string){
     console.log("入力された日付:", targetDate);
     console.log("リクエストボディ:", requestBody);
 
-    const url = port ? `${host}:${port}/demo/get-events` : `${host}/demo/get-events`;
+    const url = port ? `${host}:${port}/get-events` : `${host}/get-events`;
     return fetch(url, {
         method: 'POST',
         headers: {
@@ -78,12 +77,38 @@ export interface EventListProps {
     selectedDate?: string;
 }
 
+// カスタムフック: フォーカス管理
+const usePageFocus = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useIonViewWillEnter(() => {
+        // ページがアクティブになる時、最初の要素にフォーカス
+        if (containerRef.current) {
+            const firstFocusable = containerRef.current.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (firstFocusable instanceof HTMLElement) {
+                firstFocusable.focus();
+            }
+        }
+    });
+
+    useIonViewWillLeave(() => {
+        // ページが非アクティブになる時、フォーカスをクリア
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+    });
+
+    return containerRef;
+};
+
 export const EventList = ({
     selectedDate,
     ...props
 }: EventListProps) => {
     const dispatch = useDispatch();
-    const ionRouter = useIonRouter(); // ionRouterをコンポーネントのトップレベルに移動
+    const ionRouter = useIonRouter();
+    const containerRef = usePageFocus(); // カスタムフックを使用
+
     const searchSelectedDate = useSelector((state: RootState) => state.searchDate.selectedDate);
     const [events, setEvents] = useState<EventData[]>([]);
     const [loading, setLoading] = useState(false);
@@ -135,9 +160,9 @@ export const EventList = ({
     }, [searchSelectedDate]);
 
     return (
-        <div>
-            {loading && <p>読み込み中...</p>}
-            {error && <p className="error-message">{error}</p>}
+        <div ref={containerRef} role="region" aria-label="イベント一覧">
+            {loading && <p role="status">読み込み中...</p>}
+            {error && <p role="alert" className="error-message">{error}</p>}
             
             {/* 取得したイベントデータを表示 */}
             {events.map((event: EventData, index: number) => (
@@ -146,12 +171,11 @@ export const EventList = ({
                     backgroundColor={darkTheme ? "#333333" : "#f5f5f5"}
                     base64Image={event.image}
                     borderRadius="10px"
-                    campany={event.location.split(" ")[2]}
+                    campany={event.location ? (event.location.split(" ")[2] || event.location) : "情報なし"}
                     color={darkTheme ? "#ffffff" : "#000000"}
                     currencySymbol="¥"
-                    details={event.description}
-                    startDate={event.start_time.split('T')[0]}
-                    endDate={event.end_time.split('T')[0]}
+                    details={event.description || "詳細情報なし"}
+                    endDate={formatDateForCard(event.end_date)}
                     height="auto"
                     onClick={() => {
                         // クリックイベント
@@ -161,8 +185,9 @@ export const EventList = ({
                         // ページに遷移
                         ionRouter.push('/event'); // イベント詳細ページに遷移
                     }}
-                    paying={Number.parseInt(event.reward.replace(/[^0-9]/g, ""), 10)}
-                    tags={event.tags.map(tag => ({
+                    paying={event.reward ? Number.parseInt(event.reward.replace(/[^0-9]/g, ""), 10) || 0 : 0}
+                    startDate={formatDateForCard(event.start_date)}
+                    tags={parseTags(event.tags).map(tag => ({
                         color: getTagColor(tag),
                         label: tag
                     }))}
@@ -209,4 +234,35 @@ function getTagColor(tag: string): string {
     };
     
     return colorMap[tag] || '#9e9e9e';
+}
+
+// バックエンドの日付文字列をフロントエンド用にフォーマットする関数
+function formatDateForCard(dateString: string): string {
+    try {
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0]; // YYYY-MM-DD形式
+    } catch (error) {
+        console.error('Date formatting error:', error);
+        return dateString; // フォーマットに失敗した場合は元の文字列を返す
+    }
+}
+
+// バックエンドのtags（JSON文字列）をフロントエンド用の配列に変換する関数
+function parseTags(tagsData: string | string[]): string[] {
+    if (Array.isArray(tagsData)) {
+        return tagsData;
+    }
+    
+    if (typeof tagsData === 'string') {
+        try {
+            // JSON文字列の場合はパースを試みる
+            const parsed = JSON.parse(tagsData);
+            return Array.isArray(parsed) ? parsed : [tagsData];
+        } catch {
+            // JSON文字列でない場合はそのまま配列として扱う
+            return [tagsData];
+        }
+    }
+    
+    return [];
 }

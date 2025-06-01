@@ -1,11 +1,32 @@
-from random import randint, choice, random, sample
+import sys
+import os
+from random import randint, choice, sample
 from datetime import datetime
 import base64
-from PIL import Image
-import io
+import uuid
+import json
+from typing import TYPE_CHECKING, List
 
-# local imports
-from src.schema.schema import Event, DateModel
+# Add the API root directory to Python path for imports
+if __name__ == "__main__" or True:  # Always add for standalone execution
+    api_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    if api_root not in sys.path:
+        sys.path.insert(0, api_root)
+
+# Type checking imports
+if TYPE_CHECKING:
+    from src.schemas.database.event import Event as EventSchema
+    from src.schemas.api.base import DateModel
+else:
+    # Runtime imports with fallbacks
+    try:
+        from src.schemas.database.event import Event as EventSchema
+        from src.schemas.api.base import DateModel
+    except ImportError as e:
+        print(f"Import error: {e}")
+        # Fallback for runtime
+        EventSchema = object
+        DateModel = object
 
 class EventGenerator:
     def __init__(self):
@@ -59,7 +80,7 @@ class EventGenerator:
             print(f"Error: {image_path} が見つかりません。")
             return None
 
-    def generate_event_data(self, target_date: DateModel) -> Event:
+    def generate_event_data(self, target_date: "DateModel") -> "EventSchema":
         """
         デモ用のイベントデータを生成します
         """
@@ -82,29 +103,36 @@ class EventGenerator:
         reward_amount = randint(40, 80) * 100  # 4000円から8000円の範囲かつ、100円単位での価格
         reward_str = f"{reward_amount}円"  # 文字列に変換して単位を追加
         
+        # タグをJSONストリング形式に変換
+        tags_list = sample(self.event_types, k=randint(1, 3))
+        tags_json = json.dumps(tags_list, ensure_ascii=False)
+        
         event_data = {
-            "event_id": f"event_{randint(1, 1000)}",
-            "company_id": f"company_{randint(1, 100)}",
+            "event_id": str(uuid.uuid4()),
+            "company_id": str(uuid.uuid4()),
             "event_type": self.event_types[event_type_index],
             "title": self.event_titles[event_type_index],
             "description": self.event_descriptions[event_type_index],
-            "start_time": event_start,
-            "end_time": event_end,
+            "start_date": event_start,
+            "end_date": event_end,
             "location": choice(self.event_locations),
             "reward": reward_str,  # 文字列として報酬を設定
-            "required_qualifications": sample(self.required_qualifications, k=randint(1, 3)),
-            "max_participants": randint(5, 20),
+            "required_qualifications": ",".join(sample(self.required_qualifications, k=randint(1, 3))),
+            "available_spots": randint(5, 20),  # 参加可能人数
             "created_at": datetime.now(),
             "updated_at": datetime.now(),
-            "tags": sample(self.event_types, k=randint(1, 3)),
+            "tags": tags_json,
             "image": self.image_to_base64(choice(self.sample_images)),
         }
-        return Event(**event_data)
+        return EventSchema(**event_data)
 
-    def generate_event_data_list(self, target_date: DateModel, num_events: int = randint(5, 10)) -> list[Event]:
+    def generate_event_data_list(self, target_date: "DateModel", num_events: int = None) -> List["EventSchema"]:
         """
         デモ用のイベントデータのリストを生成します
         """
+        if num_events is None:
+            num_events = randint(5, 10)
+        
         event_list = []
         for _ in range(num_events):
             event_data = self.generate_event_data(target_date)

@@ -1,0 +1,465 @@
+@use '../styles/variables' as *;
+
+.reviews {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 32px 24px 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  border: 1px solid var(--bg-sidebar);
+}
+
+.reviews__title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 40px;
+}
+
+.tableActions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.filterContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filterLabel {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.filterSelect {
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+  font-size: 0.9rem;
+  min-width: 140px;
+  
+  &:focus {
+    outline: none;
+    border-color: #1976d2;
+  }
+}
+
+.addButton {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.18s;
+  display: flex;
+  align-items: center;
+  
+  &:hover {
+    background: #0d47a1;
+  }
+}
+
+.reviews__table {
+  width: 100%;
+  min-width: 900px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.reviews__table th, .reviews__table td {
+  padding: 12px 16px;
+  min-height: 48px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.reviews__table th {
+  background: #f5f6fa;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+}
+
+.reviews__table td {
+  &:nth-child(1), &:nth-child(2) {
+    width: 15%;
+  }
+  
+  &:nth-child(3) {
+    width: 20%;
+  }
+  
+  &:nth-child(4) {
+    width: 10%;
+  }
+  
+  &:nth-child(5) {
+    width: 25%;
+  }
+  
+  &:nth-child(6) {
+    width: 10%;
+  }
+  
+  &:nth-child(7) {
+    width: 8%;
+    text-align: center;
+  }
+}
+
+.ratingCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ratingStars {
+  color: #FFB300;
+  font-size: 1rem;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.ratingNumber {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.eventCell, .commentCell {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reviews__table tr:hover {
+  background: #f7fafd;
+}
+
+.errorMessage {
+  background: #ffebee;
+  border-left: 4px solid #ef5350;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  color: #c62828;
+}
+
+.loadingIndicator {
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+}
+
+.noData {
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+  font-style: italic;
+}
+
+.inputBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.18s;
+  margin: 0;
+}
+
+.inputBtn:hover {
+  background: #0d47a1;
+}
+
+// 企業レビュータグ
+.companyReviewTag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 8px;
+  background-color: #5c6bc0;
+  color: white;
+}
+
+// 採用候補タグ
+.hiringTag {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-left: 8px;
+  background-color: #4caf50;
+  color: white;
+}
+
+// レビュータイプ選択スタイル
+.reviewTypeSelector {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+
+.reviewTypeOption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 5px;
+  background: #f5f6fa;
+  transition: background-color 0.2s, color 0.2s;
+  
+  &:hover {
+    background: #e3f2fd;
+  }
+  
+  input {
+    margin: 0;
+  }
+  
+  span {
+    font-weight: 500;
+  }
+}
+
+// チェックボックススタイル
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-top: 8px;
+  
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+  
+  span {
+    font-weight: 500;
+  }
+}
+
+// モーダルスタイル
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalContent {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 24px 20px 24px;
+  min-width: 440px;
+  max-width: 500px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.13);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalTitle {
+  font-size: 1.3rem;
+  color: #1976d2;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.formField {
+  margin-bottom: 16px;
+  
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #444;
+  }
+}
+
+.formSelect {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #cfd8dc;
+  font-size: 1rem;
+  color: #333;
+  background: #fff;
+  margin-bottom: 4px;
+  
+  &:focus {
+    outline: none;
+    border-color: #1976d2;
+  }
+  
+  &:disabled {
+    background: #f5f5f5;
+    opacity: 0.7;
+  }
+}
+
+.ratingInput {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.ratingLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.ratingRadio {
+  margin-right: 4px;
+}
+
+.ratingText {
+  font-size: 1rem;
+}
+
+.ratingPreview {
+  color: #FFB300;
+  font-size: 1.2rem;
+  margin-top: 4px;
+  letter-spacing: 2px;
+}
+
+.reviewTextarea {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  padding: 10px 12px;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 80px;
+  
+  &:focus {
+    outline: none;
+    border-color: #1976d2;
+  }
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.submitBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.18s;
+  font-weight: 600;
+  
+  &:hover {
+    background: #0d47a1;
+  }
+}
+
+.closeBtn {
+  background: #eee;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.18s;
+  
+  &:hover {
+    background: #ccc;
+  }
+}
+
+.formHint {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .modalContent {
+    min-width: 0;
+    width: 92vw;
+    padding: 24px 16px 16px;
+  }
+  
+  .reviews__table th, .reviews__table td {
+    padding: 8px 6px;
+    font-size: 0.9rem;
+  }
+  
+  .reviews__table {
+    min-width: 650px;
+  }
+  
+  .reviews {
+    padding: 24px 12px 32px;
+  }
+  
+  .ratingInput {
+    gap: 8px;
+  }
+  
+  .reviewTypeSelector {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .tableActions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .filterContainer {
+    width: 100%;
+  }
+  
+  .filterSelect {
+    flex-grow: 1;
+  }
+}

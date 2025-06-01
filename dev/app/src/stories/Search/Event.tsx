@@ -39,6 +39,12 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'; // 
 import './Event.css';
 import { MotionPhotosAuto } from '@mui/icons-material';
 
+// タグオブジェクトの型定義
+interface TagData {
+    color: string;
+    label: string;
+}
+
 // APIから返されるイベントデータの型定義
 interface EventData {
     event_id: string;
@@ -54,7 +60,7 @@ interface EventData {
     available_spots: number;
     created_at: string;
     updated_at: string;
-    tags: string[];
+    tags: TagData[];  // タグオブジェクトの配列として定義
     image: string;
 }
 
@@ -163,12 +169,25 @@ export const Event = ({
     };
 
     // タグの色を取得する関数
-    const getTagColor = (tag: string): string => {
-        // タグに応じて色を返すロジック (暫定的な実装)
-        const hash = tag.split('').reduce((acc, char) => {
+    const getTagColor = (tag: TagData | string): string => {
+        // タグオブジェクトの場合はcolorプロパティを使用
+        if (typeof tag === 'object' && tag.color) {
+            return tag.color;
+        }
+        // 文字列の場合はハッシュ値から色を生成 (後方互換性)
+        const tagString = typeof tag === 'string' ? tag : (tag as TagData).label || '';
+        const hash = tagString.split('').reduce((acc, char) => {
             return char.charCodeAt(0) + ((acc << 5) - acc);
         }, 0);
         return `hsl(${hash % 360}, 70%, 60%)`;
+    };
+
+    // タグのラベルを取得する関数
+    const getTagLabel = (tag: TagData | string): string => {
+        if (typeof tag === 'object' && tag.label) {
+            return tag.label;
+        }
+        return typeof tag === 'string' ? tag : '';
     };
     
     // イベントデータを取得
@@ -204,38 +223,85 @@ export const Event = ({
                             updated_at: apiResponse.updated_at,
                             tags: (() => {
                                 const rawTags = apiResponse.tags;
-                                let processedTags: string[] = [];
+                                let processedTags: TagData[] = [];
+                                
+                                // 配列の場合
                                 if (Array.isArray(rawTags)) {
                                     processedTags = rawTags.map(tag => {
-                                        if (typeof tag === 'string') return tag;
-                                        if (typeof tag === 'object' && tag !== null && typeof tag.label === 'string') return tag.label;
-                                        return String(tag); // Fallback to string conversion
-                                    }).filter(tag => tag.trim() !== '' && tag !== '[object Object]');
-                                } else if (typeof rawTags === 'string') {
-                                    if (rawTags.trim() === '') return [];
+                                        if (typeof tag === 'object' && tag !== null) {
+                                            if (tag.label) {
+                                                return {
+                                                    label: String(tag.label),
+                                                    color: tag.color ? String(tag.color) : `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                                                };
+                                            }
+                                        } else if (typeof tag === 'string') {
+                                            const hash = tag.split('').reduce((acc, char) => {
+                                                return char.charCodeAt(0) + ((acc << 5) - acc);
+                                            }, 0);
+                                            return {
+                                                label: tag,
+                                                color: `hsl(${hash % 360}, 70%, 60%)`
+                                            };
+                                        }
+                                        return {
+                                            label: String(tag),
+                                            color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                                        };
+                                    });
+                                }                                        // 文字列の場合
+                                else if (typeof rawTags === 'string' && rawTags.trim() !== '') {
                                     try {
+                                        // JSONとしてパースを試みる
                                         const parsed = JSON.parse(rawTags);
                                         if (Array.isArray(parsed)) {
-                                            processedTags = parsed.map(tag => {
-                                                if (typeof tag === 'string') return tag;
-                                                if (typeof tag === 'object' && tag !== null && typeof tag.label === 'string') return tag.label;
-                                                return String(tag);
-                                            }).filter(tag => tag.trim() !== '' && tag !== '[object Object]');
-                                        } else { // Parsed is not an array, treat as single tag or object
-                                            if (typeof parsed === 'string') processedTags = [parsed];
-                                            else if (typeof parsed === 'object' && parsed !== null && typeof parsed.label === 'string') processedTags = [parsed.label];
-                                            else processedTags = [String(parsed)];
-                                            processedTags = processedTags.filter(tag => tag.trim() !== '' && tag !== '[object Object]');
+                                            // 配列の各要素を適切なTagData形式に変換
+                                            processedTags = parsed.map(item => {
+                                                if (typeof item === 'object' && item !== null && 'label' in item) {
+                                                    return {
+                                                        label: String(item.label),
+                                                        color: 'color' in item ? String(item.color) : `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                                                    };
+                                                } else if (typeof item === 'string') {
+                                                    const hash = item.split('').reduce((acc, char) => {
+                                                        return char.charCodeAt(0) + ((acc << 5) - acc);
+                                                    }, 0);
+                                                    return {
+                                                        label: item,
+                                                        color: `hsl(${hash % 360}, 70%, 60%)`
+                                                    };
+                                                } else {
+                                                    return {
+                                                        label: String(item),
+                                                        color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                                                    };
+                                                }
+                                            });
+                                        } else {
+                                            processedTags = [
+                                                {
+                                                    label: String(parsed),
+                                                    color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                                                }
+                                            ];
                                         }
                                     } catch (e) {
-                                        // Not a JSON string, treat as comma-separated or single tag
-                                        processedTags = rawTags.split(',').map(t => t.trim()).filter(t => t !== '');
+                                        // カンマ区切りの文字列として処理
+                                        processedTags = rawTags.split(',')
+                                            .map(t => t.trim())
+                                            .filter(Boolean)
+                                            .map(tag => {
+                                                const hash = tag.split('').reduce((acc, char) => {
+                                                    return char.charCodeAt(0) + ((acc << 5) - acc);
+                                                }, 0);
+                                                return {
+                                                    label: tag,
+                                                    color: `hsl(${hash % 360}, 70%, 60%)`
+                                                };
+                                            });
                                     }
-                                } else if (typeof rawTags === 'object' && rawTags !== null && typeof rawTags.label === 'string') {
-                                     processedTags = [rawTags.label].filter(tag => tag.trim() !== '' && tag !== '[object Object]');
-                                } else if (rawTags) { // Catch other types and try to stringify
-                                     processedTags = [String(rawTags)].filter(tag => tag.trim() !== '' && tag !== '[object Object]');
                                 }
+                                
                                 console.log("Event.tsx: Processed tags for EventData:", processedTags);
                                 return processedTags;
                             })(),
@@ -380,8 +446,16 @@ export const Event = ({
                             </Typography>
                             {eventData.tags && eventData.tags.length > 0 && (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
-                                    {eventData.tags.map((tag) => (
-                                        <Chip key={tag} label={tag} size="small" sx={{ backgroundColor: getTagColor(tag), color: '#fff' }} />
+                                    {eventData.tags.map((tag, index) => (
+                                        <Chip 
+                                            key={`${getTagLabel(tag)}-${index}`} 
+                                            label={getTagLabel(tag)} 
+                                            size="small" 
+                                            sx={{ 
+                                                backgroundColor: getTagColor(tag), 
+                                                color: '#fff' 
+                                            }} 
+                                        />
                                     ))}
                                 </Box>
                             )}

@@ -2,12 +2,18 @@
 Event-related Pydantic schemas for FastAPI
 """
 from pydantic import BaseModel, Field, field_validator, model_validator
-from typing import Optional, Any
+from typing import Optional, Any, List, Union
 from datetime import datetime
 import base64
 import json
 import uuid
 from src.models import EventTypeEnum
+
+
+class TagData(BaseModel):
+    """タグデータを表すモデル"""
+    color: str
+    label: str
 
 
 class EventBase(BaseModel):
@@ -20,19 +26,24 @@ class EventBase(BaseModel):
     end_date: datetime
     location: Optional[str] = None
     reward: Optional[str] = None
-    required_qualifications: Optional[str] = None
+    required_qualifications: Optional[List[str]] = Field(default_factory=list)  # 変更
     available_spots: Optional[int] = None
-    tags: Optional[str] = Field(None, description="イベントに関連するタグ (JSON文字列)")
+    tags: Optional[Union[str, List[TagData]]] = Field(None, description="イベントに関連するタグ (JSON文字列またはTagDataのリスト)")
     image: Optional[str] = Field(None, description="イベントの画像（Base64エンコードされた文字列）")
-
+    
     @field_validator('tags')
     def validate_tags_json(cls, v):
         if v is None: 
             return v
-        try:
-            json.loads(v)
-        except json.JSONDecodeError:
-            raise ValueError('tags must be a valid JSON string')
+        # リストの場合はそのまま通す
+        if isinstance(v, list):
+            return v
+        # 文字列の場合はJSONバリデーションを行う
+        if isinstance(v, str):
+            try:
+                json.loads(v)
+            except json.JSONDecodeError:
+                raise ValueError('tags must be a valid JSON string')
         return v
 
 
@@ -55,19 +66,24 @@ class EventUpdate(BaseModel):
     end_date: Optional[datetime] = None
     location: Optional[str] = None
     reward: Optional[str] = None
-    required_qualifications: Optional[str] = None
+    required_qualifications: Optional[List[str]] = None
     available_spots: Optional[int] = None
-    tags: Optional[str] = None
+    tags: Optional[Union[str, List[TagData]]] = None
     image: Optional[str] = None
 
     @field_validator('tags')
     def validate_tags_json(cls, v):
         if v is None: 
             return v
-        try:
-            json.loads(v)
-        except json.JSONDecodeError:
-            raise ValueError('tags must be a valid JSON string')
+        # リストの場合はそのまま通す
+        if isinstance(v, list):
+            return v
+        # 文字列の場合はJSONバリデーションを行う
+        if isinstance(v, str):
+            try:
+                json.loads(v)
+            except json.JSONDecodeError:
+                raise ValueError('tags must be a valid JSON string')
         return v
 
 
@@ -97,5 +113,16 @@ class Event(EventBase):
             # tags (JSON) は既にJSON文字列として扱われる想定なので、DBから取得したまま（Pythonのdict/list）なら文字列化する
             if data.tags is not None and not isinstance(data.tags, str):
                 data.tags = json.dumps(data.tags, ensure_ascii=False)
+            
+            # required_qualifications を文字列からリストに変換
+            if isinstance(data.required_qualifications, str):
+                # 空文字列の場合は空のリスト、そうでなければカンマで分割
+                if data.required_qualifications.strip() == "":
+                    data.required_qualifications = []
+                else:
+                    data.required_qualifications = [q.strip() for q in data.required_qualifications.split(',') if q.strip()]
+            elif data.required_qualifications is None: # Noneの場合は空のリストに
+                data.required_qualifications = []
+            # 既にリストの場合は何もしない
 
         return data

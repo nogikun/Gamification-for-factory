@@ -34,15 +34,14 @@ interface EventData {
 function fetchData(targetDate: Date | string, host: string, port?: string){
     let formatedTargetDate: string;
 
-    const formatter = new Intl.DateTimeFormat(undefined, {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-    });
-
     if (targetDate instanceof Date) {
-        formatedTargetDate = formatter.format(targetDate).replace(/\//g, '-');
+        // DateオブジェクトをISO形式の日付文字列 (YYYY-MM-DD) に変換
+        const year = targetDate.getFullYear();
+        const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+        const day = String(targetDate.getDate()).padStart(2, '0');
+        formatedTargetDate = `${year}-${month}-${day}`;
     } else {
+        // 文字列の場合、そのまま使用（既にフォーマット済みと仮定）
         formatedTargetDate = targetDate;
     }
     
@@ -50,6 +49,7 @@ function fetchData(targetDate: Date | string, host: string, port?: string){
         target_date: formatedTargetDate,
     };
     console.log("入力された日付:", targetDate);
+    console.log("フォーマット後の日付:", formatedTargetDate);
     console.log("リクエストボディ:", requestBody);
 
     const url = port ? `${host}:${port}/get-events` : `${host}/get-events`;

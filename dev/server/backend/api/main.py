@@ -10,9 +10,10 @@ import sqlalchemy
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
-from fastapi import Depends, FastAPI, HTTPException, APIRouter
+from fastapi import Depends, FastAPI, HTTPException, APIRouter, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 import uvicorn
@@ -88,6 +89,25 @@ async def general_exception_handler(request, exc):
     return JSONResponse(
         status_code=500,
         content={"detail": f"Internal server error: {str(exc)}"}
+    )
+
+# Pydanticバリデーションエラーハンドラーを追加
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    print("Validation error for request:", request.url)
+    try:
+        body = await request.body()
+        print("Request body:", body.decode('utf-8') if body else "Empty body")
+    except Exception as e:
+        print("Could not read request body:", str(e))
+    print("Validation errors:", exc.errors())
+    return JSONResponse(
+        status_code=422,
+        content={
+            "detail": "Validation error",
+            "errors": exc.errors(),
+            "message": "リクエストの形式が正しくありません。日付は 'YYYY-MM-DD' 形式で送信してください。"
+        }
     )
 
 # API Router with prefix
@@ -724,11 +744,82 @@ async def get_event_api(
     event_id: uuid.UUID,
     db: Session = Depends(get_db)
 ) -> EventSchema:
-    """API endpoint to get a single event by ID."""
-    db_event = get_event_by_id(db, event_id)
+    db_event = get_event_by_id(db, event_id) # get_event_by_id はこのファイルの上部で定義されている想定
     if db_event is None:
         raise HTTPException(status_code=404, detail="Event not found")
-    return EventSchema.model_validate(db_event)
+
+    # --- データ変換処理 ---
+    # tags: get_events と同様に、DBから取得した値をリストに変換後、JSON文字列にする
+    tags_list: List[str] = []
+    if isinstance(db_event.tags, str) and db_event.tags:
+        try:
+            # DBにJSON文字列として保存されている場合
+            parsed_json_tags = json.loads(db_event.tags)
+            if isinstance(parsed_json_tags, list):
+                tags_list = [str(tag) for tag in parsed_json_tags]
+            else: # JSONだがリストではない場合、単一要素のリストとして扱う
+                tags_list = [str(parsed_json_tags)]
+        except json.JSONDecodeError:
+            # JSONでなければカンマ区切り文字列と仮定
+            tags_list = [t.strip() for t in db_event.tags.split(',') if t.strip()]
+    elif isinstance(db_event.tags, list): # DBがPythonリストを返す場合
+        tags_list = [str(t) for t in db_event.tags]
+    
+    tags_for_schema = json.dumps(tags_list) if tags_list else None
+
+    # image: バイト列ならBase64エンコード、文字列ならそのまま
+    image_str: Optional[str] = None
+    if hasattr(db_event, 'image') and db_event.image:
+        if isinstance(db_event.image, bytes):
+            image_str = base64.b64encode(db_event.image).decode('utf-8')
+        elif isinstance(db_event.image, str):
+            image_str = db_event.image
+
+    # event_type: Enumの場合は .value を使用
+    event_type_value = db_event.event_type
+    if hasattr(db_event.event_type, 'value'):
+        event_type_value = db_event.event_type.value
+
+    # required_qualifications: EventSchemaがリストを期待する場合、文字列からリストに変換
+    # get_eventsでは特に変換していないため、EventSchemaの定義に依存。
+    # ここではフロントエンドの期待に合わせてリストに変換することを試みる。
+    # EventSchema.required_qualifications が List[str] であると仮定。
+    required_qualifications_list: List[str] = []
+    if isinstance(db_event.required_qualifications, str):
+        required_qualifications_list = [q.strip() for q in db_event.required_qualifications.split(',') if q.strip()]
+    elif isinstance(db_event.required_qualifications, list):
+        required_qualifications_list = [str(q) for q in db_event.required_qualifications]
+    elif db_event.required_qualifications is None:
+        required_qualifications_list = []
+
+
+    # EventSchema に渡すペイロードを作成
+    event_payload = {
+        "event_id": db_event.event_id,
+        "company_id": db_event.company_id,
+        "event_type": event_type_value,
+        "title": db_event.title,
+        "description": db_event.description,
+        "start_date": db_event.start_date,
+        "end_date": db_event.end_date,
+        "location": db_event.location,
+        "reward": db_event.reward,
+        "required_qualifications": required_qualifications_list, # リストとして渡す
+        "available_spots": db_event.available_spots,
+        "created_at": db_event.created_at,
+        "updated_at": db_event.updated_at,
+        "tags": tags_for_schema, # JSON文字列として渡す (get_eventsに合わせる)
+        "image": image_str,
+    }
+
+    try:
+        # Pydanticモデルのバリデーションとインスタンス化
+        return EventSchema.model_validate(event_payload)
+    except Exception as e:
+        # エラーログを出力してデバッグしやすくする
+        print(f"Error during EventSchema validation for event_id {event_id}: {str(e)}")
+        print(f"Payload provided for validation: {event_payload}")
+        raise HTTPException(status_code=500, detail=f"Internal server error during event data processing: {str(e)}")
 
 
 @app.put("/event/{event_id}", response_model=EventSchema)
@@ -996,6 +1087,12 @@ async def get_event(target_date: DateModel) -> List[EventSchema]:
     """
     イベント取得エンドポイント - 指定された日付のイベントリストをデータベースから取得します
     """
+    # リクエストデータをログ出力
+    print("Received request for /get-events")
+    print("Raw target_date object:", target_date)
+    print("target_date.target_date:", target_date.target_date)
+    print("target_date type:", type(target_date.target_date))
+    
     database_url = os.getenv("DATABASE_URL")
     db_connector = DBConnector(
         db_url = database_url,  # 環境変数からデータベースURLを取得
@@ -1017,15 +1114,53 @@ async def get_event(target_date: DateModel) -> List[EventSchema]:
     # イベントデータをPydanticモデルに変換
     event_list = []
     for event in events:
-        # tagsをJSON文字列からリストに変換
+        # tagsをJSON文字列からタグオブジェクト（color, label）のリストに変換
+        tags_data = []
         if isinstance(event.tags, str) and event.tags:
             try:
-                tags = json.loads(event.tags)
+                # JSONから変換を試みる
+                parsed_tags = json.loads(event.tags)
+                
+                if isinstance(parsed_tags, list):
+                    for tag in parsed_tags:
+                        if isinstance(tag, str):
+                            # 文字列タグからcolorとlabelを持つオブジェクトを生成
+                            hash_val = sum(ord(c) for c in tag) % 360
+                            tags_data.append({"color": f"hsl({hash_val}, 70%, 60%)", "label": tag})
+                        elif isinstance(tag, dict) and "label" in tag:
+                            # すでにオブジェクトの場合はそのまま追加（colorがなければ生成）
+                            if "color" not in tag:
+                                hash_val = sum(ord(c) for c in tag["label"]) % 360
+                                tag["color"] = f"hsl({hash_val}, 70%, 60%)"
+                            tags_data.append(tag)
+                else:
+                    # 単一の値の場合
+                    if isinstance(parsed_tags, str):
+                        hash_val = sum(ord(c) for c in parsed_tags) % 360
+                        tags_data.append({"color": f"hsl({hash_val}, 70%, 60%)", "label": parsed_tags})
+                    elif isinstance(parsed_tags, dict) and "label" in parsed_tags:
+                        if "color" not in parsed_tags:
+                            hash_val = sum(ord(c) for c in parsed_tags["label"]) % 360
+                            parsed_tags["color"] = f"hsl({hash_val}, 70%, 60%)"
+                        tags_data.append(parsed_tags)
             except json.JSONDecodeError:
                 # JSONでない場合はカンマで分割してリスト化を試みる
-                tags = [t.strip() for t in event.tags.split(',') if t.strip()]
-        else:
-            tags = event.tags or []
+                for tag in [t.strip() for t in event.tags.split(',') if t.strip()]:
+                    hash_val = sum(ord(c) for c in tag) % 360
+                    tags_data.append({"color": f"hsl({hash_val}, 70%, 60%)", "label": tag})
+        elif isinstance(event.tags, list):
+            # リストの場合は各要素を適切に変換
+            for tag in event.tags:
+                if isinstance(tag, str):
+                    hash_val = sum(ord(c) for c in tag) % 360
+                    tags_data.append({"color": f"hsl({hash_val}, 70%, 60%)", "label": tag})
+                elif isinstance(tag, dict) and "label" in tag:
+                    if "color" not in tag:
+                        hash_val = sum(ord(c) for c in tag["label"]) % 360
+                        tag["color"] = f"hsl({hash_val}, 70%, 60%)"
+                    tags_data.append(tag)
+        # tagsに元のデータを保持（デバッグ用）
+        tags = tags_data
 
         # 画像データをBase64エンコードされた文字列に変換
         image_str = None
@@ -1038,6 +1173,16 @@ async def get_event(target_date: DateModel) -> List[EventSchema]:
         else:
             image_str = None
 
+        # required_qualifications を文字列からリストに変換
+        required_qualifications_list = []
+        if isinstance(event.required_qualifications, str) and event.required_qualifications:
+            # カンマ区切りの文字列をリストに変換
+            required_qualifications_list = [q.strip() for q in event.required_qualifications.split(',') if q.strip()]
+        elif isinstance(event.required_qualifications, list):
+            required_qualifications_list = [str(q) for q in event.required_qualifications]
+        elif event.required_qualifications is None:
+            required_qualifications_list = []
+
         # データ型を適切に変換してEventSchemaオブジェクトを作成
         event_data = EventSchema(
             event_id=event.event_id,  # UUIDをそのまま使用
@@ -1049,11 +1194,11 @@ async def get_event(target_date: DateModel) -> List[EventSchema]:
             end_date=event.end_date,
             location=event.location,
             reward=event.reward,
-            required_qualifications=event.required_qualifications,
+            required_qualifications=required_qualifications_list,  # リストとして渡す
             available_spots=event.available_spots,
             created_at=event.created_at,
             updated_at=event.updated_at,
-            tags=json.dumps(tags) if tags else None,  # リストをJSON文字列に変換
+            tags=tags,  # タグオブジェクトの配列をそのまま渡す
             image=image_str # 修正：Base64エンコードされた画像文字列
         )
         event_list.append(event_data)

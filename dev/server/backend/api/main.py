@@ -12,33 +12,36 @@ from typing import Dict, List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 import uvicorn
 
 # local imports
-from src.database import Base, get_db, get_engine, reset_reviews_table
+from src.database import get_db
 from src.schemas.database.applicant import ApplicantCreate, Applicant as ApplicantSchema
 from src.schemas.database.event import Event as EventSchema, EventCreate, EventUpdate
 from src.schemas.database.review import Review as ReviewSchema, ReviewCreate, ReviewDetail
 from src.schemas.api.base import DateModel
-from src.schema.schema import Event, EventIdModel, Applicant
+from src.schemas.api.join_event import JoinEventRequest
+from src.schema.schema import EventIdModel, Applicant
 from src.demo.generator import EventGenerator
 from src.classes.db_connector import DBConnector
 from src.models import (
     Applicant as ApplicantModel,
     Application as ApplicationModel,
     ApplicationStatusEnum, Event as EventModel,
-    EventTypeEnum, Review as ReviewModel
+    EventTypeEnum, Review as ReviewModel,
+    User as UserModel, UserTypeEnum
 )
 from src.schemas.database.application import (
     ApplicationCreate, ApplicationDetail, ApplicationResponse, ApplicationUpdate
 )
 # reviewsテーブルをリセット
-reset_reviews_table()
+# reset_reviews_table()
 
 # データベーステーブルを作成 (存在しない場合のみ)
-Base.metadata.create_all(bind=get_engine())
+# Base.metadata.create_all(bind=get_engine())
 
 load_dotenv()  # .envファイルから環境変数を読み込む
 
@@ -75,6 +78,17 @@ app = FastAPI(
     description="Gamification for factory API server",
     version="0.1.0"
 )
+
+# カスタム例外ハンドラーを追加
+@app.exception_handler(Exception)
+async def general_exception_handler(request, exc):
+    import traceback
+    print(f"Unhandled exception: {exc}")
+    print(f"Traceback: {traceback.format_exc()}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Internal server error: {str(exc)}"}
+    )
 
 # API Router with prefix
 api_router = APIRouter(prefix="/api")
@@ -391,9 +405,25 @@ def create_applicant(
     else:
         birth_date = applicant_data.birth_date
 
+    # 新しいユーザーIDを生成
+    new_user_id = uuid.uuid4()
+    
+    # まず users テーブルにユーザーを作成
+    db_user = UserModel(
+        user_id=new_user_id,
+        user_type=UserTypeEnum.APPLICANT,
+        user_name=f"{applicant_data.last_name} {applicant_data.first_name}",
+        created_at=datetime.now(),
+        login_time=None,
+        ai_advice=None
+    )
+    
+    db.add(db_user)
+    db.flush()  # ユーザーを先にフラッシュしてIDを確定
+
     # 応募者データを作成
     db_applicant = ApplicantModel(
-        user_id=uuid.uuid4(),  # 明示的にUUIDを生成
+        user_id=new_user_id,  # 作成したユーザーのIDを使用
         last_name=applicant_data.last_name,
         first_name=applicant_data.first_name,
         mail_address=applicant_data.mail_address,
@@ -997,6 +1027,17 @@ async def get_event(target_date: DateModel) -> List[EventSchema]:
         else:
             tags = event.tags or []
 
+        # 画像データをBase64エンコードされた文字列に変換
+        image_str = None
+        if hasattr(event, 'image') and event.image:
+            if isinstance(event.image, bytes):
+                image_str = base64.b64encode(event.image).decode('utf-8')
+            else:
+                # すでに文字列の場合はそのまま使用 (またはエラー処理)
+                image_str = event.image
+        else:
+            image_str = None
+
         # データ型を適切に変換してEventSchemaオブジェクトを作成
         event_data = EventSchema(
             event_id=event.event_id,  # UUIDをそのまま使用
@@ -1013,7 +1054,7 @@ async def get_event(target_date: DateModel) -> List[EventSchema]:
             created_at=event.created_at,
             updated_at=event.updated_at,
             tags=json.dumps(tags) if tags else None,  # リストをJSON文字列に変換
-            image=event.image if hasattr(event, 'image') else None # 画像が存在しない場合はNoneを設定
+            image=image_str # 修正：Base64エンコードされた画像文字列
         )
         event_list.append(event_data)
 
@@ -1037,7 +1078,86 @@ async def join_event(applicant: Applicant, event_id_model: EventIdModel) -> Dict
     print(f"Event ID: {event_id_model.event_id}")
 
     return {"message": "Successfully joined the event"}
-  
+
+@app.post("/join-event")
+async def join_event_api(
+    request: JoinEventRequest,
+    db: Session = Depends(get_db)
+) -> Dict[str, str]:
+    """
+    イベント参加エンドポイント - 申請者が指定されたイベントに参加する処理を行います
+    """
+    import traceback
+    print(f"DEBUG: Received request: {request}")
+    print(f"DEBUG: Request type: {type(request)}")
+    
+    try:
+        # フロントエンドのデータ構造をApplicantCreateに変換
+        frontend_applicant = request.applicant
+        print(f"DEBUG: Frontend applicant: {frontend_applicant}")
+        
+        # 名前を姓名に分割（簡単な実装）
+        name_parts = frontend_applicant.name.split(" ", 1)
+        last_name = name_parts[0] if len(name_parts) > 0 else ""
+        first_name = name_parts[1] if len(name_parts) > 1 else ""
+        
+        print(f"DEBUG: Split name - last: {last_name}, first: {first_name}")
+    except Exception as e:
+        print(f"DEBUG: Error in initial processing: {e}")
+        print(f"DEBUG: Traceback: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"Initial processing error: {str(e)}")
+    
+    # フロントエンドのデータ構造をApplicantCreateに変換
+    frontend_applicant = request.applicant
+    
+    # 名前を姓名に分割（簡単な実装）
+    name_parts = frontend_applicant.name.split(" ", 1)
+    last_name = name_parts[0] if len(name_parts) > 0 else ""
+    first_name = name_parts[1] if len(name_parts) > 1 else ""
+    
+    # ApplicantCreateオブジェクトを作成
+    applicant_data = ApplicantCreate(
+        last_name=last_name,
+        first_name=first_name,
+        mail_address=frontend_applicant.email,
+        phone_number=frontend_applicant.phone_num,
+        address=frontend_applicant.address,
+        birth_date=frontend_applicant.birthdate,
+        license=", ".join(frontend_applicant.qualifications) if frontend_applicant.qualifications else None
+    )
+    
+    # 応募者をデータベースに保存
+    try:
+        created_applicant = create_applicant(db=db, applicant_data=applicant_data)
+        print(f"Created applicant: {created_applicant}")
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(f"Error creating applicant: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error creating applicant: {str(e)}"
+        ) from e
+
+    # 応募を作成
+    application_data = ApplicationCreate(
+        event_id=uuid.UUID(request.event_id_model.event_id),
+        user_id=created_applicant.user_id,  # 作成した応募者のIDを使用
+        message=frontend_applicant.motivation or "参加申請"  # motivationがあればそれを使用、なければデフォルト
+    )
+    try:
+        created_application = create_application(db=db, application_data=application_data)
+        print(f"Created application: {created_application}")
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(f"Error creating application: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error creating application: {str(e)}"
+        ) from e
+
+    return {"message": "Successfully joined the event"}
 
 # スクリプトとして直接実行された場合、Uvicornサーバーを起動
 if __name__ == "__main__":

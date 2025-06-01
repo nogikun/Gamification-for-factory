@@ -31,6 +31,9 @@ type Story = StoryObj<typeof meta>;
 // Story - 基本的なボタンのストーリー
 export const Primary : Story ={
     args: {
-        event_id: "11" // 必要なevent_idのみ
+        // 必要なevent_idのみ
+        event_id: "11",
+
+        zIndex: 0
     },
 };

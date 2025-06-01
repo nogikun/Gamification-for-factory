@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, Text, Enum as SAEnum, ForeignKey, JSON, LargeBinary, UUID, Float
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
 from datetime import datetime
@@ -66,7 +67,9 @@ class Application(Base):
     processed_at = Column(DateTime, nullable=True)
     processed_by = Column(UUID(as_uuid=True), nullable=True)
     
-    # SQLAlchemyのリレーションシップは今後必要に応じて追加
+    # リレーションシップの追加（警告修正）
+    # 明示的なリレーションシップ（シンプルに定義）
+    applicant = relationship("Applicant", back_populates="applications")
 
 # TODO: Companyモデルも必要に応じて定義する (company_idのForeignKeyのため)
 # class Company(Base):
@@ -87,6 +90,10 @@ class Applicant(Base):
     birth_date = Column(DateTime, nullable=True)
     license = Column(Text, nullable=True)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    
+    # Relationshipsの追加（明示的で簡潔なリレーションシップ）
+    applications = relationship("Application", back_populates="applicant")
+    # 参加者コレクションはシンプルに削除（不要または後で必要に応じて再定義）
 
 # レビューリクエストモデル
 class ReviewRequest(Base):
@@ -122,6 +129,10 @@ class Participant(Base):
     status = Column(SAEnum(ParticipantStatusEnum, name="participants_status"), nullable=False, default=ParticipantStatusEnum.PENDING)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    
+    # Relationshipsの追加（明示的で簡潔なリレーションシップ）
+    user = relationship("User", back_populates="participants")
+    # applicantリレーションシップは削除（不要または後で必要に応じて再定義）
 
 class User(Base):
     __tablename__ = "users"
@@ -132,3 +143,7 @@ class User(Base):
     created_at = Column(DateTime, nullable=True)
     login_time = Column(DateTime, nullable=True)
     ai_advice = Column(Text, nullable=True)
+    
+    # Relationshipsの追加（明示的で簡潔なリレーションシップ）
+    participants = relationship("Participant", back_populates="user")
+    # applicantsリレーションシップは削除（不要または後で必要に応じて再定義）

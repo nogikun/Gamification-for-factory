@@ -103,8 +103,11 @@ const App: React.FC = () => (
 					<Route exact path="/">
 						<Redirect to="/tab1" />
 					</Route>
-                    <Route path="/event">
-                        <EventPage /> {/* イベントページ */}
+                    <Route path="/event/:eventId" exact={true}>
+                        <EventPage />
+                    </Route>
+                    <Route exact path="/event">
+                        <div>イベントIDが指定されていません。</div>
                     </Route>
 				</IonRouterOutlet>
 				{/* <IonTabBar slot="bottom">

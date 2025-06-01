@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useIonRouter } from '@ionic/react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../redux/store';
+import { useParams } from 'react-router-dom';
 
 // MUI Components
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -36,53 +37,49 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'; // 
 
 // css
 import './Event.css';
+import { MotionPhotosAuto } from '@mui/icons-material';
 
-// APIから返されるイベントデータの型定義（重複しているので、共通化することを検討）
+// APIから返されるイベントデータの型定義
 interface EventData {
     event_id: string;
     company_id: string;
     event_type: string;
     title: string;
     description: string;
-    start_time: string;
-    end_time: string;
+    start_date: string;
+    end_date: string;
     location: string;
     reward: string;
     required_qualifications: string[];
-    max_participants: number;
+    available_spots: number;
     created_at: string;
     updated_at: string;
     tags: string[];
     image: string;
 }
 
-// apiに問い合わせて、データを取得する関数
-function fetchData(selectedEventId: string, host: string, port?: string, endpoint?: string) {
-    // リクエストボディ
-    const requestBody = {
-        event_id: selectedEventId
-    };
+// 古いfetchData関数は残しておくか、必要に応じて削除/リファクタリング
+// function fetchData(selectedEventId: string, host: string, port?: string, endpoint?: string) { ... }
 
-    // 問い合わせ処理
+// ★ 新しい関数: IDで単一イベントを取得 (GETリクエスト)
+async function fetchEventById(eventId: string, host: string, port?: string): Promise<EventData> {
+    const endpoint = `/event/${eventId}`;
     const url = port ? `${host}:${port}${endpoint}` : `${host}${endpoint}`;
-    return fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-        redirect: 'follow',
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .catch(error => {
-        console.error('Error fetching data:', error);
-        throw error; // エラーを再スローして、useEffectのcatchブロックで処理できるようにします
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
     });
+    if (!response.ok) {
+        let errorDetail = `HTTP error! status: ${response.status}`;
+        try {
+            const errorData = await response.json();
+            if (errorData && errorData.detail) {
+                errorDetail = typeof errorData.detail === 'string' ? errorData.detail : JSON.stringify(errorData.detail);
+            }
+        } catch (e) { /* JSONパース失敗時は何もしない */ }
+        throw new Error(errorDetail);
+    }
+    return response.json();
 }
 
 // コンポーネントの型定義
@@ -94,9 +91,9 @@ export interface EventProps {
 
 // コンポーネントの定義(props値を受け取る)
 export const Event = ({
-    event_id,
+    event_id: event_id_prop,
     zIndex = 1, // Storybookでのargs用、デフォルト値を設定
-    onClick // フォーム表示ロジックで利用方法を再検討
+    onClick
 }: EventProps) => {
     // router
     const ionRouter = useIonRouter();
@@ -111,9 +108,25 @@ export const Event = ({
         ? String(portState) 
         : (typeof portState === 'string' ? portState : undefined);
 
-    // event_idをpropsから、またはReduxストアから取得
-    // Storybookからargsで渡されたevent_idを優先し、なければReduxストアから取得
-    const currentEventId = event_id || useSelector((state: RootState) => state.searchEvent.eventId);
+    const params = useParams<{ eventIdFromUrl?: string }>(); // ★ URLパラメータを取得 (optional chain)
+    const eventIdFromUrl = params.eventIdFromUrl;
+    const eventIdFromRedux = useSelector((state: RootState) => state.searchEvent.eventId);
+
+    // props -> URL -> Redux の優先順位でIDを決定
+    const derivedEventId = event_id_prop || eventIdFromUrl || eventIdFromRedux;
+    
+    console.log(`Event.tsx: prop event_id: ${event_id_prop}, from URL: ${eventIdFromUrl}, from Redux: ${eventIdFromRedux}, derived currentEventId: ${derivedEventId}`);
+
+    // currentEventIdをステートとして管理し、derivedEventIdの変更を監視して更新
+    const [currentEventId, setCurrentEventId] = useState<string | undefined>(derivedEventId);
+
+    useEffect(() => {
+        const newId = event_id_prop || eventIdFromUrl || eventIdFromRedux;
+        if (newId !== currentEventId) {
+            setCurrentEventId(newId);
+            console.log(`Event.tsx: currentEventId state updated to: ${newId}`);
+        }
+    }, [event_id_prop, eventIdFromUrl, eventIdFromRedux, currentEventId]); // currentEventIdも依存配列に含めて自身の更新ループを防ぐ
 
     // イベントデータ状態管理
     const [eventData, setEventData] = useState<EventData | null>(null);
@@ -162,19 +175,88 @@ export const Event = ({
     useEffect(() => {
         setLoading(true);
         setError(null);
+
+        console.log(`Event.tsx useEffect triggered for data fetching. currentEventId: ${currentEventId}, typeof: ${typeof currentEventId}`);
         
-        if (currentEventId) { // currentEventId を使用
-            fetchData(currentEventId, host, port, "/demo/get-event")
+        if (currentEventId && typeof currentEventId === 'string' && currentEventId.trim() !== "") {
+            console.log(`Event.tsx: Attempting to fetch event with ID: ${currentEventId}`);
+            fetchEventById(currentEventId, host, port)
                 .then(data => {
-                    setEventData(data);
+                    // APIからのデータが単一オブジェクトであることを確認
+                    if (data && typeof data === 'object' && !Array.isArray(data)) {
+                        // EventData型にキャストする前に必要なプロパティが存在するか確認
+                        // バックエンドのEventSchemaとフロントのEventDataの齟齬を吸収
+                        const apiResponse = data as any;
+                        console.log("Event.tsx: Raw apiResponse.tags:", apiResponse.tags);
+                        const transformedData: EventData = {
+                            event_id: apiResponse.event_id,
+                            company_id: apiResponse.company_id,
+                            event_type: apiResponse.event_type,
+                            title: apiResponse.title,
+                            description: apiResponse.description,
+                            start_date: apiResponse.start_date,
+                            end_date: apiResponse.end_date,
+                            location: apiResponse.location,
+                            reward: apiResponse.reward,
+                            required_qualifications: Array.isArray(apiResponse.required_qualifications) ? apiResponse.required_qualifications : (typeof apiResponse.required_qualifications === 'string' ? [apiResponse.required_qualifications] : []),
+                            available_spots: apiResponse.available_spots,
+                            created_at: apiResponse.created_at,
+                            updated_at: apiResponse.updated_at,
+                            tags: (() => {
+                                const rawTags = apiResponse.tags;
+                                let processedTags: string[] = [];
+                                if (Array.isArray(rawTags)) {
+                                    processedTags = rawTags.map(tag => {
+                                        if (typeof tag === 'string') return tag;
+                                        if (typeof tag === 'object' && tag !== null && typeof tag.label === 'string') return tag.label;
+                                        return String(tag); // Fallback to string conversion
+                                    }).filter(tag => tag.trim() !== '' && tag !== '[object Object]');
+                                } else if (typeof rawTags === 'string') {
+                                    if (rawTags.trim() === '') return [];
+                                    try {
+                                        const parsed = JSON.parse(rawTags);
+                                        if (Array.isArray(parsed)) {
+                                            processedTags = parsed.map(tag => {
+                                                if (typeof tag === 'string') return tag;
+                                                if (typeof tag === 'object' && tag !== null && typeof tag.label === 'string') return tag.label;
+                                                return String(tag);
+                                            }).filter(tag => tag.trim() !== '' && tag !== '[object Object]');
+                                        } else { // Parsed is not an array, treat as single tag or object
+                                            if (typeof parsed === 'string') processedTags = [parsed];
+                                            else if (typeof parsed === 'object' && parsed !== null && typeof parsed.label === 'string') processedTags = [parsed.label];
+                                            else processedTags = [String(parsed)];
+                                            processedTags = processedTags.filter(tag => tag.trim() !== '' && tag !== '[object Object]');
+                                        }
+                                    } catch (e) {
+                                        // Not a JSON string, treat as comma-separated or single tag
+                                        processedTags = rawTags.split(',').map(t => t.trim()).filter(t => t !== '');
+                                    }
+                                } else if (typeof rawTags === 'object' && rawTags !== null && typeof rawTags.label === 'string') {
+                                     processedTags = [rawTags.label].filter(tag => tag.trim() !== '' && tag !== '[object Object]');
+                                } else if (rawTags) { // Catch other types and try to stringify
+                                     processedTags = [String(rawTags)].filter(tag => tag.trim() !== '' && tag !== '[object Object]');
+                                }
+                                console.log("Event.tsx: Processed tags for EventData:", processedTags);
+                                return processedTags;
+                            })(),
+                            image: apiResponse.image,
+                        };
+                        setEventData(transformedData);
+                    } else {
+                        // データ形式が予期しないものだった場合
+                        console.error("Unexpected data format received:", data);
+                        setError("Received unexpected data format for event details.");
+                    }
                     setLoading(false);
                 })
                 .catch(err => {
-                    setError(err.message);
+                    console.error('Error fetching event details:', err);
+                    setError(err.message || "Failed to fetch event details");
                     setLoading(false);
                 });
         } else {
-            setError("Event ID is required");
+            console.log(`Event.tsx: Event ID is invalid or missing ('${currentEventId}'), skipping API call.`);
+            setError("指定されたイベントIDの形式が正しくないか、見つかりません。");
             setLoading(false);
         }
     }, [currentEventId, host, port]); // 依存配列に currentEventId を追加
@@ -197,7 +279,8 @@ export const Event = ({
     });
     
     // 日付フォーマット関数
-    const formatDate = (dateString: string) => {
+    const formatDate = (dateString: string | undefined) => { // undefinedを許容
+        if (!dateString) return "N/A"; // dateStringがundefinedの場合の処理
         const date = new Date(dateString);
         return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
     };
@@ -225,7 +308,7 @@ export const Event = ({
 
     const handleFormSubmit = async () => { // asyncキーワードを追加
         // APIエンドポイント（仮）
-        const submissionEndpoint = "/demo/join-event";
+        const submissionEndpoint = "/join-event";
         const url = port ? `${host}:${port}${submissionEndpoint}` : `${host}${submissionEndpoint}`;
 
         const submissionData = {
@@ -238,7 +321,8 @@ export const Event = ({
                 email: formData.email,
                 birthdate: formData.birthDate ? formData.birthDate : null, // Ensure YYYY-MM-DD or null
                 address: formData.address,
-                qualifications: formData.licenses ? formData.licenses.split('\\n') : [],
+                qualifications: formData.licenses ? formData.licenses.split('\n') : [],
+                motivation: formData.motivation,
                 // applied_at is set by backend
             },
             event_id_model: {
@@ -287,7 +371,7 @@ export const Event = ({
                         <CardMedia
                             component="img"
                             sx={{ width: { xs: '100%', md: 200 }, height: { xs: 200, md: 'auto' }, objectFit: 'cover' }}
-                            image={eventData.image ? `data:image;base64,${eventData.image}` : 'https://via.placeholder.com/200'}
+                            image={eventData.image ? `data:image/png;base64,${eventData.image}` : 'https://via.placeholder.com/200'}
                             alt={eventData.title}
                         />
                         <CardContent sx={{ flex: 1 }}>
@@ -326,7 +410,7 @@ export const Event = ({
                                             <CalendarTodayIcon sx={{ mr: 1 }} /> 期間
                                         </Box>
                                     </TableCell>
-                                    <TableCell>{formatDate(eventData.start_time)} - {formatDate(eventData.end_time)}</TableCell>
+                                    <TableCell>{formatDate(eventData.start_date)} - {formatDate(eventData.end_date)}</TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
@@ -342,7 +426,7 @@ export const Event = ({
                                             <PeopleIcon sx={{ mr: 1 }} /> 募集人数
                                         </Box>
                                     </TableCell>
-                                    <TableCell>{eventData.max_participants}名</TableCell>
+                                    <TableCell>{eventData.available_spots}名</TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>

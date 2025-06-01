@@ -1,15 +1,17 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
-import { Accordion } from '../stories/Menu/Accordion';
+// import ExploreContainer from '../components/ExploreContainer';
+// import { Accordion } from '../stories/Menu/Accordion';
 import { MenuTile } from '../stories/Menu/MenuTile';
-import { isPlatform, getPlatforms } from '@ionic/react';
+// import { isPlatform, getPlatforms } from '@ionic/react';
 
-import { useSelector } from 'react-redux';
-import { DateTile } from '../stories/Search/DateTile';
-import { EventList } from '../stories/Search/EventList';
+// import { useSelector } from 'react-redux';
+// import { DateTile } from '../stories/Search/DateTile';
+// import { EventList } from '../stories/Search/EventList';
 import { Event } from '../stories/Search/Event';
+import { useParams } from 'react-router-dom';
+import { validate as uuidValidate } from 'uuid';
 
-console.log("getPlatforms", getPlatforms());
+// console.log("getPlatforms", getPlatforms());
 
 const EventPage: React.FC = () => {
     return (
@@ -53,11 +55,7 @@ const EventPage: React.FC = () => {
                     padding: 'auto 20px',
                     textAlign: 'center',
                 }}>
-                    <Event
-                        event_id="123"
-                        zIndex={0}
-                        onClick={() => {}}
-                    />
+                    <EventDisplay />
                 </div>
 
                 {/* 空白分を確保する必要がある（現在は臨時） */}
@@ -93,5 +91,25 @@ const EventPage: React.FC = () => {
         </IonPage>
     );
 };
+
+const EventDisplay: React.FC = () => {
+    const { eventId } = useParams<{ eventId: string }>();
+    console.log(`EventPage.tsx (EventDisplay): eventId from useParams: ${eventId}, typeof: ${typeof eventId}`);
+    const isValid = eventId && uuidValidate(eventId);
+    console.log(`EventPage.tsx (EventDisplay): uuidValidate(${eventId}) result: ${isValid}`);
+
+    if (!isValid) {
+        return <div>指定されたイベントIDの形式が正しくないか、見つかりません。</div>;
+    }
+
+    // ここで eventId を使ってイベントの詳細情報を取得するロジックを実装
+    // 例: const eventDetails = fetchEventDetails(eventId);
+
+    return <Event
+        event_id={eventId} // URLから取得した eventId を渡す
+        zIndex={0}
+        onClick={() => { /* 詳細ページ内でのクリックイベントなど */ }}
+    />;
+}
 
 export default EventPage;

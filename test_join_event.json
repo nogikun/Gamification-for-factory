@@ -1,0 +1,17 @@
+{
+  "applicant": {
+    "applicant_id": "550e8400-e29b-41d4-a716-446655440000",
+    "company_id": "c0000001-0000-0000-0000-000000000001",
+    "event_id": "6b60bc59-4d6b-42c5-a630-f586aaef5add",
+    "name": "田中太郎",
+    "phone_num": "090-1234-5678",
+    "email": "tanaka@example.com",
+    "birthdate": "1990-01-01T00:00:00.000Z",
+    "address": "東京都渋谷区",
+    "qualifications": ["普通自動車免許", "フォークリフト運転技能講習"],
+    "motivation": "AI技術に非常に興味があり、実際の開発現場を体験したいと思います。将来的にAIエンジニアとして活躍したいので、このインターンシップを通じて実践的なスキルを身につけたいです。"
+  },
+  "event_id_model": {
+    "event_id": "6b60bc59-4d6b-42c5-a630-f586aaef5add"
+  }
+}

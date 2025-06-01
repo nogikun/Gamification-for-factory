@@ -141,10 +141,12 @@ export const EventList = ({
         fetchData(targetDate, host, port)
             .then(data => {
                 console.log("APIレスポンス:", data);
+                // 追加: event_id 一覧を出力
+                const eventsArray = Array.isArray(data) ? data : [data];
+                console.log("APIレスポンスの event_id 一覧:", eventsArray.map(ev => ev.event_id));
                 // より柔軟なデータチェック
                 if (data) {
                     // データが配列でない場合は配列に変換（単一オブジェクトの場合など）
-                    const eventsArray = Array.isArray(data) ? data : [data];
                     setEvents(eventsArray);
                 } else {
                     setError("データが見つかりませんでした");
@@ -179,11 +181,12 @@ export const EventList = ({
                     height="auto"
                     onClick={() => {
                         // クリックイベント
+                        console.log(`Card clicked. Event ID from event object: ${event.event_id}, Type: ${typeof event.event_id}`);
                         console.log(`イベント詳細: ${event.event_id}`);
-                        // 選択されたイベントIDをReduxストアに保存
+                        // 選択されたイベントIDをReduxストアに保存 (URLパラメータをメインとするが、念のため残すことも可能)
                         dispatch({ type: 'searchEvent/setEventId', payload: event.event_id });
-                        // ページに遷移
-                        ionRouter.push('/event'); // イベント詳細ページに遷移
+                        // ページに遷移 (URLにevent_idを含める)
+                        ionRouter.push(`/event/${event.event_id}`);
                     }}
                     paying={event.reward ? Number.parseInt(event.reward.replace(/[^0-9]/g, ""), 10) || 0 : 0}
                     startDate={formatDateForCard(event.start_date)}
@@ -247,22 +250,46 @@ function formatDateForCard(dateString: string): string {
     }
 }
 
-// バックエンドのtags（JSON文字列）をフロントエンド用の配列に変換する関数
+// バックエンドのtags（JSON文字列または文字列配列）をフロントエンド用の文字列配列に変換する関数
 function parseTags(tagsData: string | string[]): string[] {
+    const processItem = (item: any): string | null => {
+        if (typeof item === 'string') {
+            return item;
+        }
+        if (typeof item === 'object' && item !== null) {
+            if (typeof (item as any).label === 'string') {
+                return (item as any).label;
+            }
+        }
+        // If it's not a string and not an object with a string label, try to stringify
+        // but return null if it results in [object Object] to filter it out later
+        const stringified = String(item);
+        return stringified !== '[object Object]' ? stringified : null;
+    };
+
+    let processedTags: (string | null)[] = [];
+
     if (Array.isArray(tagsData)) {
-        return tagsData;
+        processedTags = tagsData.map(processItem);
     }
-    
-    if (typeof tagsData === 'string') {
+    else if (typeof tagsData === 'string') {
+        if (!tagsData.trim()) {
+            return [];
+        }
         try {
-            // JSON文字列の場合はパースを試みる
             const parsed = JSON.parse(tagsData);
-            return Array.isArray(parsed) ? parsed : [tagsData];
-        } catch {
-            // JSON文字列でない場合はそのまま配列として扱う
-            return [tagsData];
+            if (Array.isArray(parsed)) {
+                processedTags = parsed.map(processItem);
+            } else {
+                // If parsed is not an array, process it as a single item
+                processedTags = [processItem(parsed)];
+            }
+        } catch (e) {
+            // Not a valid JSON string (and it's not empty).
+            // Treat the original string as a single tag.
+            processedTags = [tagsData]; // Keep original string as is
         }
     }
-    
-    return [];
+
+    return processedTags.filter((tag): tag is string => tag !== null && tag.trim() !== '');
 }

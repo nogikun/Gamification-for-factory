@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "./Reviews.module.scss";
 import ReviewInputModal from "./ReviewInputModal";
 import { usePageAnimation } from "../hooks/usePageAnimation";
+import { apiRequest } from "../config";
 
 export default function Reviews() {
   const containerRef = useRef(null);
@@ -22,6 +23,7 @@ export default function Reviews() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [applications, setApplications] = useState([]);
   
   // 評価スコアの表示フォーマット
   const formatRating = (rating) => {
@@ -35,31 +37,52 @@ export default function Reviews() {
       setError(null);
       
       try {
-        // レビューデータを取得
-        const reviewsResponse = await fetch('http://localhost:1880/api/reviews');
-        if (!reviewsResponse.ok) {
-          throw new Error('レビューデータの取得に失敗しました');
-        }
-        const reviewsData = await reviewsResponse.json();
+        // APIリクエストをconfig.jsのapiRequest関数を使用して統一
+        // レビューデータを取得（Debugページで作成したレビューも含める）
+        const [apiReviews, debugReviews] = await Promise.all([
+          apiRequest('/api/reviews').catch(() => []),
+          apiRequest('/reviews').catch(() => [])
+        ]);
         
-        // データが配列かどうかを確認
-        if (Array.isArray(reviewsData)) {
-          setReviews(reviewsData);
-        } else if (reviewsData && Array.isArray(reviewsData.reviews)) {
-          setReviews(reviewsData.reviews);
-        } else if (reviewsData && Array.isArray(reviewsData.data)) {
-          setReviews(reviewsData.data);
-        } else {
-          console.warn('レビューAPIから期待される配列形式のデータが返されませんでした:', reviewsData);
-          setReviews([]);
+        // レビューデータを結合
+        let allReviews = [];
+        
+        // APIレビューデータの処理
+        if (Array.isArray(apiReviews)) {
+          allReviews = [...apiReviews];
+        } else if (apiReviews && Array.isArray(apiReviews.reviews)) {
+          allReviews = [...apiReviews.reviews];
+        } else if (apiReviews && Array.isArray(apiReviews.data)) {
+          allReviews = [...apiReviews.data];
         }
+        
+        // デバッグレビューデータの処理
+        if (Array.isArray(debugReviews)) {
+          allReviews = [...allReviews, ...debugReviews];
+        } else if (debugReviews && Array.isArray(debugReviews.reviews)) {
+          allReviews = [...allReviews, ...debugReviews.reviews];
+        } else if (debugReviews && Array.isArray(debugReviews.data)) {
+          allReviews = [...allReviews, ...debugReviews.data];
+        }
+        
+        // 重複を削除（review_idに基づく）
+        const uniqueReviews = allReviews.reduce((acc, review) => {
+          if (!acc.some(r => r.review_id === review.review_id)) {
+            acc.push(review);
+          }
+          return acc;
+        }, []);
+        
+        // 日付降順で並べ替え
+        uniqueReviews.sort((a, b) => 
+          new Date(b.created_at || b.updated_at || 0) - 
+          new Date(a.created_at || a.updated_at || 0)
+        );
+        
+        setReviews(uniqueReviews);
         
         // イベントデータを取得
-        const eventsResponse = await fetch('http://localhost:1880/event');
-        if (!eventsResponse.ok) {
-          throw new Error('イベントデータの取得に失敗しました');
-        }
-        const eventsData = await eventsResponse.json();
+        const eventsData = await apiRequest('/event').catch(() => []);
         
         // イベントデータも配列チェック
         if (Array.isArray(eventsData)) {
@@ -74,23 +97,60 @@ export default function Reviews() {
         }
         
         // ユーザーデータを取得
-        const usersResponse = await fetch('http://localhost:1880/api/users');
-        if (!usersResponse.ok) {
-          throw new Error('ユーザーデータの取得に失敗しました');
-        }
-        const usersData = await usersResponse.json();
+        const [apiUsers, applicantsData] = await Promise.all([
+          apiRequest('/api/users').catch(() => []),
+          apiRequest('/applicants').catch(() => [])
+        ]);
         
-        // ユーザーデータも配列チェック
-        if (Array.isArray(usersData)) {
-          setUsers(usersData);
-        } else if (usersData && Array.isArray(usersData.users)) {
-          setUsers(usersData.users);
-        } else if (usersData && Array.isArray(usersData.data)) {
-          setUsers(usersData.data);
-        } else {
-          console.warn('ユーザーAPIから期待される配列形式のデータが返されませんでした:', usersData);
-          setUsers([]);
+        // ユーザーデータを結合
+        let allUsers = [];
+        
+        // APIユーザーデータの処理
+        if (Array.isArray(apiUsers)) {
+          allUsers = [...apiUsers];
+        } else if (apiUsers && Array.isArray(apiUsers.users)) {
+          allUsers = [...apiUsers.users];
+        } else if (apiUsers && Array.isArray(apiUsers.data)) {
+          allUsers = [...apiUsers.data];
         }
+        
+        // 応募者データの処理（Debugページで作成したユーザー）
+        if (Array.isArray(applicantsData)) {
+          // 応募者データをユーザーデータ形式に変換
+          const applicantUsers = applicantsData.map(applicant => ({
+            user_id: applicant.user_id,
+            first_name: applicant.first_name,
+            last_name: applicant.last_name,
+            user_type: 'applicant'
+          }));
+          allUsers = [...allUsers, ...applicantUsers];
+        }
+        
+        // 重複を削除（user_idに基づく）
+        const uniqueUsers = allUsers.reduce((acc, user) => {
+          if (!acc.some(u => u.user_id === user.user_id)) {
+            acc.push(user);
+          }
+          return acc;
+        }, []);
+        
+        setUsers(uniqueUsers);
+        
+        // 応募データを取得（application_idを取得するため）
+        const applicationsData = await apiRequest('/applications').catch(() => []);
+        
+        // 応募データの処理
+        let applications = [];
+        if (Array.isArray(applicationsData)) {
+          applications = applicationsData;
+        } else if (applicationsData && Array.isArray(applicationsData.applications)) {
+          applications = applicationsData.applications;
+        } else if (applicationsData && Array.isArray(applicationsData.data)) {
+          applications = applicationsData.data;
+        }
+        
+        // 応募データを保存
+        setApplications(applications);
         
       } catch (err) {
         console.error('データ取得エラー:', err);
@@ -115,6 +175,38 @@ export default function Reviews() {
     return fullName;
   };
   
+  // レビュー対象者の表示名を取得する関数
+  const getRevieweeName = (review) => {
+    // 応募情報からユーザー情報を取得
+    const app = review.application_id && applications.find(a => a.application_id === review.application_id);
+    const userId = review.reviewee_id || (app ? app.user_id : null);
+    
+    // レビュアーのIDを取得
+    const reviewerId = review.reviewer_id;
+    
+    // ユーザーがいない場合は「不明」を返す
+    if (!userId) return '不明な対象';
+    
+    // レビュアーのユーザー情報を取得
+    const reviewer = users.find(u => u.user_id === reviewerId);
+    
+    // 評価対象者のユーザー情報を取得
+    const reviewee = users.find(u => u.user_id === userId);
+    if (!reviewee) return '不明なユーザー';
+    
+    // レビュアーが応募者（applicant）の場合、評価対象者は「企業」と表示
+    if (reviewer && reviewer.user_type === 'applicant') {
+      return '企業';
+    }
+    
+    // それ以外の場合（企業側からのレビュー）は、評価対象者の名前を表示
+    const fullName = `${reviewee.last_name} ${reviewee.first_name}`;
+    if (reviewee.user_type === 'employee' && reviewee.position) {
+      return `${fullName}（${reviewee.position}）`;
+    }
+    return fullName;
+  };
+  
   // イベント名を取得する関数
   const getEventName = (eventId) => {
     const event = events.find(e => e.event_id === eventId);
@@ -122,7 +214,7 @@ export default function Reviews() {
   };
 
   // レビュー入力モーダルを開く
-  const handleOpenModal = (userId, eventId) => {
+  const handleOpenModal = (userId, eventId, reviewerId) => {
     setSelectedUser(users.find(u => u.user_id === userId));
     setSelectedEvent(events.find(e => e.event_id === eventId));
     setModalOpen(true);
@@ -135,34 +227,37 @@ export default function Reviews() {
     setSelectedEvent(null);
   };
   
+  // 選択されたユーザーとイベントのapplication_idを見つける
+  const findApplicationId = (userId, eventId) => {
+    const application = applications.find(
+      app => app.user_id === userId && app.event_id.toString() === eventId.toString()
+    );
+    return application ? application.application_id : null;
+  };
+  
   // レビュー送信処理
   const handleSubmitReview = async (reviewData) => {
     setIsLoading(true);
     setError(null);
     
     try {
-      const response = await fetch('http://localhost:1880/api/reviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          reviewer_id: reviewData.reviewer_id, // 現在のユーザーID
-          reviewee_id: selectedUser.user_id,
-          event_id: selectedEvent.event_id,
-          rating: reviewData.rating,
-          comment: reviewData.comment,
-          advice: reviewData.advice
-        })
-      });
+      // 必要なapplication_idを見つける
+      const applicationId = findApplicationId(reviewData.reviewee_id, reviewData.event_id);
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'レビュー送信に失敗しました');
+      if (!applicationId) {
+        throw new Error('選択されたユーザーとイベントに対応する応募情報が見つかりませんでした');
       }
       
-      // 成功したら全レビューリストを取得（POST /api/reviewsは全レビューを返すため）
-      const updatedReviews = await response.json();
+      // レビューデータにapplication_idを追加
+      const reviewDataWithAppId = {
+        application_id: applicationId,
+        reviewer_id: reviewData.reviewer_id,
+        rating: reviewData.rating,
+        comment: reviewData.comment
+      };
+      
+      // APIリクエストをconfig.jsのapiRequest関数を使用
+      const updatedReviews = await apiRequest('/review', 'POST', reviewDataWithAppId);
       
       // レスポンスデータの配列チェック
       if (Array.isArray(updatedReviews)) {
@@ -175,12 +270,10 @@ export default function Reviews() {
         // フォールバック: 新しいレビューを現在のリストに追加
         const newReview = {
           review_id: `review_${Date.now()}`,
+          application_id: applicationId,
           reviewer_id: reviewData.reviewer_id,
-          reviewee_id: selectedUser.user_id,
-          event_id: selectedEvent.event_id,
           rating: reviewData.rating,
           comment: reviewData.comment,
-          advice: reviewData.advice,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };
@@ -239,11 +332,11 @@ export default function Reviews() {
             </thead>
             <tbody>
               {reviews.map((review) => (
-                <tr key={review.review_id}>
+                <tr key={review.review_id || `review-${review.application_id || Math.random()}`}>
                   <td>{getUserName(review.reviewer_id)}</td>
-                  <td>{getUserName(review.reviewee_id)}</td>
-                  <td className={styles.eventCell} title={getEventName(review.event_id)}>
-                    {getEventName(review.event_id)}
+                  <td>{getRevieweeName(review)}</td>
+                  <td className={styles.eventCell} title={getEventName(review.event_id || (review.application_id && applications.find(a => a.application_id === review.application_id)?.event_id))}>
+                    {getEventName(review.event_id || (review.application_id && applications.find(a => a.application_id === review.application_id)?.event_id))}
                   </td>
                   <td className={styles.ratingCell}>
                     <span className={styles.ratingStars}>
@@ -257,12 +350,22 @@ export default function Reviews() {
                     {review.comment}
                   </td>
                   <td>
-                    {new Date(review.created_at).toLocaleDateString('ja-JP')}
+                    {new Date(review.created_at || review.updated_at || Date.now()).toLocaleDateString('ja-JP')}
                   </td>
                   <td>
                     <button 
                       className={styles.inputBtn} 
-                      onClick={() => handleOpenModal(review.reviewee_id, review.event_id)}
+                      onClick={() => {
+                        // アプリケーションからユーザーIDとイベントIDを取得
+                        const app = applications.find(a => a.application_id === review.application_id);
+                        const userId = review.reviewee_id || (app ? app.user_id : null);
+                        const eventId = review.event_id || (app ? app.event_id : null);
+                        if (userId && eventId) {
+                          handleOpenModal(userId, eventId, review.reviewer_id);
+                        } else {
+                          alert('ユーザーまたはイベント情報が見つかりません');
+                        }
+                      }}
                     >
                       詳細
                     </button>

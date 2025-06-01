@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import styles from "./DashboardCalendar.module.scss";
+import { apiRequest } from "../config";
 
 const jaWeekdays = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -20,8 +21,8 @@ export default function DashboardCalendar() {
       
       try {
         const [eventsResponse, usersResponse] = await Promise.all([
-          fetch('http://localhost:1880/event'),
-          fetch('http://localhost:1880/api/users')
+          fetch('http://localhost:8000/event'),
+          fetch('http://localhost:8000/api/users')
         ]);
 
         let eventsData = [];

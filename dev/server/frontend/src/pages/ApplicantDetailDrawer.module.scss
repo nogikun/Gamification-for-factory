@@ -49,6 +49,16 @@ h2 {
     font-size: 0.9em;
   }
 }
+.messageBox {
+  border: 1px solid #e0e0e0;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  background-color: #f9f9f9;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
 .statusBadge {
   display: inline-block;
   padding: 3px 8px;
@@ -58,15 +68,15 @@ h2 {
   background: #f5f5f5;
   color: #555;
 }
-.status_未対応 {
+.未対応 {
   background: #e3f2fd;
   color: #1565c0;
 }
-.status_承認 {
+.承認 {
   background: #e8f5e9;
   color: #2e7d32;
 }
-.status_拒否 {
+.否認 {
   background: #ffebee;
   color: #c62828;
 }

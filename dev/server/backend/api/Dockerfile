@@ -21,12 +21,12 @@ RUN uv pip install --no-cache --system -r requirements.lock
 # アプリケーションコードをコピー
 COPY . .
 
-# アプリケーションの起動ポート
-EXPOSE 3000
+# アプリケーションの起動ポート (main.py の設定に合わせる)
+EXPOSE 8000
 
-# ヘルスチェック
+# ヘルスチェック (main.py の設定に合わせる)
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3000/health || exit 1
+  CMD curl -f http://localhost:8000/health || exit 1
 
-# 起動コマンド
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3000"]
+# 起動コマンド (main.py を直接実行)
+CMD ["python", "main.py"]

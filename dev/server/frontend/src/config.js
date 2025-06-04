@@ -1,10 +1,11 @@
 // API接続設定
 // 開発環境ではlocalhostを使用し、Docker環境ではbackendコンテナ名を使用
-let apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+// 通常バックエンドは3000番ポートで起動するためデフォルトを3000に変更
+let apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 // ブラウザ環境ではlocalhostを使用する
 if (typeof window !== 'undefined' && apiBaseUrl.includes('backend')) {
-  apiBaseUrl = 'http://localhost:8000';
+  apiBaseUrl = 'http://localhost:3000';
 }
 
 export const API_BASE_URL = apiBaseUrl;

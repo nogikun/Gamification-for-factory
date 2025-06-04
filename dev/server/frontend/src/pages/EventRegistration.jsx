@@ -5,7 +5,7 @@ import 'react-calendar/dist/Calendar.css';
 import styles from "./EventRegistration.module.scss";
 import { usePageAnimation } from "../hooks/usePageAnimation";
 import { Pencil, Trash, Upload } from "phosphor-react";
-import { apiRequest } from "../config";
+import { apiRequest, API_BASE_URL } from "../config";
 
 const jaWeekdays = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -89,7 +89,7 @@ export default function EventRegistration() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:3000/event');
+      const response = await fetch(`${API_BASE_URL}/event`);
       if (!response.ok) {
         throw new Error('イベントの取得に失敗しました');
       }
@@ -272,8 +272,8 @@ export default function EventRegistration() {
       };
       
       const url = editMode 
-        ? `http://localhost:3000/event/${formData.event_id}` 
-        : 'http://localhost:3000/event';
+        ? `${API_BASE_URL}/event/${formData.event_id}`
+        : `${API_BASE_URL}/event`;
       
       const method = editMode ? 'PUT' : 'POST';
       
@@ -353,7 +353,7 @@ export default function EventRegistration() {
       setError(null);
       
       try {
-        const response = await fetch(`http://localhost:3000/event/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/event/${id}`, {
           method: 'DELETE'
         });
         

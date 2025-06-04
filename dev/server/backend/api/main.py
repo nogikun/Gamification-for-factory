@@ -191,7 +191,7 @@ def create_event(db: Session, event_data: EventCreate) -> EventModel:
             if isinstance(event_data.tags, str):
                 tags_json = json.loads(event_data.tags)
             else:
-                tags_json = event_data.tags
+                tags_json = [tag.model_dump() for tag in event_data.tags]
         except json.JSONDecodeError as e:
             raise HTTPException(
                 status_code=400,

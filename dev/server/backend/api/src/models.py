@@ -67,8 +67,7 @@ class Application(Base):
     processed_at = Column(DateTime, nullable=True)
     processed_by = Column(UUID(as_uuid=True), nullable=True)
     
-    # リレーションシップの追加（警告修正）
-    # 明示的なリレーションシップ（シンプルに定義）
+    # リレーションシップの追加
     applicant = relationship("Applicant", back_populates="applications")
 
 # TODO: Companyモデルも必要に応じて定義する (company_idのForeignKeyのため)
@@ -91,16 +90,15 @@ class Applicant(Base):
     license = Column(Text, nullable=True)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     
-    # Relationshipsの追加（明示的で簡潔なリレーションシップ）
+    # リレーションシップの追加
     applications = relationship("Application", back_populates="applicant")
-    # 参加者コレクションはシンプルに削除（不要または後で必要に応じて再定義）
 
 # レビューリクエストモデル
 class ReviewRequest(Base):
     __tablename__ = "review_requests"
     __table_args__ = {"schema": "public"}
     
-    review_request_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    review_request_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     application_id = Column(UUID(as_uuid=True), ForeignKey("applications.application_id"), nullable=False)
     requested_by = Column(UUID(as_uuid=True), nullable=False)
     requested_at = Column(DateTime, server_default=func.now())
@@ -112,7 +110,7 @@ class Review(Base):
     __tablename__ = "reviews"
     __table_args__ = {"schema": "public"}
     
-    review_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    review_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     application_id = Column(UUID(as_uuid=True), ForeignKey("applications.application_id"), nullable=False)
     reviewer_id = Column(UUID(as_uuid=True), nullable=False)
     rating = Column(Float, nullable=False)
@@ -130,9 +128,8 @@ class Participant(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     
-    # Relationshipsの追加（明示的で簡潔なリレーションシップ）
+    # リレーションシップの追加
     user = relationship("User", back_populates="participants")
-    # applicantリレーションシップは削除（不要または後で必要に応じて再定義）
 
 class User(Base):
     __tablename__ = "users"
@@ -144,6 +141,5 @@ class User(Base):
     login_time = Column(DateTime, nullable=True)
     ai_advice = Column(Text, nullable=True)
     
-    # Relationshipsの追加（明示的で簡潔なリレーションシップ）
+    # リレーションシップの追加
     participants = relationship("Participant", back_populates="user")
-    # applicantsリレーションシップは削除（不要または後で必要に応じて再定義）

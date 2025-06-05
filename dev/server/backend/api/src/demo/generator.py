@@ -117,7 +117,8 @@ class EventGenerator:
             "end_date": event_end,
             "location": choice(self.event_locations),
             "reward": reward_str,  # 文字列として報酬を設定
-            "required_qualifications": ",".join(sample(self.required_qualifications, k=randint(1, 3))),
+            # required_qualifications should be a list, not a comma-separated string
+            "required_qualifications": sample(self.required_qualifications, k=randint(1, 3)),
             "available_spots": randint(5, 20),  # 参加可能人数
             "created_at": datetime.now(),
             "updated_at": datetime.now(),

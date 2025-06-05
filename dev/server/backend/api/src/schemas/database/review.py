@@ -28,7 +28,7 @@ class ReviewUpdate(BaseModel):
 
 class Review(ReviewBase):
     """Review response model"""
-    review_id: int  # ReviewはSerialタイプのまま
+    review_id: uuid.UUID  # UUIDに変更
     created_at: datetime
     updated_at: datetime
 

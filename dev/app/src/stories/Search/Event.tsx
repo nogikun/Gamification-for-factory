@@ -346,6 +346,9 @@ export const Event = ({
 
     // エラー発生時
     if (error || !eventData) {
+        // エラーがある場合はアラートをAPIに送信
+        
+
         return <Alert severity="error">Error: {error || "Event data not available."}</Alert>;
     }
 

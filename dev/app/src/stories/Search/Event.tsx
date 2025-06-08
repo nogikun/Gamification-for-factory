@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useIonRouter } from '@ionic/react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../redux/store';
@@ -347,7 +348,19 @@ export const Event = ({
     // エラー発生時
     if (error || !eventData) {
         // エラーがある場合はアラートをAPIに送信
-        
+        try {
+            const endpoint = '/debug/error-report';
+            const baseUrl = port ? `${host}:${port}` : host;
+            // Send error details to the FastAPI backend
+            axios.post(`${baseUrl}${endpoint}`, {
+                error: error || 'Event data not available.',
+                message: 'Event.tsx error',
+            }).catch(err => {
+                console.error('Error sending error report:', err);
+            });
+        } catch (e) {
+            console.error('Failed to send error report:', e);
+        }
 
         return <Alert severity="error">Error: {error || "Event data not available."}</Alert>;
     }

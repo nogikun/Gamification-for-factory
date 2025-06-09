@@ -102,9 +102,9 @@ async function fetchEventById(eventId: string, host: string, port?: string): Pro
 
 // コンポーネントの型定義
 export interface EventProps {
-  event_id?: string;
-  zIndex?: number; // Storybookでのargs用
-  onClick?: () => void;
+    event_id?: string;
+    zIndex?: number; // Storybookでのargs用
+    onClick?: () => void;
 }
 
 // コンポーネントの定義(props値を受け取る)

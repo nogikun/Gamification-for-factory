@@ -23,7 +23,7 @@ import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Snackbar from '@mui/material/Snackbar';
-import MuiAlert, { AlertProps as MuiAlertProps } from '@mui/material/Alert'; // Renamed AlertProps to MuiAlertProps to avoid conflict
+import MuiAlert, { type AlertProps as MuiAlertProps } from '@mui/material/Alert'; // Renamed AlertProps to avoid conflict
 
 // MUI Icons
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -38,6 +38,9 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'; // 
 // css
 import './Event.css';
 import { MotionPhotosAuto } from '@mui/icons-material';
+
+// local
+import { apiConnector } from '@/scripts/apiConnector'; // APIコネクタをインポート
 
 // タグオブジェクトの型定義
 interface TagData {
@@ -64,40 +67,58 @@ interface EventData {
     image: string;
 }
 
-// 古いfetchData関数は残しておくか、必要に応じて削除/リファクタリング
-// function fetchData(selectedEventId: string, host: string, port?: string, endpoint?: string) { ... }
-
-// ★ 新しい関数: IDで単一イベントを取得 (GETリクエスト)
+// ★ 新しい関数: IDで単一イベントを取得 (GETリクエスト) - apiConnectorを使用してngrokヘッダー自動適用
 async function fetchEventById(eventId: string, host: string, port?: string): Promise<EventData> {
     const endpoint = `/event/${eventId}`;
-    const url = port ? `${host}:${port}${endpoint}` : `${host}${endpoint}`;
-    console.log('Requesting URL:', url); // ★ リクエストURLをコンソールに出力
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-    });
-
-    // レスポンスヘッダーとステータスコードの確認
-    const contentType = response.headers.get("content-type");
-    if (!response.ok || !contentType || !contentType.includes("application/json")) {
-        let errorDetail = `HTTP error! status: ${response.status}`;
-        if (contentType && !contentType.includes("application/json")) {
-            errorDetail += `. Expected application/json but received ${contentType}`;
+    
+    // apiConnectorのbaseURLを一時的に更新
+    const originalBaseURL = apiConnector.defaults.baseURL;
+    const newBaseURL = port ? `${host}:${port}` : host;
+    apiConnector.defaults.baseURL = newBaseURL;
+    
+    console.log('Requesting URL via apiConnector:', `${newBaseURL}${endpoint}`);
+    
+    try {
+        // apiConnectorを使用（Axiosインターセプターでngrokヘッダーが自動適用される）
+        const response = await apiConnector.get(endpoint);
+        return response.data;
+    } catch (error: unknown) {
+        console.error("API request error:", error);
+        
+        let errorDetail = 'Failed to fetch event data';
+        
+        // errorがAxiosErrorかどうかをチェック
+        if (error && typeof error === 'object' && 'response' in error) {
+            const axiosError = error as { response?: { status: number; headers: Record<string, string>; data: unknown } };
+            if (axiosError.response) {
+                const contentType = axiosError.response.headers['content-type'];
+                errorDetail = `HTTP error! status: ${axiosError.response.status}`;
+                
+                if (contentType && !contentType.includes("application/json")) {
+                    errorDetail += `. Expected application/json but received ${contentType}`;
+                }
+                
+                if (axiosError.response.data) {
+                    if (typeof axiosError.response.data === 'string') {
+                        // HTMLやテキストレスポンスの場合
+                        console.error("Server response (text):", axiosError.response.data.substring(0, 500));
+                        errorDetail += `. Response: ${axiosError.response.data.substring(0, 100)}...`;
+                    } else {
+                        errorDetail += `. Response: ${JSON.stringify(axiosError.response.data)}`;
+                    }
+                }
+            }
+        } else if (error && typeof error === 'object' && 'request' in error) {
+            errorDetail += '. No response received from server';
+        } else if (error && typeof error === 'object' && 'message' in error) {
+            errorDetail += `. ${(error as { message: string }).message}`;
         }
-        try {
-            // HTMLやテキストの場合でもエラーメッセージを取得試行
-            const errorText = await response.text();
-            console.error("Server response (text):", errorText); // ログに実際のレスポンスを出力
-            // 詳細なエラーメッセージがあればそれを利用
-            // ここでは単純化のため、テキスト全体をエラー詳細に含めるか、一部を抜粋するなどの処理も可能
-            errorDetail += `. Response: ${errorText.substring(0, 100)}...`; // 長すぎる場合は一部を抜粋
-        } catch (e) {
-            // テキストの取得に失敗した場合は何もしない
-        }
+        
         throw new Error(errorDetail);
+    } finally {
+        // baseURLを元に戻す
+        apiConnector.defaults.baseURL = originalBaseURL;
     }
-
-    return response.json();
 }
 
 // コンポーネントの型定義
@@ -120,6 +141,14 @@ export const Event = ({
     const darkTheme = useSelector((state: RootState) => state.theme.isDarkMode);
     const host = useSelector((state: RootState) => state.server.host);
     const portState = useSelector((state: RootState) => state.server.port);
+
+    // useEffect
+    useEffect(() => {
+        // ホストとポートの変更を監視してAPIコネクタのベースURLを更新
+        const newBaseUrl = portState ? `${host}:${portState}` : host;
+        apiConnector.defaults.baseURL = newBaseUrl; // APIコネクタのベースURLを更新
+        console.log(`Event.tsx: API base URL updated to: ${newBaseUrl}`);
+    }, [host, portState]); // hostとportStateが変更されたときに実行
 
     // portをstring型に、未定義の場合はundefinedに
     const port: string | undefined = typeof portState === 'number' 
@@ -217,107 +246,113 @@ export const Event = ({
                     if (data && typeof data === 'object' && !Array.isArray(data)) {
                         // EventData型にキャストする前に必要なプロパティが存在するか確認
                         // バックエンドのEventSchemaとフロントのEventDataの齟齬を吸収
-                        const apiResponse = data as any;
+                        const apiResponse = data as unknown as Record<string, unknown>;
                         console.log("Event.tsx: Raw apiResponse.tags:", apiResponse.tags);
-                        const transformedData: EventData = {
-                            event_id: apiResponse.event_id,
-                            company_id: apiResponse.company_id,
-                            event_type: apiResponse.event_type,
-                            title: apiResponse.title,
-                            description: apiResponse.description,
-                            start_date: apiResponse.start_date,
-                            end_date: apiResponse.end_date,
-                            location: apiResponse.location,
-                            reward: apiResponse.reward,
-                            required_qualifications: Array.isArray(apiResponse.required_qualifications) ? apiResponse.required_qualifications : (typeof apiResponse.required_qualifications === 'string' ? [apiResponse.required_qualifications] : []),
-                            available_spots: apiResponse.available_spots,
-                            created_at: apiResponse.created_at,
-                            updated_at: apiResponse.updated_at,
-                            tags: (() => {
-                                const rawTags = apiResponse.tags;
-                                let processedTags: TagData[] = [];
-                                
-                                // 配列の場合
-                                if (Array.isArray(rawTags)) {
-                                    processedTags = rawTags.map(tag => {
-                                        if (typeof tag === 'object' && tag !== null) {
-                                            if (tag.label) {
+                        
+                        // tagsの処理を独立した関数にする
+                        const processEventTags = (rawTags: unknown): TagData[] => {
+                            let processedTags: TagData[] = [];
+                            
+                            // 配列の場合
+                            if (Array.isArray(rawTags)) {
+                                processedTags = rawTags.map((tag: unknown) => {
+                                    if (typeof tag === 'object' && tag !== null) {
+                                        const tagObj = tag as { label?: unknown; color?: unknown };
+                                        if (tagObj.label) {
+                                            return {
+                                                label: String(tagObj.label),
+                                                color: tagObj.color ? String(tagObj.color) : `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                                            };
+                                        }
+                                    } else if (typeof tag === 'string') {
+                                        const hash = tag.split('').reduce((acc: number, char: string) => {
+                                            return char.charCodeAt(0) + ((acc << 5) - acc);
+                                        }, 0);
+                                        return {
+                                            label: tag,
+                                            color: `hsl(${hash % 360}, 70%, 60%)`
+                                        };
+                                    }
+                                    return {
+                                        label: String(tag),
+                                        color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                                    };
+                                });
+                            }
+                            // 文字列の場合
+                            else if (typeof rawTags === 'string' && rawTags.trim() !== '') {
+                                try {
+                                    // JSONとしてパースを試みる
+                                    const parsed = JSON.parse(rawTags);
+                                    if (Array.isArray(parsed)) {
+                                        // 配列の各要素を適切なTagData形式に変換
+                                        processedTags = parsed.map((item: unknown) => {
+                                            if (typeof item === 'object' && item !== null && 'label' in item) {
+                                                const itemObj = item as { label: unknown; color?: unknown };
                                                 return {
-                                                    label: String(tag.label),
-                                                    color: tag.color ? String(tag.color) : `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                                                    label: String(itemObj.label),
+                                                    color: 'color' in item ? String((item as { color: unknown }).color) : `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                                                };
+                                            } else if (typeof item === 'string') {
+                                                const hash = item.split('').reduce((acc: number, char: string) => {
+                                                    return char.charCodeAt(0) + ((acc << 5) - acc);
+                                                }, 0);
+                                                return {
+                                                    label: item,
+                                                    color: `hsl(${hash % 360}, 70%, 60%)`
+                                                };
+                                            } else {
+                                                return {
+                                                    label: String(item),
+                                                    color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
                                                 };
                                             }
-                                        } else if (typeof tag === 'string') {
-                                            const hash = tag.split('').reduce((acc, char) => {
+                                        });
+                                    } else {
+                                        processedTags = [
+                                            {
+                                                label: String(parsed),
+                                                color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                                            }
+                                        ];
+                                    }
+                                } catch (e) {
+                                    // カンマ区切りの文字列として処理
+                                    processedTags = rawTags.split(',')
+                                        .map((t: string) => t.trim())
+                                        .filter(Boolean)
+                                        .map((tag: string) => {
+                                            const hash = tag.split('').reduce((acc: number, char: string) => {
                                                 return char.charCodeAt(0) + ((acc << 5) - acc);
                                             }, 0);
                                             return {
                                                 label: tag,
                                                 color: `hsl(${hash % 360}, 70%, 60%)`
                                             };
-                                        }
-                                        return {
-                                            label: String(tag),
-                                            color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
-                                        };
-                                    });
-                                }                                        // 文字列の場合
-                                else if (typeof rawTags === 'string' && rawTags.trim() !== '') {
-                                    try {
-                                        // JSONとしてパースを試みる
-                                        const parsed = JSON.parse(rawTags);
-                                        if (Array.isArray(parsed)) {
-                                            // 配列の各要素を適切なTagData形式に変換
-                                            processedTags = parsed.map(item => {
-                                                if (typeof item === 'object' && item !== null && 'label' in item) {
-                                                    return {
-                                                        label: String(item.label),
-                                                        color: 'color' in item ? String(item.color) : `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
-                                                    };
-                                                } else if (typeof item === 'string') {
-                                                    const hash = item.split('').reduce((acc, char) => {
-                                                        return char.charCodeAt(0) + ((acc << 5) - acc);
-                                                    }, 0);
-                                                    return {
-                                                        label: item,
-                                                        color: `hsl(${hash % 360}, 70%, 60%)`
-                                                    };
-                                                } else {
-                                                    return {
-                                                        label: String(item),
-                                                        color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
-                                                    };
-                                                }
-                                            });
-                                        } else {
-                                            processedTags = [
-                                                {
-                                                    label: String(parsed),
-                                                    color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
-                                                }
-                                            ];
-                                        }
-                                    } catch (e) {
-                                        // カンマ区切りの文字列として処理
-                                        processedTags = rawTags.split(',')
-                                            .map(t => t.trim())
-                                            .filter(Boolean)
-                                            .map(tag => {
-                                                const hash = tag.split('').reduce((acc, char) => {
-                                                    return char.charCodeAt(0) + ((acc << 5) - acc);
-                                                }, 0);
-                                                return {
-                                                    label: tag,
-                                                    color: `hsl(${hash % 360}, 70%, 60%)`
-                                                };
-                                            });
-                                    }
+                                        });
                                 }
-                                
-                                console.log("Event.tsx: Processed tags for EventData:", processedTags);
-                                return processedTags;
-                            })(),
-                            image: apiResponse.image,
+                            }
+                            
+                            console.log("Event.tsx: Processed tags for EventData:", processedTags);
+                            return processedTags;
+                        };
+                        
+                        const transformedData: EventData = {
+                            event_id: String(apiResponse.event_id ?? ''),
+                            company_id: String(apiResponse.company_id ?? ''),
+                            event_type: String(apiResponse.event_type ?? ''),
+                            title: String(apiResponse.title ?? ''),
+                            description: String(apiResponse.description ?? ''),
+                            start_date: String(apiResponse.start_date ?? ''),
+                            end_date: String(apiResponse.end_date ?? ''),
+                            location: String(apiResponse.location ?? ''),
+                            reward: String(apiResponse.reward ?? ''),
+                            required_qualifications: Array.isArray(apiResponse.required_qualifications) ? apiResponse.required_qualifications.map(q => String(q)) : (typeof apiResponse.required_qualifications === 'string' ? [String(apiResponse.required_qualifications)] : []),
+                            available_spots: typeof apiResponse.available_spots === 'number' ? apiResponse.available_spots : Number(apiResponse.available_spots) || 0,
+                            created_at: String(apiResponse.created_at ?? ''),
+                            updated_at: String(apiResponse.updated_at ?? ''),
+                            tags: processEventTags(apiResponse.tags),
+                            image: String(apiResponse.image ?? ''),
                         };
                         setEventData(transformedData);
                     } else {
@@ -347,7 +382,15 @@ export const Event = ({
     // エラー発生時
     if (error || !eventData) {
         // エラーがある場合はアラートをAPIに送信
-        
+        apiConnector.post('/debug/error-report', {
+            error: error || "Event data not available",
+            message: `Failed to fetch event details for ID: ${currentEventId}`,
+            debug_info: "Event component",
+            status_code: 500,
+            timestamp: new Date().toISOString(),
+        }).catch(err => {
+            console.error('Error logging to API:', err);
+        });
 
         return <Alert severity="error">Error: {error || "Event data not available."}</Alert>;
     }
@@ -412,11 +455,23 @@ export const Event = ({
         };
 
         try {
+            // ngrokヘッダーを準備（より確実な回避のため複数のヘッダーを使用）
+            const headers: Record<string, string> = {
+                'Content-Type': 'application/json',
+            };
+            
+            // ngrokトンネルの場合、ブラウザ警告をスキップするヘッダーを追加
+            if (url.includes('ngrok')) {
+                headers['ngrok-skip-browser-warning'] = 'true';
+                headers['User-Agent'] = 'ngrok-api-client/1.0';
+                headers['X-Forwarded-For'] = '127.0.0.1';
+                headers.Accept = 'application/json';
+                console.log('Event: ngrokトンネル検出（参加申し込み）: 複数ヘッダーでブラウザ警告をスキップ');
+            }
+            
             const response = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers,
                 body: JSON.stringify(submissionData),
             });
 

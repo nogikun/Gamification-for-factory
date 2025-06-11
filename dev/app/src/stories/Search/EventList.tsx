@@ -53,11 +53,24 @@ function fetchData(targetDate: Date | string, host: string, port?: string){
     console.log("リクエストボディ:", requestBody);
 
     const url = port ? `${host}:${port}/get-events` : `${host}/get-events`;
+    
+    // ngrokヘッダーを準備（より確実な回避のため複数のヘッダーを使用）
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+    };
+    
+    // ngrokトンネルの場合、ブラウザ警告をスキップするヘッダーを追加
+    if (url.includes('ngrok')) {
+        headers['ngrok-skip-browser-warning'] = 'true';
+        headers['User-Agent'] = 'ngrok-api-client/1.0';
+        headers['X-Forwarded-For'] = '127.0.0.1';
+        headers['Accept'] = 'application/json';
+        console.log('EventList: ngrokトンネル検出: 複数ヘッダーでブラウザ警告をスキップ');
+    }
+    
     return fetch(url, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(requestBody),
         redirect: 'follow',
     })

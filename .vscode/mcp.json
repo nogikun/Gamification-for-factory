@@ -28,6 +28,10 @@
                 "--key",
                 "f3fbd809-16b7-4336-accf-a4bc4a12ee6f"
             ]
+        },
+        "browsermcp": {
+            "command": "npx",
+            "args": ["@browsermcp/mcp@latest"]
         }
     }
 }

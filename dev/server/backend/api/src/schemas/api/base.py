@@ -25,3 +25,13 @@ class BaseResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class DebugModel(BaseModel):
+    """
+    デバッグ用モデル - デバッグ情報を含む
+    """
+    error: Optional[str] = None
+    message: Optional[str] = None
+    debug_info: Optional[str] = None
+    status_code: Optional[int] = None
+    timestamp: Optional[datetime] = Field(default_factory=datetime.utcnow, description="デバッグ情報のタイムスタンプ")

@@ -23,9 +23,9 @@ from src.database import get_db
 from src.schemas.database.applicant import ApplicantCreate, Applicant as ApplicantSchema
 from src.schemas.database.event import Event as EventSchema, EventCreate, EventUpdate
 from src.schemas.database.review import Review as ReviewSchema, ReviewCreate, ReviewDetail
-from src.schemas.api.base import DateModel
-from src.schemas.api.join_event import JoinEventRequest
-from src.schema.schema import EventIdModel, Applicant
+from src.schemas.api.base import DateModel, DebugModel
+from src.schemas.api.join_event import JoinEventRequest, EventIdModel, FrontendApplicant
+# 古いschema.pyからschemasに移行完了
 from src.demo.generator import EventGenerator
 from src.classes.db_connector import DBConnector
 from src.models import (
@@ -191,7 +191,7 @@ def create_event(db: Session, event_data: EventCreate) -> EventModel:
             if isinstance(event_data.tags, str):
                 tags_json = json.loads(event_data.tags)
             else:
-                tags_json = event_data.tags
+                tags_json = [tag.model_dump() for tag in event_data.tags]
         except json.JSONDecodeError as e:
             raise HTTPException(
                 status_code=400,
@@ -1202,7 +1202,6 @@ async def get_event(target_date: DateModel) -> List[EventSchema]:
             image=image_str # 修正：Base64エンコードされた画像文字列
         )
         event_list.append(event_data)
-
     return event_list
 
 
@@ -1211,7 +1210,7 @@ app.include_router(api_router)
 
 
 @app.post("/demo/join-event")
-async def join_event(applicant: Applicant, event_id_model: EventIdModel) -> Dict[str, str]:
+async def join_event(applicant: FrontendApplicant, event_id_model: EventIdModel) -> Dict[str, str]:
     """
     デモ用イベント参加エンドポイント - 申請者が指定されたイベントに参加する処理を行います
     """
@@ -1301,8 +1300,15 @@ async def join_event_api(
             status_code=500,
             detail=f"Error creating application: {str(e)}"
         ) from e
-
     return {"message": "Successfully joined the event"}
+
+@app.post("/debug/error-report")
+async def debug_error_report(debug_data: DebugModel):
+    """
+    デバッグ用エラーレポートエンドポイント - エラーを受取り、ロギング処理を行います
+    """
+    print(f"DEBUG: Received debug data: {debug_data}")
+    return {"debug_data": debug_data.model_dump()}
 
 # スクリプトとして直接実行された場合、Uvicornサーバーを起動
 if __name__ == "__main__":

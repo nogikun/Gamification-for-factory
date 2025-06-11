@@ -1,18 +1,23 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonToast } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonToast, IonIcon } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab4.css';
 import { Accordion } from '../stories/Menu/Accordion';
 import { HostServerCard } from '../stories/Settings/HostServerCard';
 import { useEffect, useState } from 'react';
 import { Keyboard } from '@capacitor/keyboard';
-import { PluginListenerHandle } from '@capacitor/core';
+import type { PluginListenerHandle } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import axios from 'axios';
+import { shieldOutline, shieldCheckmark } from 'ionicons/icons';
 
 // redux
 import { useSelector } from 'react-redux';
 
 // components
 import { MenuTile } from '../stories/Menu/MenuTile';
+
+// ngrok認証フック
+import { useNgrokAuth } from '../lib/useNgrokAuth';
 
 const Tab4: React.FC = () => {
 	// キーボードが表示されているかどうかを追跡するステート
@@ -23,9 +28,23 @@ const Tab4: React.FC = () => {
 	const [showToast, setShowToast] = useState(false);
 	const [toastMessage, setToastMessage] = useState('');
 	
+	// ngrok認証フックを使用
+	const {
+		status: authStatus,
+		isAuthenticated,
+		isAuthenticating,
+		isUnauthenticated,
+		error: authError,
+		startAuth,
+		setAuthSuccess,
+		setAuthError,
+		clearAuthError,
+		restoreAuth
+	} = useNgrokAuth();
+	
 	// サーバーURL情報を取得
-	const host = useSelector((state: any) => state.server.host);
-	const port = useSelector((state: any) => state.server.port);
+	const host = useSelector((state: {server: {host: string}}) => state.server.host);
+	const port = useSelector((state: {server: {port: string}}) => state.server.port);
 	
 	// 適切なURLを構築（host末尾のスラッシュを確認）
 	const getServerUrl = () => {
@@ -40,6 +59,9 @@ const Tab4: React.FC = () => {
 
 	// キーボードイベントのリスナーを設定
 	useEffect(() => {
+		// ngrok認証状態の復元
+		restoreAuth();
+		
 		 // リスナーを保持する変数
 		let keyboardShowListener: PluginListenerHandle | undefined;
 		let keyboardHideListener: PluginListenerHandle | undefined;
@@ -73,7 +95,7 @@ const Tab4: React.FC = () => {
 			
 			cleanupListeners();
 		};
-	}, []);
+	}, [restoreAuth]);
 	
 	// API通信テスト関数
 	const testApiConnection = async () => {
@@ -83,15 +105,26 @@ const Tab4: React.FC = () => {
 			setToastMessage(`APIリクエスト送信中: ${serverUrl}/health`);
 			setShowToast(true);
 			
+			// ngrokのブラウザ警告ページをスキップするためのヘッダーを準備（改善版）
+			const headers: Record<string, string> = {
+				'Accept': 'application/json',
+				'Cache-Control': 'no-cache',
+				'Connection': 'keep-alive',
+			};
+			
+			// ngrokトンネルの場合、複数のヘッダーでより確実にブラウザ警告をスキップ
+			if (serverUrl.includes('ngrok')) {
+				headers['ngrok-skip-browser-warning'] = 'true';
+				headers['User-Agent'] = 'ngrok-api-client/1.0';
+				headers['X-Forwarded-For'] = '127.0.0.1';
+				console.log('ngrokトンネル検出: 複数ヘッダーでブラウザ警告をスキップ');
+			}
+			
 			// ヘルスチェックエンドポイントにリクエスト
 			// より詳細なエラー情報を得るための設定
 			const response = await axios.get(`${serverUrl}/health`, {
 				timeout: 15000, // タイムアウトを15秒に延長
-				headers: {
-					'Accept': '*/*',
-					'Cache-Control': 'no-cache',
-					'Connection': 'keep-alive',
-				},
+				headers,
 				// エラーハンドリングを改善
 				validateStatus: (status) => {
 					return status >= 200 && status < 600; // すべてのステータスコードを許容してエラーにならないように
@@ -103,30 +136,107 @@ const Tab4: React.FC = () => {
 			setApiResponse(JSON.stringify(response.data));
 			setToastMessage(`API通信成功: ${JSON.stringify(response.data)}`);
 			setShowToast(true);
-		} catch (error: any) {
+		} catch (error: unknown) {
 			// より詳細なエラー情報を表示
 			console.error('API通信エラー詳細:', error);
 			let errorMessage = 'エラーの詳細:';
 			
-			if (error.response) {
-				// サーバーからのレスポンスがある場合
-				errorMessage += `\nステータス: ${error.response.status}`;
-				errorMessage += `\nデータ: ${JSON.stringify(error.response.data)}`;
-			} else if (error.request) {
-				// リクエストは送られたがレスポンスがない場合
-				errorMessage += '\nサーバーからの応答がありません';
-				errorMessage += `\nリクエスト情報: ${JSON.stringify(error.request._currentUrl || error.request)}`;
-			} else {
-				// リクエスト設定中にエラーが発生
+			if (axios.isAxiosError(error)) {
+				if (error.response) {
+					// サーバーからのレスポンスがある場合
+					errorMessage += `\nステータス: ${error.response.status}`;
+					errorMessage += `\nデータ: ${JSON.stringify(error.response.data)}`;
+				} else if (error.request) {
+					// リクエストは送られたがレスポンスがない場合
+					errorMessage += '\nサーバーからの応答がありません';
+					errorMessage += `\nリクエスト情報: ${JSON.stringify(error.request._currentUrl || error.request)}`;
+				} else {
+					// リクエスト設定中にエラーが発生
+					errorMessage += `\nメッセージ: ${error.message}`;
+				}
+				
+				if (error.code) {
+					errorMessage += `\nエラーコード: ${error.code}`;
+				}
+			} else if (error instanceof Error) {
 				errorMessage += `\nメッセージ: ${error.message}`;
-			}
-			
-			if (error.code) {
-				errorMessage += `\nエラーコード: ${error.code}`;
+			} else {
+				errorMessage += '\n不明なエラーが発生しました';
 			}
 			
 			setApiResponse(errorMessage);
-			setToastMessage(`API通信エラー: ${error.message || '不明なエラー'}`);
+			const displayError = axios.isAxiosError(error) ? 
+				(error.message || '不明なエラー') : 
+				(error instanceof Error ? error.message : '不明なエラー');
+			setToastMessage(`API通信エラー: ${displayError}`);
+			setShowToast(true);
+		}
+	};
+
+	// 認証ボタンの表示内容を決定
+	const getAuthButtonContent = () => {
+		if (isAuthenticating) {
+			return {
+				text: '設定中...',
+				icon: shieldOutline,
+				color: 'medium',
+				disabled: true
+			};
+		}
+		
+		if (isAuthenticated) {
+			return {
+				text: 'ngrok設定済み',
+				icon: shieldCheckmark,
+				color: 'success',
+				disabled: false
+			};
+		}
+		
+		return {
+			text: 'ngrok設定',
+			icon: shieldOutline,
+			color: 'primary',
+			disabled: false
+		};
+	};
+	
+	// ngrok設定を処理する関数（簡素化版）
+	const handleNgrokAuth = async () => {
+		try {
+			setToastMessage(
+				'ngrok設定情報:\n' +
+				'✓ ngrokトンネルへのAPI通信は自動化されています\n' +
+				'✓ ブラウザ警告ページは自動的にスキップされます\n' +
+				'✓ 手動での認証設定は不要です'
+			);
+			setShowToast(true);
+			
+			// 設定済み状態に
+			setAuthSuccess('auto-configured');
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : 'エラーが発生しました';
+			setAuthError(errorMessage);
+			setToastMessage(`エラー: ${errorMessage}`);
+			setShowToast(true);
+		}
+	};
+	
+	// 手動でトークンを設定する関数（簡素化版）
+	const handleManualTokenSetting = async () => {
+		try {
+			setToastMessage(
+				'情報: ngrokトンネルへのAPI通信には手動設定は不要です。\n' +
+				'アプリが自動的にヘッダーを管理します。'
+			);
+			setShowToast(true);
+			
+			// 設定済み状態に
+			setAuthSuccess('auto-configured');
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : 'エラーが発生しました';
+			setAuthError(errorMessage);
+			setToastMessage(`エラー: ${errorMessage}`);
 			setShowToast(true);
 		}
 	};
@@ -149,14 +259,83 @@ const Tab4: React.FC = () => {
                 <p>ここは設定画面です。</p>
 
                 <HostServerCard
-                    host="http://localhost"
-                    port="3000"
+                    host={host}
+                    port={port}
                     width="100%"
                     height="300px"
                 />
                 
-                {/* API通信テスト用ボタン */}
+                {/* ngrok認証ボタンとAPI通信テスト */}
 				<div style={{ padding: '20px', textAlign: 'center' }}>
+					{/* ngrok設定ボタン */}
+					<IonButton 
+						expand="block" 
+						color={getAuthButtonContent().color}
+						onClick={handleNgrokAuth}
+						disabled={getAuthButtonContent().disabled}
+						style={{ marginBottom: '10px' }}
+					>
+						<IonIcon icon={getAuthButtonContent().icon} slot="start" />
+						{getAuthButtonContent().text}
+					</IonButton>
+					
+					{/* 手動設定ボタン（未設定の場合のみ表示） */}
+					{!isAuthenticated && (
+						<IonButton 
+							expand="block" 
+							fill="outline"
+							color="medium"
+							onClick={handleManualTokenSetting}
+							style={{ marginBottom: '15px', fontSize: '14px' }}
+						>
+							ngrok設定情報を表示
+						</IonButton>
+					)}
+					
+					{/* 設定エラー表示 */}
+					{authError && (
+						<div style={{ 
+							marginBottom: '15px',
+							padding: '10px', 
+							backgroundColor: '#ffebee',
+							borderRadius: '8px',
+							color: '#c62828',
+							fontSize: '14px'
+						}}>
+							エラー: {authError}
+						</div>
+					)}
+					
+					{/* 設定完了表示 */}
+					{isAuthenticated && (
+						<div style={{ 
+							marginBottom: '15px',
+							padding: '10px', 
+							backgroundColor: '#e8f5e8',
+							borderRadius: '8px',
+							color: '#2e7d32',
+							fontSize: '14px'
+						}}>
+							✓ ngrok設定が完了しています（ブラウザ警告自動スキップ）
+							<IonButton 
+								fill="clear" 
+								size="small" 
+								color="medium"
+								onClick={() => {
+									localStorage.removeItem('ngrok_auth_token');
+									clearAuthError();
+									setToastMessage('設定状態をリセットしました');
+									setShowToast(true);
+									window.location.reload();
+								}}
+								style={{ marginLeft: '10px', fontSize: '12px' }}
+							>
+								リセット
+							</IonButton>
+						</div>
+					)}
+					
+					{/* API通信テストボタン */}
 					<IonButton expand="block" onClick={testApiConnection}>
 						API通信テスト
 					</IonButton>

@@ -6,6 +6,7 @@ import { searchDateReducer } from "./searchDateSlice"; // 検索日付のリデ�
 import { searchEventReducer } from "./searchEventSlice"; // 検索のリデューサーをインポート
 import { themeReducer } from "./themeSlice";
 import { serverReducer } from "./serverSlice"; // サーバーのリデューサーをインポート
+import { ngrokAuthReducer } from "./ngrokAuthSlice"; // ngrok認証のリデューサーをインポート
 
 // storeの作成
 export const store = configureStore({
@@ -15,6 +16,7 @@ export const store = configureStore({
         searchEvent: searchEventReducer,      // 検索のリデューサーを追加
         theme: themeReducer,            // テーマのリデューサーを追加
         server: serverReducer,          // サーバーのリデューサーを追加
+        ngrokAuth: ngrokAuthReducer,    // ngrok認証のリデューサーを追加
     },
 });
 

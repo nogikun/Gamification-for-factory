@@ -268,7 +268,11 @@ export default function EventRegistration() {
       const apiFormData = {
         ...formData,
         // タグをJSONとして送信
-        tags: JSON.stringify(formData.tags)
+        tags: JSON.stringify(formData.tags),
+        // required_qualificationsを文字列からリストに変換
+        required_qualifications: formData.required_qualifications 
+          ? formData.required_qualifications.split(',').map(q => q.trim()).filter(q => q.length > 0)
+          : []
       };
       
       const url = editMode 
@@ -711,7 +715,7 @@ export default function EventRegistration() {
                     name="required_qualifications"
                     value={formData.required_qualifications || ""}
                     onChange={handleInputChange}
-                    placeholder="必要な資格や条件を入力" 
+                    placeholder="必要な資格や条件をカンマ区切りで入力（例：普通自動車免許, 英語検定2級, パソコン操作）" 
                     required
                     className={styles.formTextarea} 
                     rows={2} 

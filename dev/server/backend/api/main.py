@@ -23,9 +23,9 @@ from src.database import get_db
 from src.schemas.database.applicant import ApplicantCreate, Applicant as ApplicantSchema
 from src.schemas.database.event import Event as EventSchema, EventCreate, EventUpdate
 from src.schemas.database.review import Review as ReviewSchema, ReviewCreate, ReviewDetail
-from src.schemas.api.base import DateModel, BaseResponse, DebugModel
-from src.schemas.api.join_event import JoinEventRequest
-from src.schema.schema import EventIdModel, Applicant
+from src.schemas.api.base import DateModel, DebugModel
+from src.schemas.api.join_event import JoinEventRequest, EventIdModel, FrontendApplicant
+# 古いschema.pyからschemasに移行完了
 from src.demo.generator import EventGenerator
 from src.classes.db_connector import DBConnector
 from src.models import (
@@ -1210,7 +1210,7 @@ app.include_router(api_router)
 
 
 @app.post("/demo/join-event")
-async def join_event(applicant: Applicant, event_id_model: EventIdModel) -> Dict[str, str]:
+async def join_event(applicant: FrontendApplicant, event_id_model: EventIdModel) -> Dict[str, str]:
     """
     デモ用イベント参加エンドポイント - 申請者が指定されたイベントに参加する処理を行います
     """

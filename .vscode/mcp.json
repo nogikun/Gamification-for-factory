@@ -1,0 +1,37 @@
+{
+    "mcpServers": {
+        "mcp-taskmanager": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@smithery/cli@latest",
+                "run",
+                "@kazuph/mcp-taskmanager",
+                "--key",
+                "f3fbd809-16b7-4336-accf-a4bc4a12ee6f"
+            ]
+        },
+        "sequential-thinking": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-sequential-thinking"
+            ]
+        },
+        "context7": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@smithery/cli@latest",
+                "run",
+                "@upstash/context7-mcp",
+                "--key",
+                "f3fbd809-16b7-4336-accf-a4bc4a12ee6f"
+            ]
+        },
+        "browsermcp": {
+            "command": "npx",
+            "args": ["@browsermcp/mcp@latest"]
+        }
+    }
+}

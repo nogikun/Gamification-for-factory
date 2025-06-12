@@ -65,24 +65,40 @@ export const CardComponent = ({
         <div style={{
             margin: "10px 10px 10px 10px",
         }}>
-            <button
-            type="button"
-            style={{
-                backgroundColor: 'transparent', // 透明なボタン
-                border: 'none',
-            }}
-            onClick={() => {
-                // クリックイベント
-                console.log("jobID", jobID);
-            }}>
-                <Card
+            <Card
                 variant="outlined"
+                component="button"
+                role="button"
+                tabIndex={0}
+                onClick={onClick}
+                onKeyPress={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        onClick();
+                    }
+                }}
                 sx={{ 
-                    p: 1.5, display: 'flex', flexWrap: 'wrap', zIndex: 1, 
+                    p: 1.5, 
+                    display: 'flex', 
+                    flexWrap: 'wrap', 
+                    zIndex: 1,
                     width: "100%",
                     height: "100%",
-                    borderRadius: 2, backgroundColor, color, borderColor, borderWidth, borderStyle: bordered ? "solid" : "none", cursor: "pointer" }}
-                >
+                    border: 'none',
+                    borderRadius: 2, 
+                    backgroundColor, 
+                    color, 
+                    borderColor, 
+                    borderWidth, 
+                    borderStyle: bordered ? "solid" : "none", 
+                    cursor: "pointer",
+                    '&:focus': {
+                        outline: '2px solid #007FFF',
+                        outlineOffset: '2px',
+                    },
+                    '&:focus:not(:focus-visible)': {
+                        outline: 'none',
+                    }
+                }}>
                 <CardMedia
                     component="img"
                     width="140"
@@ -140,7 +156,6 @@ export const CardComponent = ({
 
                 </Box>
                 </Card>
-            </button>
         </div>
     );
 };

@@ -183,3 +183,17 @@ CREATE TABLE reviews (
     FOREIGN KEY (reviewer_id) REFERENCES users(user_id) ON DELETE CASCADE                     -- ユーザーが削除された場合、関連するレビューも削除
 );
 
+--------------------------------------------------
+--   TABLE NAME: game_item
+-- DESCRIPTIONS: ゲームの進行度に必要な情報を管理する。
+--------------------------------------------------
+CREATE TYPE item_type_enum AS ENUM ('武器', '支援アイテム');
+
+CREATE TABLE game_item (
+    item_id UUID PRIMARY KEY,              -- アイテムID（主キー）
+    item_type item_type_enum,              -- アイテムタイプ（ENUM: 武器 or 支援アイテム）
+    atk INTEGER,                           -- 攻撃力
+    hit_rate REAL,                         -- 命中率
+    crit_dmg INTEGER,                      -- 会心ダメージ
+    crit_rate REAL                         -- 会心率
+);

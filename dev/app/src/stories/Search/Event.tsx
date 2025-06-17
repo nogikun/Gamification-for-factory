@@ -40,7 +40,7 @@ import './Event.css';
 import { MotionPhotosAuto } from '@mui/icons-material';
 
 // local
-import { apiConnector } from '@/scripts/apiConnector'; // APIコネクタをインポート
+import { apiConnector } from '../../scripts/apiConnector'; // APIコネクタをインポート
 
 // タグオブジェクトの型定義
 interface TagData {
@@ -134,8 +134,14 @@ export const Event = ({
     zIndex = 1, // Storybookでのargs用、デフォルト値を設定
     onClick
 }: EventProps) => {
-    // router
-    const ionRouter = useIonRouter();
+    // ★ useIonRouter()を安全に呼び出し (Storybookなどでコンテキストがない場合に対応)
+    let ionRouter: ReturnType<typeof useIonRouter> | null = null;
+    try {
+        ionRouter = useIonRouter();
+    } catch (error) {
+        console.warn('Event.tsx: useIonRouter failed (likely no Ionic router context):', error);
+        ionRouter = null;
+    }
     // Redux
     const dispatch = useDispatch();
     const darkTheme = useSelector((state: RootState) => state.theme.isDarkMode);
@@ -155,8 +161,15 @@ export const Event = ({
         ? String(portState) 
         : (typeof portState === 'string' ? portState : undefined);
 
-    const params = useParams<{ eventIdFromUrl?: string }>(); // ★ URLパラメータを取得 (optional chain)
-    const eventIdFromUrl = params.eventIdFromUrl;
+    // ★ useParams()を安全に呼び出し (Storybookなどでコンテキストがない場合に対応)
+    let params: { eventIdFromUrl?: string } = {};
+    try {
+        params = useParams<{ eventIdFromUrl?: string }>() || {};
+    } catch (error) {
+        console.warn('Event.tsx: useParams failed (likely no router context):', error);
+        params = {};
+    }
+    const eventIdFromUrl = params?.eventIdFromUrl;
     const eventIdFromRedux = useSelector((state: RootState) => state.searchEvent.eventId);
 
     // props -> URL -> Redux の優先順位でIDを決定
@@ -217,10 +230,14 @@ export const Event = ({
         }
         // 文字列の場合はハッシュ値から色を生成 (後方互換性)
         const tagString = typeof tag === 'string' ? tag : (tag as TagData).label || '';
-        const hash = tagString.split('').reduce((acc, char) => {
-            return char.charCodeAt(0) + ((acc << 5) - acc);
-        }, 0);
-        return `hsl(${hash % 360}, 70%, 60%)`;
+        if (tagString && typeof tagString === 'string') {
+            const hash = tagString.split('').reduce((acc, char) => {
+                return char.charCodeAt(0) + ((acc << 5) - acc);
+            }, 0);
+            return `hsl(${hash % 360}, 70%, 60%)`;
+        }
+        // フォールバック色
+        return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
     };
 
     // タグのラベルを取得する関数
@@ -264,7 +281,7 @@ export const Event = ({
                                                 color: tagObj.color ? String(tagObj.color) : `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
                                             };
                                         }
-                                    } else if (typeof tag === 'string') {
+                                    } else if (typeof tag === 'string' && tag) {
                                         const hash = tag.split('').reduce((acc: number, char: string) => {
                                             return char.charCodeAt(0) + ((acc << 5) - acc);
                                         }, 0);
@@ -293,7 +310,7 @@ export const Event = ({
                                                     label: String(itemObj.label),
                                                     color: 'color' in item ? String((item as { color: unknown }).color) : `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
                                                 };
-                                            } else if (typeof item === 'string') {
+                                            } else if (typeof item === 'string' && item) {
                                                 const hash = item.split('').reduce((acc: number, char: string) => {
                                                     return char.charCodeAt(0) + ((acc << 5) - acc);
                                                 }, 0);
@@ -318,18 +335,31 @@ export const Event = ({
                                     }
                                 } catch (e) {
                                     // カンマ区切りの文字列として処理
-                                    processedTags = rawTags.split(',')
-                                        .map((t: string) => t.trim())
-                                        .filter(Boolean)
-                                        .map((tag: string) => {
-                                            const hash = tag.split('').reduce((acc: number, char: string) => {
-                                                return char.charCodeAt(0) + ((acc << 5) - acc);
-                                            }, 0);
-                                            return {
-                                                label: tag,
-                                                color: `hsl(${hash % 360}, 70%, 60%)`
-                                            };
-                                        });
+                                    // rawTagsがundefinedやnullでないことを確認
+                                    if (rawTags && typeof rawTags === 'string') {
+                                        processedTags = rawTags.split(',')
+                                            .map((t: string) => t.trim())
+                                            .filter(Boolean)
+                                            .map((tag: string) => {
+                                                if (tag && typeof tag === 'string') {
+                                                    const hash = tag.split('').reduce((acc: number, char: string) => {
+                                                        return char.charCodeAt(0) + ((acc << 5) - acc);
+                                                    }, 0);
+                                                    return {
+                                                        label: tag,
+                                                        color: `hsl(${hash % 360}, 70%, 60%)`
+                                                    };
+                                                }
+                                                // フォールバック
+                                                return {
+                                                    label: String(tag),
+                                                    color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                                                };
+                                            });
+                                    } else {
+                                        // rawTagsが文字列でない場合は空配列
+                                        processedTags = [];
+                                    }
                                 }
                             }
                             
@@ -445,7 +475,7 @@ export const Event = ({
                 email: formData.email,
                 birthdate: formData.birthDate ? formData.birthDate : null, // Ensure YYYY-MM-DD or null
                 address: formData.address,
-                qualifications: formData.licenses ? formData.licenses.split('\n') : [],
+                qualifications: formData.licenses && typeof formData.licenses === 'string' ? formData.licenses.split('\n').filter(Boolean) : [],
                 motivation: formData.motivation,
                 // applied_at is set by backend
             },

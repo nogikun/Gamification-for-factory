@@ -40,7 +40,7 @@ import './Event.css';
 import { MotionPhotosAuto } from '@mui/icons-material';
 
 // local
-import { apiConnector } from '@/scripts/apiConnector'; // APIコネクタをインポート
+import { apiConnector } from '../../scripts/apiConnector'; // APIコネクタをインポート
 
 // タグオブジェクトの型定義
 interface TagData {

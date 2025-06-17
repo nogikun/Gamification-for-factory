@@ -197,3 +197,14 @@ CREATE TABLE game_item (
     crit_dmg INTEGER,                      -- 会心ダメージ
     crit_rate REAL                         -- 会心率
 );
+
+--------------------------------------------------
+--   TABLE NAME: game_progress
+-- DESCRIPTIONS: ゲームの進行度に必要な情報を管理する。
+--------------------------------------------------
+CREATE TABLE game_progress (
+    user_id UUID PRIMARY KEY,            -- ユーザーID（主キー）
+    cleared_stages INTEGER,              -- クリア済ステージ数
+    progress_percentage INTEGER,         -- 進行度（整数）
+    updated_at TIMESTAMP                 -- 最終更新日時
+);

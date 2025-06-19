@@ -1,0 +1,35 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "dbcode.connections": [
+        {
+            "connectionId": "CIpMEexByCns2mhkpxLVU",
+            "name": "localhost",
+            "driver": "postgres",
+            "connectionType": "host",
+            "host": "localhost",
+            "port": 5432,
+            "ssl": false,
+            "username": "postgres",
+            "password": "",
+            "savePassword": "secretStorage",
+            "database": "db",
+            "readOnly": false,
+            "connectionTimeout": 30
+        },
+        {
+            "connectionId": "WfV8X3bsSc3XLSzeJ3Gl8",
+            "name": "localhost",
+            "driver": "postgres",
+            "connectionType": "host",
+            "host": "localhost",
+            "port": 5432,
+            "ssl": false,
+            "username": "postgres",
+            "password": "",
+            "savePassword": "secretStorage",
+            "database": "db",
+            "readOnly": false,
+            "connectionTimeout": 30
+        }
+    ]
+}

@@ -1,0 +1,84 @@
+services:
+  # APIサーバー - ユーザーデータやステータス情報の処理
+  api:
+    build:
+      context: ./backend/api
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./backend/api:/app"
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - default
+
+  # PostgreSQLデータベース - ユーザーや企業情報の保存
+  postgres:
+    build:
+      context: ./backend/database
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/database/init:/docker-entrypoint-initdb.d
+      # - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=gamification
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+  # フロントエンド - Reactアプリケーション
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://backend:3000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api
+      - postgres
+    restart: unless-stopped
+    networks:
+      - default
+
+  adminer:
+    image: adminer
+    restart: always
+    environment:
+      - ADMINER_DESIGN=pepa_linha
+      - SERVER=postgres
+    ports:
+      - 5050:8080
+    depends_on:
+      - postgres
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  postgres-data:

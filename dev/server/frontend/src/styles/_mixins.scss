@@ -1,0 +1,31 @@
+@use 'variables' as *;
+
+// Media Query Mixin
+@mixin mq($size) {
+  @if $size == sm {
+    @media (min-width: $sm) { @content; }
+  } @else if $size == md {
+    @media (min-width: $md) { @content; }
+  } @else if $size == lg {
+    @media (min-width: $lg) { @content; }
+  }
+}
+
+// Flex Center Mixin
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin mq-mobile {
+  @media (max-width: #{$breakpoint-mobile}) {
+    @content;
+  }
+}
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+}

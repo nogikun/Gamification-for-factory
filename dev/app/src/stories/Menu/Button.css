@@ -1,0 +1,31 @@
+.storybook-button {
+    display: inline-block;
+    cursor: pointer;
+    border: 0;
+    border-radius: 3em;
+    font-weight: 700;
+    line-height: 1;
+    font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+  .storybook-memu-button--primary {
+    background-color: #555ab9;
+    color: white;
+  }
+  .storybook-memu-button--secondary {
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset;
+    background-color: transparent;
+    color: #333;
+  }
+  
+	/* ラベルに関するテンプレートスタイル（使用しない） */
+  .storybook-menu-button__label {
+    display: inline-block;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }

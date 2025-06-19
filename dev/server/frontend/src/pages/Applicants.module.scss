@@ -1,0 +1,210 @@
+@use '../styles/variables' as *;
+
+.applicantsPage {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 32px 24px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  border: 1px solid var(--bg-sidebar);
+}
+
+.applicants__title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.filtersContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.filterControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  label {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+}
+
+.filterSelect {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--bg-sidebar);
+  background: var(--bg-base);
+  color: var(--text-main);
+  min-width: 150px;
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.applicantsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 32px;
+  
+  th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--bg-sidebar);
+  }
+  
+  th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  tr:hover {
+    background-color: rgba(0,0,0,0.02);
+  }
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.未対応 {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.承認 {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.否認 {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.messageCell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.detailBtn {
+  padding: 6px 12px;
+  border: none;
+  background: #1976d2;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.18s;
+  
+  &:hover {
+    background: #0d47a1;
+  }
+}
+
+.errorMessage {
+  background: #ffebee;
+  border-left: 4px solid #ef5350;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  color: #c62828;
+}
+
+.loadingIndicator {
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+}
+
+.noData {
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+  font-style: italic;
+}
+
+// ダミーデータ関連スタイル
+.dummyDataNotice {
+  background: #fff8e1;
+  border: 1px dashed #ffb300;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #ff8f00;
+}
+
+.actionButtons {
+  margin-left: auto;
+}
+
+.refreshButton, 
+.dummyButton {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.refreshButton {
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+  color: #1976d2;
+  
+  &:hover:not(:disabled) {
+    background: #bbdefb;
+  }
+}
+
+.dummyButton {
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  color: #ff8f00;
+  
+  &:hover {
+    background: #ffecb3;
+  }
+}
+
+.actionBtns {
+  display: flex;
+  gap: 8px;
+}
+
+// レスポンシブ対応
+@media (max-width: 768px) {
+  .filtersContainer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .actionButtons {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+}

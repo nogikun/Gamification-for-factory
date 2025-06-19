@@ -1,0 +1,38 @@
+@use 'reset';
+@use 'variables' as *;
+
+body {
+  --bg-base: #fff;
+  --bg-surface: #fff;
+  --bg-sidebar: #f5f6fa;
+  --text-main: #222;
+  --text-secondary: #1ea7ff;
+  --accent: #1976d2;
+  --hover-bg: #e3eefe;
+  --border: #e0e0e0;
+  background: var(--bg-base);
+  color: var(--text-main);
+  font-family: 'Noto Sans JP', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  min-height: 100vh;
+  background: var(--bg-base);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: var(--bg-sidebar);
+}
+::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+
+input, textarea, select, button {
+  font-family: inherit;
+  color: var(--text-main);
+}

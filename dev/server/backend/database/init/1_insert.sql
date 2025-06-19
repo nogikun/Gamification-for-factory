@@ -369,7 +369,7 @@ INSERT INTO game_logs (user_id, log_type_id, details, created_at) VALUES
 
 -- ログタイプ: 2 = ステージクリア
 ('11111111-1111-1111-1111-111111111111', 2,
- '{"stage": 5, "result": "success", "score": 9800}',
+ '{"stage": 2, "result": "クリア"}',
  '2025-06-18 14:35:00'),
 
 -- ログタイプ: 3 = ガチャ結果
@@ -379,5 +379,5 @@ INSERT INTO game_logs (user_id, log_type_id, details, created_at) VALUES
 
 -- ログタイプ: 4 = ログイン
 ('33333333-3333-3333-3333-333333333333', 4,
- '{"ip": "192.168.1.1", "device": "PC"}',
+ '{"ip": "192.168.1.1", "device": "android"}',
  '2025-06-18 09:00:00');

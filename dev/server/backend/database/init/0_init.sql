@@ -208,3 +208,15 @@ CREATE TABLE game_progress (
     progress_percentage INTEGER,         -- 自動計算される進行度（%）
     updated_at TIMESTAMP NOT NULL        -- 最終更新日時
 );
+
+--------------------------------------------------
+--   TABLE NAME: game_logs
+-- DESCRIPTIONS: プレイヤーの行動履歴を時系列で管理する。
+--------------------------------------------------
+CREATE TABLE game_logs (
+    log_id BIGSERIAL PRIMARY KEY,        -- ログID（自動連番）
+    user_id UUID NOT NULL,               -- ユーザーID（外部キー想定）
+    log_type_id INT NOT NULL,            -- ログ種別ID（外部キー想定）
+    details JSON NOT NULL,               -- JSON形式の詳細情報
+    created_at TIMESTAMP NOT NULL        -- 記録日時
+);

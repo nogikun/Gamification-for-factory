@@ -1,7 +1,7 @@
 """
 Applicant-related Pydantic schemas for FastAPI
 """
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 import uuid
@@ -14,8 +14,11 @@ class ApplicantBase(BaseModel):
     mail_address: Optional[str] = None
     phone_number: Optional[str] = None
     address: Optional[str] = None
-    birth_date: Optional[datetime] = None
+    birth_date: Optional[datetime] = Field(None, alias="birthdate")
     license: Optional[str] = None
+    
+    class Config:
+        validate_by_name = True
 
 
 class ApplicantCreate(ApplicantBase):

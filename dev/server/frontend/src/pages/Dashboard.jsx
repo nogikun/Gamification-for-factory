@@ -4,7 +4,7 @@ import { gsap } from "gsap";
 import DashboardCalendar from "../components/DashboardCalendar";
 import styles from "./Dashboard.module.scss";
 import { UserPlus, CalendarCheck, HourglassMedium } from "phosphor-react";
-import { apiRequest } from "../config";
+import { apiRequest, API_BASE_URL } from "../config";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -49,10 +49,10 @@ const Dashboard = () => {
       try {
         // 並列で全てのAPIからデータを取得
         const [eventsResponse, applicationsResponse, reviewsResponse, usersResponse] = await Promise.all([
-          fetch('http://localhost:8000/event'),
-          fetch('http://localhost:8000/applications'),
-          fetch('http://localhost:8000/api/reviews'),
-          fetch('http://localhost:8000/api/users')
+          fetch(`${API_BASE_URL}/event`),
+          fetch(`${API_BASE_URL}/applications`),
+          fetch(`${API_BASE_URL}/api/reviews`),
+          fetch(`${API_BASE_URL}/api/users`)
         ]);
 
         // レスポンスチェック

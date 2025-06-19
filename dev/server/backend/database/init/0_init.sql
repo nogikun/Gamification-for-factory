@@ -204,7 +204,7 @@ CREATE TABLE game_item (
 --------------------------------------------------
 CREATE TABLE game_progress (
     user_id UUID PRIMARY KEY,            -- ユーザーID（主キー）
-    cleared_stages INTEGER,              -- クリア済ステージ数
-    progress_percentage INTEGER,         -- 進行度（整数）
-    updated_at TIMESTAMP                 -- 最終更新日時
+    cleared_stages INTEGER NOT NULL,     -- クリア済ステージ数
+    progress_percentage INTEGER,         -- 自動計算される進行度（%）
+    updated_at TIMESTAMP NOT NULL        -- 最終更新日時
 );

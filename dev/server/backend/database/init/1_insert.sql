@@ -339,24 +339,23 @@ INSERT INTO game_item (item_id, item_type, atk, hit_rate, crit_dmg, crit_rate) V
 ('00000000-0000-0000-0000-000000000004', '支援アイテム', 0, 0.00, 50, 0.00);
 
 -- game_progressテーブルにダミーデータを挿入
-INSERT INTO game_progress (user_id, cleared_stages, progress_percentage, updated_at)
-VALUES
-    (
-        '66666666-6666-6666-6666-666666666666',
-        5,
-        5,  -- 例: 5ステージ / 100ステージ × 100 = 5%
-        '2025-06-15 14:30:00'
-    ),
-    (
-        '77777777-7777-7777-7777-777777777777',
-        50,
-        50,
-        '2025-06-16 09:00:00'
-    ),
-    (
-        '88888888-8888-8888-8888-888888888888',
-        100,
-        100,
-        '2025-06-16 11:45:00'
-    );
-
+CREATE OR REPLACE FUNCTION update_progress_percentage()
+RETURNS TRIGGER AS $$
+DECLARE
+    total_stages INTEGER := 3; -- 総ステージ数
+BEGIN
+    -- 小数→四捨五入して整数にして保存
+    NEW.progress_percentage := ROUND((NEW.cleared_stages::NUMERIC / total_stages) * 100);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER trg_update_progress_percentage
+BEFORE INSERT OR UPDATE ON game_progress
+FOR EACH ROW
+EXECUTE FUNCTION update_progress_percentage();
+INSERT INTO game_progress (user_id, cleared_stages, updated_at) VALUES
+('11111111-1111-1111-1111-111111111111', 1,  '2025-06-10 12:30:00'),  -- → 33%
+('22222222-2222-2222-2222-222222222222', 2, '2025-06-12 15:45:00'),  -- → 67%
+('33333333-3333-3333-3333-333333333333', 3, '2025-06-14 09:00:00'),  -- → 100%
+('44444444-4444-4444-4444-444444444444', 0,  '2025-06-01 08:00:00');  -- → 0%
+SELECT * FROM game_progress;

@@ -16,6 +16,8 @@ export interface FeedbackTabProps {
 	primary?: boolean; // プライマリーかどうか
 	color?: string; // 色
 	backgroundColor?: string; // 背景色
+    width?: string; // 幅
+    height?: string; // 高さ
     aiReview?: string; // AIレビューの内容
 	onClick?: () => void; // クリック時のイベントハンドラー
 	// 他のプロパティを追加
@@ -27,6 +29,8 @@ export const FeedbackTab = ({
 	color,
 	backgroundColor,
     aiReview = "",
+    width = "100%", // デフォルトの幅
+    height = "100%", // デフォルトの高さ
 	onClick,
 	...props
 }: FeedbackTabProps) => {
@@ -40,19 +44,31 @@ export const FeedbackTab = ({
 	};
 
 	return (
-		<div>
+		<Box sx={{ width: width, height: height }}>
 			<TabContext value={useSelector((state: RootState) => state.feedbackTab.TabId.toString())}>
 				<Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-					<TabList onChange={handleChange} aria-label="lab API tabs example">
+					<TabList 
+						onChange={handleChange} 
+						aria-label="lab API tabs example"
+						variant="scrollable"
+						scrollButtons="auto"
+					>
 						<Tab label="AIフィードバック" value="1" />
-						{/* <Tab label="Item Two" value="2" />
-						<Tab label="Item Three" value="3" /> */}
+
+                        {/* 新規に表示するものがあれば以下のような形式でタブを設定する。 */}
+
+						<Tab label="人事の方のフィードバック" value="2" />
+						<Tab label="短期的な学習プラン" value="3" />
+                        <Tab label="長期的な学習プラン" value="4" />
 					</TabList>
 				</Box>
 				<TabPanel value="1">{aiReview}</TabPanel>
+
+                {/* 以下はTabがアクティベートされると表示されるようになる。文字列のみでなく、コンポーネントを設定しても良い。 */}
 				<TabPanel value="2">Item Two</TabPanel>
-				<TabPanel value="3">Item Three</TabPanel>
+				<TabPanel value="3">短期的には ~~~ を学習すると良いですよ！</TabPanel>
+				<TabPanel value="4">長期的には どんなことを学びたいか 明確にすると良いです！</TabPanel>
 			</TabContext>
-		</div>
+		</Box>
 	);
 };

@@ -10,6 +10,7 @@ export { searchDateReducer } from './searchDateSlice';
 export { searchEventReducer } from './searchEventSlice';
 export { serverReducer } from './serverSlice';
 export { themeReducer } from './themeSlice';
+export { feedbackTabReducer } from './feedbackTabSlice';
 
 // ストアのエクスポート
 export { store } from './store';

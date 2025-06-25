@@ -21,6 +21,7 @@ from src.models import (
 from src.schemas.database.application import (
   ApplicationCreate, ApplicationUpdate
 )
+from src.utils.review_converter import ReviewConverter
 
 
 # --- ヘルパー関数 --- #
@@ -395,24 +396,49 @@ def create_application(
 
 # レビューを作成する関数
 def create_review(db: Session, review_data: ReviewCreate) -> ReviewModel:
-    """Create a new review."""
-    # 応募が存在するか確認
-    application = (
-        db.query(ApplicationModel)
-        .filter(ApplicationModel.application_id == review_data.application_id)
-        .first()
-    )
-    if not application:
-        raise HTTPException(status_code=404, detail="指定された応募が見つかりません")
-
-    # レビューを作成
+    """Create a new review (新しいスキーマ対応版)"""
+    # 変換処理クラスの初期化
+    converter = ReviewConverter(db, enable_cache=True, strict_mode=True)
+    
+    # application_id → (reviewee_id, event_id) 変換
+    try:
+        reviewee_id, event_id = converter.convert_for_create(review_data.application_id)
+    except HTTPException as e:
+        # 元のエラーメッセージを維持
+        raise e
+    
+    # バリデーション: 自己レビューチェック
+    if reviewee_id == review_data.reviewer_id:
+        raise HTTPException(
+            status_code=400, 
+            detail="自分自身をレビューすることはできません"
+        )
+    
+    # バリデーション: 重複レビューチェック
+    from sqlalchemy import and_
+    existing_review = db.query(ReviewModel).filter(
+        and_(
+            ReviewModel.reviewee_id == reviewee_id,
+            ReviewModel.reviewer_id == review_data.reviewer_id,
+            ReviewModel.event_id == event_id
+        )
+    ).first()
+    
+    if existing_review:
+        raise HTTPException(
+            status_code=409, 
+            detail="このイベントで既にレビューを投稿済みです"
+        )
+    
+    # 新しいスキーマでレビュー作成
     db_review = ReviewModel(
-        application_id=review_data.application_id,
+        reviewee_id=reviewee_id,
         reviewer_id=review_data.reviewer_id,
+        event_id=event_id,
         rating=review_data.rating,
         comment=review_data.comment
     )
-
+    
     db.add(db_review)
     db.commit()
     db.refresh(db_review)
@@ -426,22 +452,22 @@ def get_reviews(
     limit: int = 100
 ) -> List[Dict]:
     """Get a list of reviews with application, event, and applicant details."""
+    # ReviewConverterを初期化
+    converter = ReviewConverter(db, enable_cache=True, strict_mode=False)
+    
     # レビュー、応募情報、イベント情報、応募者情報を結合して取得
+    # 新しいスキーマに対応したクエリ
     query = (
         db.query(
             ReviewModel,
-            ApplicationModel.application_id,
             EventModel.title.label("event_title"),
             ApplicantModel.last_name.label("applicant_last_name"),
             ApplicantModel.first_name.label("applicant_first_name")
         )
-        .join(
-            ApplicationModel,
-            ReviewModel.application_id == ApplicationModel.application_id)
-        .join(EventModel, ApplicationModel.event_id == EventModel.event_id)
+        .join(EventModel, ReviewModel.event_id == EventModel.event_id)
         .join(
             ApplicantModel,
-            ApplicationModel.user_id == ApplicantModel.user_id)
+            ReviewModel.reviewee_id == ApplicantModel.user_id)
         .offset(skip)
         .limit(limit)
         .all()
@@ -452,10 +478,17 @@ def get_reviews(
     for row in query:
         review = row[0]  # ReviewModelオブジェクト
 
+        # (reviewee_id, event_id)からapplication_idに逆変換
+        try:
+            application_id = converter.convert_for_response(review.reviewee_id, review.event_id)
+        except (ValueError, HTTPException):
+            # 変換できない場合はスキップするか、デフォルト値を使用
+            application_id = None
+
         # ReviewDetailモデルに合わせてデータを整形
         review_dict = {
             "review_id": review.review_id,
-            "application_id": review.application_id,
+            "application_id": application_id,  # 逆変換された値
             "reviewer_id": review.reviewer_id,
             "rating": review.rating,
             "comment": review.comment,
@@ -477,6 +510,9 @@ def update_review(
     review_data: ReviewCreate
 ) -> Optional[ReviewModel]:
     """Update an existing review."""
+    # ReviewConverterを初期化
+    converter = ReviewConverter(db, enable_cache=True, strict_mode=True)
+    
     # 既存のレビューを取得
     review = (
         db.query(ReviewModel)
@@ -486,8 +522,20 @@ def update_review(
     if not review:
         return None
 
+    # review_dataにapplication_idが含まれている場合は変換
+    update_data = review_data.model_dump(exclude_unset=True)
+    if "application_id" in update_data:
+        try:
+            reviewee_id, event_id = converter.convert_for_create(update_data["application_id"])
+            # application_idを削除し、新しいフィールドを追加
+            del update_data["application_id"]
+            update_data["reviewee_id"] = reviewee_id
+            update_data["event_id"] = event_id
+        except HTTPException as e:
+            raise e
+
     # 更新対象のフィールドを設定
-    for key, value in review_data.model_dump(exclude_unset=True).items():
+    for key, value in update_data.items():
         setattr(review, key, value)
 
     # 更新日時を更新

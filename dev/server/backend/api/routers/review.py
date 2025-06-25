@@ -11,6 +11,7 @@ from src.crud import (
     update_review,
     delete_review,
 )
+from src.utils.review_converter import ReviewConverter
 
 # Routerを作成
 router = APIRouter()
@@ -25,7 +26,26 @@ async def create_review_api(
     try:
         print(f"Received review data: {review_data}")
         created_review = create_review(db=db, review_data=review_data)
-        return ReviewSchema.model_validate(created_review)
+        
+        # ReviewConverterを使用してレスポンス用のデータを準備
+        converter = ReviewConverter(db, enable_cache=True, strict_mode=False)
+        application_id = converter.convert_for_response(
+            created_review.reviewee_id, 
+            created_review.event_id
+        )
+        
+        # レスポンススキーマ用のディクショナリを作成
+        response_data = {
+            "review_id": created_review.review_id,
+            "application_id": application_id,
+            "reviewer_id": created_review.reviewer_id,
+            "rating": created_review.rating,
+            "comment": created_review.comment,
+            "created_at": created_review.created_at,
+            "updated_at": created_review.updated_at
+        }
+        
+        return ReviewSchema.model_validate(response_data)
     except HTTPException as e:
         raise e
     except Exception as e:
@@ -49,7 +69,26 @@ async def update_review_api(
     )
     if updated_review is None:
         raise HTTPException(status_code=404, detail="Review not found")
-    return ReviewSchema.model_validate(updated_review)
+    
+    # ReviewConverterを使用してレスポンス用のデータを準備
+    converter = ReviewConverter(db, enable_cache=True, strict_mode=False)
+    application_id = converter.convert_for_response(
+        updated_review.reviewee_id, 
+        updated_review.event_id
+    )
+    
+    # レスポンススキーマ用のディクショナリを作成
+    response_data = {
+        "review_id": updated_review.review_id,
+        "application_id": application_id,
+        "reviewer_id": updated_review.reviewer_id,
+        "rating": updated_review.rating,
+        "comment": updated_review.comment,
+        "created_at": updated_review.created_at,
+        "updated_at": updated_review.updated_at
+    }
+    
+    return ReviewSchema.model_validate(response_data)
 
 
 @router.delete("/review/{review_id}", status_code=204)

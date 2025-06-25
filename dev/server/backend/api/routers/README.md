@@ -1,3 +1,5 @@
+# API Routes
+
 /
 ├── health
 ├── event

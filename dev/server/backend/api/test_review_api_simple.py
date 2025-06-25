@@ -18,9 +18,9 @@ def test_review_creation_with_conversion():
     
     # テスト用のデータ（データベースにある実際のIDs）
     test_review_data = {
-        "application_id": "a0000001-0001-0001-0001-000000000001",  # テストデータのapplication_id
+        "application_id": "4f836161-a4e8-4ef8-9857-f6ee1af703bb",  # 3番目のapplication_id
         "reviewer_id": "c0000001-0000-0000-0000-000000000001",     # テストデータのreviewer_id
-        "rating": 4.5,
+        "rating": 3.5,
         "comment": "API修正後のテストレビューです。コンバーター機能が正常に動作することを確認しています。"
     }
     

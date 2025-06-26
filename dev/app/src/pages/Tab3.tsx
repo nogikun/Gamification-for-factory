@@ -4,48 +4,96 @@ import './Tab3.css';
 
 // components
 import { MenuTile } from '../stories/Menu/MenuTile';
+import * as React from 'react';
 
-const Tab3: React.FC = () => {
-	return (
-		<IonPage>
-			<IonHeader>
-				<IonToolbar>
-					<IonTitle>Tab 3</IonTitle>
-				</IonToolbar>
-			</IonHeader>
-			<IonContent fullscreen>
-				<IonHeader collapse="condense">
-					<IonToolbar>
-						<IonTitle size="large">Tab 3</IonTitle>
-					</IonToolbar>
-				</IonHeader>
-				<ExploreContainer name="Tab 3 page" />
+// 新しく作成した InternParticipantsHorizontalBarChart コンポーネントをインポート
+import InternParticipantsHorizontalBarChart from '../components/InternParticipantsHorizontalBarChart';
+import AiDiagnosisResult from '../components/AiDiagnosisResult';
+import { Gauge } from '@mui/x-charts/Gauge';
+import { gameProgressData } from '@/dataset/chartData';
+import { Typography } from '@mui/material';
+import GameLog from '../components/GameLog'; // ★ GameLogコンポーネントをインポート
 
-                <p>ここはあしあと機能の画面です。</p>
 
-                <MenuTile
-                    primary
-                    backgroundColor="#6100ff"
-                    bottomMarginTop=""
-                    height="100%"
-                    label="Button"
-                    menuAlignItems="center"
-                    menuBtnLeft="50%"
-                    menuBtnTop=""
-                    menuJustifyContent="center"
-                    menuMargin="0em"
-                    menuTransform="translate(-50%, -50%)"
-                    menuZIndex={10}
-                    onClick={() => {}}
-                    position="fixed"
-                    accordionPosition="absolute"
-                    bottom="0px"
-                    variant="primary"
-                    width="100vw"
-                />
-			</IonContent>
-		</IonPage>
-	);
-};
+function Tab3() {
+  return (
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>ログ一覧</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent fullscreen>
+        <IonHeader collapse="condense">
+          <IonToolbar>
+            <IonTitle size="large">Tab 3</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        {/* <ExploreContainer name="Tab 3 page" /> */}
+        
+        {/* --- ゲーム進捗グラフ --- */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 0' }}>
+          <Typography variant="h6" component="h2" gutterBottom>
+            ゲームの進捗
+          </Typography>
+          <Gauge
+            width={200}
+            height={200}
+            value={gameProgressData.value}
+            startAngle={-110}
+            endAngle={110}
+            sx={{
+              [`& .MuiGauge-valueText`]: {
+                fontSize: 40,
+                transform: 'translate(0px, 0px)',
+              },
+            }}
+            text={`${gameProgressData.value}%`} />
+        </div>
+
+        {/* --- ゲームログ --- */}
+        <div style={{ padding: '8px 0' }}>
+          <GameLog />
+        </div>
+
+        {/* --- インターン参加数グラフ --- */}
+        {/* ここに InternParticipantsHorizontalBarChart コンポーネントを配置 */}
+        <div style={{ padding: '16px' }}>
+          <InternParticipantsHorizontalBarChart />
+        </div>
+        {/* --- AI診断結果 --- */}
+        <div style={{ padding: '16px' }}>
+            <AiDiagnosisResult />
+        </div>
+        {/* --- この部分が可変で伸びるコンテンツエリア --- */}
+          <div style={{
+            flexGrow: 1,
+            overflowY: 'auto',
+            paddingBottom: '200px' // ★ スクロール下部の余白を追加
+          }}></div>
+
+        <MenuTile
+          primary
+          backgroundColor="#6100ff"
+          bottomMarginTop=""
+          height="100%"
+          label="Button"
+          menuAlignItems="center"
+          menuBtnLeft="50%"
+          menuBtnTop=""
+          menuJustifyContent="center"
+          menuMargin="0em"
+          menuTransform="translate(-50%, -50%)"
+          menuZIndex={10}
+          onClick={() => { } }
+          position="fixed"
+          accordionPosition="absolute"
+          bottom="0px"
+          variant="primary"
+          width="100vw" />
+      </IonContent>
+    </IonPage>
+  );
+}
 
 export default Tab3;

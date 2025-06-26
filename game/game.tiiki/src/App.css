@@ -1,0 +1,261 @@
+.App {
+  min-height: 100vh;
+  /* メイン画面では背景画像を使用するため、他の画面でのみグラデーション背景を適用 */
+}
+
+/* タブレット画面対応 */
+@media (max-width: 1024px) {
+  .App {
+    font-size: 15px;
+  }
+  
+  .main-screen,
+  .inventory-screen,
+  .dungeon-screen,
+  .battle-screen {
+    padding: 20px;
+    max-width: 100%;
+  }
+  
+  button {
+    padding: 12px 16px;
+    font-size: 15px;
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* 小さなタブレット・大きなスマホ対応 */
+@media (max-width: 768px) {
+  .App {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .main-screen,
+  .inventory-screen,
+  .dungeon-screen,
+  .battle-screen {
+    padding: 15px;
+    max-width: 100%;
+    margin: 0;
+  }
+  
+  .main-header,
+  .inventory-header,
+  .dungeon-header,
+  .battle-header {
+    margin-bottom: 25px;
+    padding: 0 10px;
+  }
+  
+  button {
+    padding: 12px 16px;
+    font-size: 16px;
+    min-height: 44px;
+    min-width: 44px;
+    border-radius: 8px;
+  }
+  
+  h1, h2, h3 {
+    line-height: 1.3;
+  }
+  
+  .scrollable {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* スマホ画面 (412x915) に最適化 */
+@media (max-width: 480px) {
+  .App {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  
+  /* 全画面共通のスマホ最適化 */
+  .main-screen,
+  .inventory-screen,
+  .dungeon-screen,
+  .battle-screen {
+    padding: 12px !important;
+    max-width: 100% !important;
+    margin: 0;
+  }
+  
+  /* ヘッダーの最適化 */
+  .main-header,
+  .inventory-header,
+  .dungeon-header,
+  .battle-header {
+    margin-bottom: 20px !important;
+    padding: 0 5px;
+  }
+  
+  /* ボタンの最適化 */
+  button {
+    padding: 14px 18px !important;
+    font-size: 16px !important;
+    min-height: 48px; /* タッチ操作に適したサイズ */
+    min-width: 48px;
+    border-radius: 8px !important;
+    font-weight: 500;
+  }
+  
+  /* テキストの可読性向上 */
+  h1, h2, h3 {
+    line-height: 1.3 !important;
+  }
+  
+  /* スクロール領域の改善 */
+  .scrollable {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* タッチターゲットの改善 */
+  .clickable {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* 全体のリセット */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ボタンの共通スタイル */
+button {
+  font-family: inherit;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+button:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+button:focus {
+  outline: 3px solid #4CAF50;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+}
+
+button:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+/* 画像の読み込みエラー対策とレスポンシブ対応 */
+img {
+  max-width: 100%;
+  height: auto;
+  transition: opacity 0.3s ease;
+}
+
+img:not([src]) {
+  opacity: 0;
+}
+
+img[src=""] {
+  opacity: 0;
+}
+
+/* レスポンシブ画像サイズ調整 */
+@media (max-width: 1024px) {
+  /* タイトルロゴ */
+  .title-logo {
+    max-width: 90% !important;
+  }
+  
+  /* アバター画像 */
+  .player-avatar,
+  .battle-avatar {
+    width: 90px !important;
+    height: 90px !important;
+  }
+  
+  /* 武器画像 */
+  .weapon-image,
+  .weapon-option-image {
+    width: 70px !important;
+    height: 70px !important;
+  }
+  
+  .attacking-weapon-image {
+    width: 50px !important;
+    height: 50px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* タイトルロゴ */
+  .title-logo {
+    max-width: 85% !important;
+  }
+  
+  /* アバター画像 */
+  .player-avatar,
+  .battle-avatar {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  
+  /* 武器画像 */
+  .weapon-image,
+  .weapon-option-image {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  
+  .attacking-weapon-image {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* タイトルロゴ */
+  .title-logo {
+    max-width: 80% !important;
+  }
+  
+  /* アバター画像 */
+  .player-avatar,
+  .battle-avatar {
+    width: 65px !important;
+    height: 65px !important;
+  }
+  
+  /* 武器画像 */
+  .weapon-image,
+  .weapon-option-image {
+    width: 50px !important;
+    height: 50px !important;
+  }
+  
+  .attacking-weapon-image {
+    width: 35px !important;
+    height: 35px !important;
+  }
+  
+  /* 敵プレースホルダー */
+  .enemy-placeholder {
+    width: 60px !important;
+    height: 60px !important;
+  }
+} 

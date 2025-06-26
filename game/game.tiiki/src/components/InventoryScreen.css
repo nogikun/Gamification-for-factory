@@ -1,0 +1,526 @@
+.inventory-screen {
+  /* Pixel7最適化: 412px × 915px */
+  max-width: 412px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 12px;
+  font-family: 'DotGothic16', monospace;
+  min-height: 100vh;
+  background-image: url('/image/main/背景.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  color: #ffffff;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.inventory-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(1px);
+  z-index: -1;
+}
+
+.inventory-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 0 4px;
+}
+
+.back-btn {
+  background: linear-gradient(135deg, #000000, #1a1a1a);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'DotGothic16', monospace;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.back-btn:hover {
+  background: linear-gradient(135deg, #ffffff, #f0f0f0);
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+  border-color: #ffffff;
+}
+
+.back-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.back-btn:hover::before {
+  left: 100%;
+}
+
+.inventory-header h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.inventory-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 4px;
+}
+
+.equipped-section, .weapons-section, .items-section {
+  background: rgba(0, 0, 0, 0.95);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+}
+
+.equipped-section:hover, .weapons-section:hover, .items-section:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+}
+
+.equipped-section h2, .weapons-section h2, .items-section h2 {
+  margin: 0 0 12px 0;
+  color: #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding-bottom: 6px;
+  font-size: 14px;
+}
+
+.equipped-slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.equipment-slot {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  padding: 8px;
+  color: #ffffff;
+  min-height: 120px;
+}
+
+.slot-header {
+  font-weight: bold;
+  color: #cccccc;
+  margin-bottom: 6px;
+  text-align: center;
+  font-size: 10px;
+}
+
+.equipped-weapon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.weapon-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 2px solid #ffffff;
+}
+
+.weapon-image.small {
+  width: 40px;
+  height: 40px;
+}
+
+.weapon-info {
+  flex: 1;
+}
+
+.weapon-name {
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 4px;
+  line-height: 1.2;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.equipped-weapon .weapon-stats {
+  font-size: 9px;
+  color: #cccccc;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.unequip-btn {
+  background: linear-gradient(135deg, #000000, #1a1a1a);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 9px;
+  font-family: 'DotGothic16', monospace;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.unequip-btn:hover {
+  background: linear-gradient(135deg, #ffffff, #f0f0f0);
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+  border-color: #ffffff;
+}
+
+.unequip-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.unequip-btn:hover::before {
+  left: 100%;
+}
+
+.empty-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  border: 1px dashed #ffffff;
+  border-radius: 4px;
+  color: #cccccc;
+  font-size: 10px;
+}
+
+.weapons-grid {
+  display: grid;
+  /* 二列レイアウト：Pixel7幅に最適化 */
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.weapon-card {
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #ffffff;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.weapon-card:hover {
+  border-color: #00ff00;
+  background: rgba(0, 50, 0, 0.9);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0, 255, 0, 0.2), 0 0 30px rgba(0, 255, 0, 0.1);
+}
+
+.weapon-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+  transition: left 0.6s;
+}
+
+.weapon-card:hover::before {
+  left: 100%;
+}
+
+.weapon-card.equipped {
+  border-color: #ffff00;
+  background: rgba(50, 50, 0, 0.8);
+}
+
+.weapon-card .weapon-image {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 8px auto;
+  display: block;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.weapon-details {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.weapon-attributes {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 6px 0;
+  font-size: 10px;
+  flex-wrap: wrap;
+}
+
+.weapon-attributes span {
+  padding: 2px 4px;
+  background: #000000;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.weapon-stats {
+  font-size: 10px;
+  color: #cccccc;
+  margin: 8px 0;
+  text-align: left;
+  flex-grow: 1;
+}
+
+.weapon-stats div {
+  margin: 5px 0;
+}
+
+.weapon-effect {
+  color: #00ff00;
+  font-weight: bold;
+}
+
+.equipped-indicator {
+  background: #000000;
+  color: #ffff00;
+  border: 1px solid #ffff00;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-family: 'DotGothic16', monospace;
+  margin-top: 6px;
+}
+
+.equip-btn {
+  background: linear-gradient(135deg, #000000, #1a1a1a);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: 'DotGothic16', monospace;
+  margin-top: 6px;
+  width: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  min-height: 32px;
+}
+
+.equip-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffffff, #f0f0f0);
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+  border-color: #ffffff;
+}
+
+.equip-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.equip-btn:hover::before {
+  left: 100%;
+}
+
+.equip-btn:disabled {
+  background: #333333;
+  color: #666666;
+  border-color: #666666;
+  cursor: not-allowed;
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.item-card {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #ffffff;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.item-name {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.item-count {
+  font-size: 14px;
+  color: #cccccc;
+  margin-bottom: 10px;
+}
+
+.item-description {
+  font-size: 12px;
+  color: #aaaaaa;
+}
+
+/* Pixel7 (412px)向け追加最適化 */
+@media (max-width: 450px) {
+  .weapons-grid {
+    gap: 8px;
+    padding: 0 2px;
+  }
+  
+  .weapon-card {
+    padding: 8px;
+    min-height: 260px;
+  }
+  
+  .weapon-card .weapon-image {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .weapon-name {
+    font-size: 11px;
+    min-height: 24px;
+  }
+  
+  .weapon-attributes span {
+    font-size: 8px;
+    padding: 1px 3px;
+  }
+  
+  .weapon-stats {
+    font-size: 9px;
+    margin: 6px 0;
+  }
+  
+  .equip-btn {
+    padding: 5px 6px;
+    font-size: 9px;
+    min-height: 28px;
+  }
+  
+  .equipped-indicator {
+    font-size: 8px;
+    padding: 3px 5px;
+  }
+  
+  .items-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+}
+
+/* 極小デバイス向け */
+@media (max-width: 380px) {
+  .inventory-screen {
+    padding: 8px;
+  }
+  
+  .weapons-grid {
+    gap: 6px;
+    padding: 0 1px;
+  }
+  
+  .weapon-card {
+    padding: 6px;
+    min-height: 240px;
+  }
+  
+  .weapon-card .weapon-image {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .weapon-name {
+    font-size: 10px;
+    min-height: 20px;
+  }
+  
+  .weapon-attributes {
+    gap: 2px;
+    margin: 4px 0;
+  }
+  
+  .weapon-attributes span {
+    font-size: 7px;
+    padding: 1px 2px;
+  }
+  
+  .weapon-stats {
+    font-size: 8px;
+    margin: 4px 0;
+  }
+  
+  .equip-btn {
+    padding: 4px 5px;
+    font-size: 8px;
+    min-height: 24px;
+  }
+  
+  .equipped-indicator {
+    font-size: 7px;
+    padding: 2px 4px;
+  }
+} 

@@ -4,6 +4,7 @@ import './Tab3.css';
 
 // components
 import { MenuTile } from '../stories/Menu/MenuTile';
+import { FeedbackTab } from '../stories/Feedback/FeedbackTab';
 
 const Tab3: React.FC = () => {
 	return (
@@ -22,6 +23,17 @@ const Tab3: React.FC = () => {
 				<ExploreContainer name="Tab 3 page" />
 
                 <p>ここはあしあと機能の画面です。</p>
+
+                <FeedbackTab
+                    primary
+                    color="#6100ff"
+                    backgroundColor="#f5f5f5"
+                    width="100ew"
+                    height="100%"
+                    aiReview="AIによるフィードバックを表示します。あああああああああああああああああああああ"
+                    onClick={() => {}}
+                />
+
 
                 <MenuTile
                     primary

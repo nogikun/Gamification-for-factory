@@ -10,6 +10,7 @@ import { serverReducer } from "./serverSlice";
 import { ngrokAuthReducer } from "./ngrokAuthSlice";
 import { feedbackTabReducer } from "./feedbackTabSlice";
 import { userReducer } from "./userSlice";
+import { envReducer } from "./envSlice";
 
 /**
  * 全リデューサーを自動的に収集・登録
@@ -23,7 +24,8 @@ export const autoReducers = {
 	server: serverReducer,
 	ngrokAuth: ngrokAuthReducer,
 	feedbackTab: feedbackTabReducer,
-	user: userReducer,
+    user: userReducer,
+    env: envReducer,
 };
 
 /**

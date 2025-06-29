@@ -5,9 +5,10 @@ import traceback
 import logging
 
 # Local imports
-from src.schemas.database.review import ReviewDetail
+from src.schemas.database.review import ReviewDetail, ReviewCreate
 from src.database import get_db
-from src.crud import get_reviews
+from src.crud import get_reviews, create_review
+from src.utils.review_converter import ReviewConverter
 
 # ログ設定
 logger = logging.getLogger(__name__)
@@ -53,4 +54,43 @@ async def get_reviews_api(
         raise HTTPException(
             status_code=500,
             detail=f"Internal server error: {str(e)}"
+        )
+
+@router.post("/reviews", response_model=ReviewDetail, status_code=201)
+async def create_review_api(
+    review: ReviewCreate,
+    db: Session = Depends(get_db)
+) -> ReviewDetail:
+    """API endpoint to create a new review."""
+    try:
+        logger.info(f"Creating review for application_id={review.application_id}")
+        db_review = create_review(db=db, review_data=review)
+        logger.info(f"Successfully created review with review_id={db_review.review_id}")
+        
+        # ReviewConverterを初期化
+        converter = ReviewConverter(db, enable_cache=True, strict_mode=False)
+        
+        # application_idを逆変換
+        application_id = converter.convert_for_response(db_review.reviewee_id, db_review.event_id)
+        
+        # ReviewDetailモデルに合うようにデータを整形
+        review_data_for_response = {
+            "review_id": db_review.review_id,
+            "application_id": application_id,
+            "reviewer_id": db_review.reviewer_id,
+            "rating": db_review.rating,
+            "comment": db_review.comment,
+            "created_at": db_review.created_at,
+            "updated_at": db_review.updated_at,
+            "event_title": None,  # 必要に応じて取得
+            "applicant_name": None  # 必要に応じて取得
+        }
+        
+        return ReviewDetail.model_validate(review_data_for_response)
+    except Exception as e:
+        logger.error(f"Error in create_review_api: {e}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Could not create review: {str(e)}"
         )

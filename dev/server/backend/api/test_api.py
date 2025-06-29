@@ -8,17 +8,49 @@ import json
 import uuid
 import time
 
+import pytest
+from sqlalchemy.orm import Session
+from src.database import get_db
+from src.crud import create_user
+from src.schemas.database.user import UserCreate
+from src.models import UserTypeEnum
+
 BASE_URL = "http://localhost:3000"
+
+@pytest.fixture
+def db_session():
+    """Provides a database session for testing."""
+    db = next(get_db())
+    try:
+        yield db
+    finally:
+        db.close()
+
+@pytest.fixture
+def reviewer_id(db_session: Session):
+    """Provides a test reviewer_id by creating a dummy user."""
+    user_data = UserCreate(user_name="Test Reviewer", user_type=UserTypeEnum.APPLICANT)
+    user = create_user(db=db_session, user_data=user_data)
+    return str(user.user_id)
+
+@pytest.fixture
+def application_id():
+    """Provides a test application_id."""
+    response = requests.get(f"{BASE_URL}/applications")
+    if response.status_code == 200 and response.json():
+        return response.json()[0].get('application_id')
+    pytest.skip("Could not fetch application_id for testing.")
+
 
 def test_api_status():
     """APIサーバーの状態確認"""
     try:
         response = requests.get(f"{BASE_URL}/docs")
         print(f"✓ API Server Status: {response.status_code}")
-        return response.status_code == 200
+        assert response.status_code == 200
     except Exception as e:
         print(f"✗ API Server Error: {e}")
-        return False
+        assert False
 
 def test_get_reviews():
     """レビュー一覧取得API テスト"""
@@ -27,43 +59,41 @@ def test_get_reviews():
         response = requests.get(f"{BASE_URL}/reviews")
         print(f"Status: {response.status_code}")
         
-        if response.status_code == 200:
-            data = response.json()
-            print(f"Reviews count: {len(data)}")
-            if data:
-                print("Sample review:")
-                sample = data[0]
-                print(f"  review_id: {sample.get('review_id')}")
-                print(f"  application_id: {sample.get('application_id')}")  # 変換されたID
-                print(f"  reviewer_id: {sample.get('reviewer_id')}")
-                print(f"  rating: {sample.get('rating')}")
-                print(f"  comment: {sample.get('comment')}")
-        else:
-            print(f"Error: {response.text}")
+        assert response.status_code == 200
+        data = response.json()
+        print(f"Reviews count: {len(data)}")
+        if data:
+            print("Sample review:")
+            sample = data[0]
+            print(f"  review_id: {sample.get('review_id')}")
+            print(f"  application_id: {sample.get('application_id')}")  # 変換されたID
+            print(f"  reviewer_id: {sample.get('reviewer_id')}")
+            print(f"  rating: {sample.get('rating')}")
+            print(f"  comment: {sample.get('comment')}")
             
     except Exception as e:
         print(f"Error: {e}")
+        assert False
 
 def test_get_events():
     """イベント一覧取得 - application_id確認用"""
     print("\n=== Testing GET /events ===")
     try:
-        response = requests.post(f"{BASE_URL}/get_events")
+        response = requests.post(f"{BASE_URL}/get-events", json={"target_date": "2025-06-29"})
         print(f"Status: {response.status_code}")
         
-        if response.status_code == 200:
-            data = response.json()
-            print(f"Events count: {len(data)}")
-            if data:
-                print("Sample event:")
-                sample = data[0]
-                print(f"  event_id: {sample.get('event_id')}")
-                print(f"  title: {sample.get('title')}")
-        else:
-            print(f"Error: {response.text}")
+        assert response.status_code == 200
+        data = response.json()
+        print(f"Events count: {len(data)}")
+        if data:
+            print("Sample event:")
+            sample = data[0]
+            print(f"  event_id: {sample.get('event_id')}")
+            print(f"  title: {sample.get('title')}")
             
     except Exception as e:
         print(f"Error: {e}")
+        assert False
 
 def test_get_applications():
     """応募一覧取得 - application_id確認用"""
@@ -72,30 +102,24 @@ def test_get_applications():
         response = requests.get(f"{BASE_URL}/applications")
         print(f"Status: {response.status_code}")
         
-        if response.status_code == 200:
-            data = response.json()
-            print(f"Applications count: {len(data)}")
-            if data:
-                print("Sample application:")
-                sample = data[0]
-                print(f"  application_id: {sample.get('application_id')}")
-                print(f"  user_id: {sample.get('user_id')}")
-                print(f"  event_id: {sample.get('event_id')}")
-                return sample.get('application_id')  # テスト用に返す
-        else:
-            print(f"Error: {response.text}")
+        assert response.status_code == 200
+        data = response.json()
+        print(f"Applications count: {len(data)}")
+        if data:
+            print("Sample application:")
+            sample = data[0]
+            print(f"  application_id: {sample.get('application_id')}")
+            print(f"  user_id: {sample.get('user_id')}")
+            print(f"  event_id: {sample.get('event_id')}")
             
     except Exception as e:
         print(f"Error: {e}")
-    return None
+        assert False
 
-def test_create_review(application_id, reviewer_id=None):
+
+def test_create_review(application_id, reviewer_id):
     """レビュー作成API テスト"""
     print(f"\n=== Testing POST /reviews with application_id: {application_id} ===")
-    
-    if not reviewer_id:
-        # ダミーのreviewer_id生成
-        reviewer_id = str(uuid.uuid4())
     
     review_data = {
         "application_id": application_id,
@@ -113,45 +137,15 @@ def test_create_review(application_id, reviewer_id=None):
         print(f"Status: {response.status_code}")
         print(f"Response: {response.text}")
         
-        if response.status_code == 201:
+        if response.status_code == 200:
             data = response.json()
             print("✓ Review created successfully!")
             print(f"  review_id: {data.get('review_id')}")
-            return data.get('review_id')
+            assert data.get('review_id') is not None
         else:
             print(f"✗ Failed to create review")
+            assert False
             
     except Exception as e:
         print(f"Error: {e}")
-    return None
-
-def main():
-    """メインテスト実行"""
-    print("=== Review API Test Suite ===")
-    print(f"Testing API at: {BASE_URL}")
-    
-    # 1. APIサーバー状態確認
-    if not test_api_status():
-        print("API server is not running!")
-        return
-    
-    # 2. 既存データ確認
-    test_get_reviews()
-    test_get_events()
-    
-    # 3. アプリケーション取得（テスト用ID取得）
-    app_id = test_get_applications()
-    
-    # 4. レビュー作成テスト（もしアプリケーションIDが取得できた場合）
-    if app_id:
-        review_id = test_create_review(app_id)
-        
-        # 5. 作成後の一覧確認
-        if review_id:
-            print("\n=== Verifying created review ===")
-            test_get_reviews()
-    
-    print("\n=== Test Complete ===")
-
-if __name__ == "__main__":
-    main()
+        assert False

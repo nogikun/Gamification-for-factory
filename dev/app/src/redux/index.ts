@@ -12,6 +12,7 @@ export { serverReducer } from './serverSlice';
 export { themeReducer } from './themeSlice';
 export { feedbackTabReducer } from './feedbackTabSlice';
 export { userReducer } from './userSlice';
+export { envReducer } from './envSlice';
 
 // ストアのエクスポート
 export { store } from './store';

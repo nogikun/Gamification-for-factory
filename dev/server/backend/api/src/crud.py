@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 # local imports
 from src.schemas.database.applicant import ApplicantCreate
+from src.schemas.database.user import UserCreate
 from src.schemas.database.event import EventCreate, EventUpdate
 from src.schemas.database.review import ReviewCreate
 from src.models import (
@@ -363,7 +364,24 @@ def create_applicant(
     return db_applicant
 
 
-# 応募者一覧を取得する関数
+# ユーザーを作成する関数
+def create_user(db: Session, user_data: UserCreate) -> UserModel:
+    """Create a new user."""
+    db_user = UserModel(
+        user_id=uuid.uuid4(),
+        user_type=user_data.user_type,
+        user_name=user_data.user_name,
+        created_at=datetime.now(),
+        login_time=None,
+        ai_advice=None
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+# 応募を作成する関数
 def get_applicants(
     db: Session,
     skip: int = 0,

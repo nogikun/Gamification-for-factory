@@ -10,6 +10,9 @@ import asyncio
 from src.database import get_db
 from routers.reviews import get_reviews_api
 
+import pytest
+
+@pytest.mark.anyio
 async def test_api_function():
     """APIルーター関数を直接テスト"""
     print("=== FastAPIルーター直接テスト開始 ===")

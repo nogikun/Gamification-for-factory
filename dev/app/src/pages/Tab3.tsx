@@ -4,6 +4,7 @@ import './Tab3.css';
 
 // components
 import { MenuTile } from '../stories/Menu/MenuTile';
+import { FeedbackTab } from '../stories/Feedback/FeedbackTab';
 
 const Tab3: React.FC = () => {
 	return (
@@ -19,9 +20,20 @@ const Tab3: React.FC = () => {
 						<IonTitle size="large">Tab 3</IonTitle>
 					</IonToolbar>
 				</IonHeader>
-				<ExploreContainer name="Tab 3 page" />
+				{/* <ExploreContainer name="Tab 3 page" /> */}
 
                 <p>ここはあしあと機能の画面です。</p>
+
+                <FeedbackTab
+                    primary
+                    color="#6100ff"
+                    backgroundColor="#6100ff"
+                    width="100%"
+                    height="100%"
+                    // user_id="11111111-1111-1111-1111-111111111111" // テスト用のUUID
+                    aiReview="AIによるレビュー内容がここに表示されます。"
+                    onClick={() => {}}
+                />
 
                 <MenuTile
                     primary

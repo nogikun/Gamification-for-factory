@@ -1,0 +1,22 @@
+{
+    "FastAPI APIRouter Basic Setup": {
+        "prefix": "fastapi-router",
+        "body": [
+            "from fastapi import APIRouter",
+            "",
+            "# Routerを作成",
+            "router = APIRouter()",
+            "",
+            "@router.${1|get,post,put,delete,patch|}(\"/${TM_DIRECTORY/.*\\/(.*)$/$1/}/${TM_FILENAME_BASE}\")",
+            "async def ${3:function_name}() -> ${4:dict}:",
+            "    \"\"\"",
+            "    ${5:エンドポイントの説明}",
+            "",
+            "    Returns:",
+            "      ${4:dict}: ${6:レスポンスの説明}",
+            "    \"\"\"",
+            "    return {\"message\": \"${7:レスポンスメッセージ}\"}"
+        ],
+        "description": "FastAPI APIRouterの基本セットアップ"
+    }
+}

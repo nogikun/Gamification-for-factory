@@ -1,0 +1,71 @@
+# Machikoba Dungeon - Balance Adjustment Configuration File
+
+## Weapon Data
+# Format: WeaponID,Name,Attribute,WeightClass,Rarity,BaseAttack,CritRate,Effect,ImagePath
+
+### Cutting Weapons (Light)
+cutting_light_N,Light Cutter (N),CUTTING,LIGHT,N,50,0.05,,/image/weapon/cutting/cutting_light_N_flipped.png
+cutting_light_R,Light Cutter (R),CUTTING,LIGHT,R,80,0.08,,/image/weapon/cutting/cutting_light_R_flipped.png
+cutting_light_SR,Light Cutter (SR),CUTTING,LIGHT,SR,120,0.12,defense_down,/image/weapon/cutting/cutting_light_SR_flipped.png
+cutting_light_UR,Light Cutter (UR),CUTTING,LIGHT,UR,180,0.15,stamina_drain,/image/weapon/cutting/cutting_light_UR_flipped.png
+
+### Polishing Weapons (Light)
+polishing_light_N,Light Polisher (N),POLISHING,LIGHT,N,45,0.06,,/image/weapon/polishing/polishing_light_N.png
+polishing_light_R,Light Polisher (R),POLISHING,LIGHT,R,75,0.09,,/image/weapon/polishing/polishing_light_R.png
+polishing_light_SR,Light Polisher (SR),POLISHING,LIGHT,SR,110,0.13,accuracy_up,/image/weapon/polishing/polishing_light_SR.png
+polishing_light_UR,Light Polisher (UR),POLISHING,LIGHT,UR,170,0.16,multi_strike,/image/weapon/polishing/polishing_light_UR.png
+
+## Enemy Data
+# Format: EnemyID,Name,Attribute,MaxHP,Attack,Defense,EXP,IsBoss,ImagePath,ImageClass
+
+### Welding Dungeon
+welding_normal,Magma Slime,WELDING,200,40,20,50,false,/image/enemy/溶接/溶接_雑魚.png,welding-minion
+welding_boss,Welding Master,WELDING,800,80,40,300,true,/image/enemy/溶接/溶接_ボス.png,welding-boss
+
+### Cutting Dungeon (New)
+cutting_normal,Steel Golem,CUTTING,250,45,25,60,false,/image/enemy/切削/切削_雑魚.png,cutting-minion
+cutting_boss,Machinist Master,CUTTING,900,85,45,350,true,/image/enemy/切削/切削_ボス.png,cutting-boss
+
+### Polishing Dungeon (New)
+polishing_normal,Crystal Slime,POLISHING,180,35,15,45,false,/image/enemy/研磨/研磨_雑魚.png,polishing-minion
+polishing_boss,Polishing Master,POLISHING,750,75,35,280,true,/image/enemy/研磨/研磨_ボス.png,polishing-boss
+
+## Dungeon Data
+# Format: DungeonID,Name,Attribute,RecommendedAttribute,EnemyList,DungeonImagePath
+
+welding,Welding Factory,WELDING,CUTTING,welding_normal|welding_boss,/image/dungeon/溶接ダンジョン外観.png
+cutting,Cutting Factory,CUTTING,POLISHING,cutting_normal|cutting_boss,/image/dungeon/切削ダンジョン外観.png
+polishing,Polishing Factory,POLISHING,WELDING,polishing_normal|polishing_boss,/image/dungeon/研磨ダンジョン外観.png
+
+## Numerical Adjustment Constants
+# Rarity Multipliers
+RARITY_N_MULTIPLIER,0.9
+RARITY_R_MULTIPLIER,1.0
+RARITY_SR_MULTIPLIER,1.1
+RARITY_UR_MULTIPLIER,1.3
+
+# Weight Class Multipliers
+WEIGHT_LIGHT_MULTIPLIER,0.8
+WEIGHT_MEDIUM_MULTIPLIER,1.0
+WEIGHT_HEAVY_MULTIPLIER,1.3
+
+# Attribute Effectiveness Multipliers
+ATTRIBUTE_ADVANTAGE_MULTIPLIER,2.0
+ATTRIBUTE_DISADVANTAGE_MULTIPLIER,0.5
+ATTRIBUTE_NEUTRAL_MULTIPLIER,1.0
+
+# Level System
+BASE_EXP_MULTIPLIER,50
+LEVEL_EXP_POWER,2
+MAX_LEVEL,50
+
+# Stamina System
+BASE_STAMINA_COST,3
+MAX_STAMINA,100
+STAMINA_POTION_RECOVERY,100
+
+# Critical Damage Multiplier
+CRITICAL_DAMAGE_MULTIPLIER,2.0
+
+# Damage Stamina Cost
+DAMAGE_STAMINA_COST,2

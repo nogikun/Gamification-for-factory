@@ -1,0 +1,152 @@
+:root {
+  font-family: 'DotGothic16', 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.95);
+  background-color: #1a1a1a;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+}
+
+/* タブレット対応 */
+@media (max-width: 1024px) {
+  body {
+    place-items: stretch;
+  }
+  
+  h1 {
+    font-size: 2.5em;
+  }
+}
+
+/* 小さなタブレット・大きなスマホ対応 */
+@media (max-width: 768px) {
+  body {
+    place-items: stretch;
+  }
+  
+  h1 {
+    font-size: 2em;
+  }
+  
+  button {
+    padding: 0.7em 1.2em;
+    font-size: 0.95em;
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* スマホ縦画面対応 */
+@media (max-width: 480px) {
+  :root {
+    font-size: 14px;
+  }
+  
+  body {
+    place-items: stretch;
+  }
+  
+  h1 {
+    font-size: 1.8em;
+    line-height: 1.2;
+  }
+  
+  button {
+    padding: 0.8em 1.2em;
+    font-size: 1em;
+    min-height: 48px;
+    min-width: 48px;
+    border-radius: 8px;
+  }
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 10px;
+  border: 2px solid transparent;
+  padding: 0.8em 1.4em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+  color: white;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+button:hover {
+  border-color: #646cff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(100, 108, 255, 0.3);
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+button:hover::before {
+  left: 100%;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #f8f9fa;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background: linear-gradient(135deg, #f9f9f9, #e9ecef);
+    color: #213547;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  body {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  }
+} 

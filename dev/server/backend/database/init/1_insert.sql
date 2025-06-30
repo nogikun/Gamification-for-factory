@@ -331,3 +331,58 @@ BEGIN
 END
 $$;
 
+-- game_itemテーブルにダミーデータを挿入
+INSERT INTO game_item (item_id, item_type, atk, hit_rate, crit_dmg, crit_rate) VALUES
+('00000000-0000-0000-0000-000000000001', '武器', 120, 0.85, 60, 0.25),
+('00000000-0000-0000-0000-000000000002', '武器', 200, 0.60, 90, 0.40),
+('00000000-0000-0000-0000-000000000003', '支援アイテム', 30, 1.00, 0, 0.10),
+('00000000-0000-0000-0000-000000000004', '支援アイテム', 0, 0.00, 50, 0.00);
+
+-- game_progressテーブルにダミーデータを挿入
+CREATE OR REPLACE FUNCTION update_progress_percentage()
+RETURNS TRIGGER AS $$
+DECLARE
+    total_stages INTEGER := 3; -- 総ステージ数
+BEGIN
+    -- 小数→四捨五入して整数にして保存
+    NEW.progress_percentage := ROUND((NEW.cleared_stages::NUMERIC / total_stages) * 100);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER trg_update_progress_percentage
+BEFORE INSERT OR UPDATE ON game_progress
+FOR EACH ROW
+EXECUTE FUNCTION update_progress_percentage();
+INSERT INTO game_progress (user_id, cleared_stages, updated_at) VALUES
+('11111111-1111-1111-1111-111111111111', 1,  '2025-06-10 12:30:00'),  -- → 33%
+('22222222-2222-2222-2222-222222222222', 2, '2025-06-12 15:45:00'),  -- → 67%
+('33333333-3333-3333-3333-333333333333', 3, '2025-06-14 09:00:00'),  -- → 100%
+('44444444-4444-4444-4444-444444444444', 0,  '2025-06-01 08:00:00');  -- → 0%
+SELECT * FROM game_progress;
+
+-- game_logsテーブルにダミーデータを挿入
+-- クエスト開始 (log_type_id = 1)
+INSERT INTO game_logs (user_id, log_type_id, details) VALUES
+('11111111-1111-1111-1111-111111111111', 1,
+ '{"quest_name": "森の試練"}');
+
+-- クエスト達成 (log_type_id = 2)
+INSERT INTO game_logs (user_id, log_type_id, details) VALUES
+('11111111-1111-1111-1111-111111111111', 2,
+ '{"quest_name": "森の試練"}');
+
+-- レベルアップ (log_type_id = 3)
+INSERT INTO game_logs (user_id, log_type_id, details) VALUES
+('11111111-1111-1111-1111-111111111111', 3,
+ '{"new_level": 12}');
+
+-- ボス撃破 (log_type_id = 4)
+INSERT INTO game_logs (user_id, log_type_id, details) VALUES
+('11111111-1111-1111-1111-111111111111', 4,
+ '{"boss_name": "ダークドラゴン"}');
+
+-- アイテム獲得 (log_type_id = 5)
+INSERT INTO game_logs (user_id, log_type_id, details) VALUES
+('11111111-1111-1111-1111-111111111111', 5,
+ '{"item_name": "回復薬"}');
+

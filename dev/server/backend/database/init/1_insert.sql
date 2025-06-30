@@ -361,18 +361,28 @@ INSERT INTO game_progress (user_id, cleared_stages, updated_at) VALUES
 SELECT * FROM game_progress;
 
 -- game_logsテーブルにダミーデータを挿入
-INSERT INTO game_logs (user_id, log_type_id, details, created_at) VALUES
--- ログタイプ: 1 = アイテム使用
+-- クエスト開始 (log_type_id = 1)
+INSERT INTO game_logs (user_id, log_type_id, details) VALUES
 ('11111111-1111-1111-1111-111111111111', 1,
- '{"item_id": "item001", "item_name": "回復薬", "effect": "HP+50"}',
- '2025-06-18 14:30:00'),
+ '{"quest_name": "森の試練"}');
 
--- ログタイプ: 2 = ステージクリア
+-- クエスト達成 (log_type_id = 2)
+INSERT INTO game_logs (user_id, log_type_id, details) VALUES
 ('11111111-1111-1111-1111-111111111111', 2,
- '{"stage": 2, "result": "クリア"}',
- '2025-06-18 14:35:00'),
+ '{"quest_name": "森の試練"}');
 
--- ログタイプ: 3 = ログイン
-('33333333-3333-3333-3333-333333333333', 3,
- '{"ip": "192.168.1.1", "device": "android"}',
- '2025-06-18 09:00:00');
+-- レベルアップ (log_type_id = 3)
+INSERT INTO game_logs (user_id, log_type_id, details) VALUES
+('11111111-1111-1111-1111-111111111111', 3,
+ '{"new_level": 12}');
+
+-- ボス撃破 (log_type_id = 4)
+INSERT INTO game_logs (user_id, log_type_id, details) VALUES
+('11111111-1111-1111-1111-111111111111', 4,
+ '{"boss_name": "ダークドラゴン"}');
+
+-- アイテム獲得 (log_type_id = 5)
+INSERT INTO game_logs (user_id, log_type_id, details) VALUES
+('11111111-1111-1111-1111-111111111111', 5,
+ '{"item_name": "回復薬"}');
+

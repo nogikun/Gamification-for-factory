@@ -331,3 +331,10 @@ BEGIN
 END
 $$;
 
+-- log_typeテーブルにテストデータを挿入
+INSERT INTO log_types (type_id, name, template_message) VALUES
+(1, 'クエスト開始', '「%quest_name%」を開始しました'),
+(2, 'クエスト達成', '「%quest_name%」を達成しました！'),
+(3, 'レベルアップ', 'レベルが %new_level% になりました！'),
+(4, 'ボス撃破',     'ボス「%boss_name%」を撃破しました！'),
+(5, 'アイテム獲得', '「%item_name%」を %quantity% 個獲得しました');

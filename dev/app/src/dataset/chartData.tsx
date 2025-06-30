@@ -51,3 +51,21 @@ export const gameLogData: GameLogItem[] = [
   { date: '4/25', icon: <FavoriteIcon />, color: '#ec407a', text: '仲間「リーナ」がパーティーに加入' },
   { date: '4/30', icon: <EmojiEventsIcon />, color: '#ffa726', text: 'エンディング到達！全クリア！' },
 ];
+
+/**
+ * 企業からの評価データの型定義
+ */
+export interface CompanyEvaluationData {
+  id: string;
+  companyName: string;
+  rating: number;
+}
+
+/**
+ * 企業からの評価データ配列
+ */
+export const companyEvaluations: CompanyEvaluationData[] = [
+  { id: 'eval-01', companyName: 'あしあと工業', rating: 5 },
+  { id: 'eval-02', companyName: 'B3製作所', rating: 4 },
+  { id: 'eval-03', companyName: '株式会社ビーチサンダル', rating: 4.5 },
+];

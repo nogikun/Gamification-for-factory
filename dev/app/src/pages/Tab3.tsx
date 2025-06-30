@@ -12,7 +12,8 @@ import AiDiagnosisResult from '../components/AiDiagnosisResult';
 import { Gauge } from '@mui/x-charts/Gauge';
 import { gameProgressData } from '@/dataset/chartData';
 import { Typography } from '@mui/material';
-import GameLog from '../components/GameLog'; // ★ GameLogコンポーネントをインポート
+import GameLog from '../components/GameLog';
+import CompanyEvaluations from '../components/CompanyEvaluations';
 
 
 function Tab3() {
@@ -61,6 +62,12 @@ function Tab3() {
         <div style={{ padding: '16px' }}>
           <InternParticipantsHorizontalBarChart />
         </div>
+
+        {/* --- 企業評価 --- */}
+        <div style={{ padding: '16px' }}>
+          <CompanyEvaluations />
+        </div>
+
         {/* --- AI診断結果 --- */}
         <div style={{ padding: '16px' }}>
             <AiDiagnosisResult />

@@ -183,3 +183,20 @@ CREATE TABLE reviews (
     FOREIGN KEY (reviewer_id) REFERENCES users(user_id) ON DELETE CASCADE                     -- ユーザーが削除された場合、関連するレビューも削除
 );
 
+--------------------------------------------------
+--   TABLE NAME: log_type
+-- DESCRIPTIONS: ログの種類と表示用のテンプレート情報を管理するマスターデータ
+--------------------------------------------------
+-- ENUMの追加（先に定義していない場合）
+CREATE TYPE log_type_enum AS ENUM (
+  'クエスト開始', 'クエスト達成',
+  'レベルアップ', 'ボス撃破',
+  'アイテム獲得'
+);
+
+-- テーブル作成（まだの人用）
+CREATE TABLE log_types (
+    type_id INT PRIMARY KEY,
+    name log_type_enum NOT NULL,
+    template_message VARCHAR(255) NOT NULL
+);

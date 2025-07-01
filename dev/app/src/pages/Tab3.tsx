@@ -7,17 +7,40 @@ import { MenuTile } from '../stories/Menu/MenuTile';
 import * as React from 'react';
 
 // 新しく作成した InternParticipantsHorizontalBarChart コンポーネントをインポート
-import InternParticipantsHorizontalBarChart from '../components/InternParticipantsHorizontalBarChart';
-import AiDiagnosisResult from '../components/AiDiagnosisResult';
+import InternParticipantsHorizontalBarChart from '../stories/Charts/InternParticipantsHorizontalBarChart';
+import AiDiagnosisResult from '../stories/Charts/AiDiagnosisResult';
 import { Gauge } from '@mui/x-charts/Gauge';
 import { gameProgressData } from '@/dataset/chartData';
-import { Typography } from '@mui/material';
-import GameLog from '../components/GameLog';
-import CompanyEvaluations from '../components/CompanyEvaluations';
+import { Typography, useMediaQuery, createTheme, ThemeProvider, CssBaseline } from '@mui/material';
+import GameLog from '../stories/Charts/GameLog';
+import CompanyEvaluations from '../stories/Charts/CompanyEvaluations';
 
 
 function Tab3() {
+  // システムのカラーテーマを検出
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  
+  // テーマを作成
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: prefersDarkMode ? 'dark' : 'light',
+          primary: {
+            main: prefersDarkMode ? '#90CAF9' : '#1976D2',
+          },
+          background: {
+            default: prefersDarkMode ? '#121212' : '#FAFAFA',
+            paper: prefersDarkMode ? '#1E1E1E' : '#FFFFFF',
+          },
+        },
+      }),
+    [prefersDarkMode],
+  );
+
   return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
     <IonPage>
       <IonHeader>
         <IonToolbar>
@@ -100,6 +123,7 @@ function Tab3() {
           width="100vw" />
       </IonContent>
     </IonPage>
+    </ThemeProvider>
   );
 }
 

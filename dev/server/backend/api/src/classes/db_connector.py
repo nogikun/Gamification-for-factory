@@ -12,7 +12,7 @@ class DBConnector:
     PostgreSQLデータベースにSQLAlchemyを用いて接続するためのクラス
     """
     def __init__(self, db_url: str, debug: bool = False):
-        self.db_url = db_url                                # PostgreSQLの接続文字列
+        self.db_url = db_url  # PostgreSQLの接続文字列
         
         try:
             self.engine = create_engine(

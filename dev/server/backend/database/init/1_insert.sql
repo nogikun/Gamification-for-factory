@@ -364,12 +364,12 @@ SELECT * FROM game_progress;
 -- クエスト開始 (log_type_id = 1)
 INSERT INTO game_logs (user_id, log_type_id, details) VALUES
 ('11111111-1111-1111-1111-111111111111', 1,
- '{"quest_name": "森の試練"}');
+ '{"start_quest": "森の試練"}');
 
 -- クエスト達成 (log_type_id = 2)
 INSERT INTO game_logs (user_id, log_type_id, details) VALUES
 ('11111111-1111-1111-1111-111111111111', 2,
- '{"quest_name": "森の試練"}');
+ '{"complete_quest": "森の試練"}');
 
 -- レベルアップ (log_type_id = 3)
 INSERT INTO game_logs (user_id, log_type_id, details) VALUES

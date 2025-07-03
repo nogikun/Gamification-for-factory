@@ -304,25 +304,33 @@ BEGIN
             'COMPLETED'
         );
 
-        -- reviewsテーブルにテストデータを挿入
+        -- reviewsテーブルにテストデータを挿入（新スキーマ対応）
         INSERT INTO reviews (
-            application_id,
+            reviewee_id,
             reviewer_id,
+            event_id,
             rating,
             comment
-        ) VALUES
-        (
-            app_id1,
-            'c0000001-0000-0000-0000-000000000001',
-            4.5,
-            '積極的に参加され、良い質問をされていました。次回のイベントにもぜひ参加してください。'
-        ),
-        (
-            app_id2,
-            'c0000002-0000-0000-0000-000000000002',
-            3.8,
-            'チームでの協力が求められる場面で、リーダーシップを発揮していました。もう少し他のメンバーとの連携を意識するとさらに良くなるでしょう。'
-        );
+        ) 
+        SELECT 
+            a1.user_id as reviewee_id,
+            'c0000001-0000-0000-0000-000000000001'::uuid as reviewer_id,
+            a1.event_id,
+            4.5 as rating,
+            '積極的に参加され、良い質問をされていました。次回のイベントにもぜひ参加してください。' as comment
+        FROM applications a1 
+        WHERE a1.application_id = app_id1
+        
+        UNION ALL
+        
+        SELECT 
+            a2.user_id as reviewee_id,
+            'c0000002-0000-0000-0000-000000000002'::uuid as reviewer_id,
+            a2.event_id,
+            3.8 as rating,
+            'チームでの協力が求められる場面で、リーダーシップを発揮していました。もう少し他のメンバーとの連携を意識するとさらに良くなるでしょう。' as comment
+        FROM applications a2 
+        WHERE a2.application_id = app_id2;
         
         RAISE NOTICE 'レビューテストデータを正常に挿入しました。';
     ELSE
@@ -331,3 +339,10 @@ BEGIN
 END
 $$;
 
+-- log_typeテーブルにテストデータを挿入
+INSERT INTO log_types (type_id, name, template_message) VALUES
+(1, 'クエスト開始', '「%quest_name%」を開始しました'),
+(2, 'クエスト達成', '「%quest_name%」を達成しました！'),
+(3, 'レベルアップ', 'レベルが %new_level% になりました！'),
+(4, 'ボス撃破',     'ボス「%boss_name%」を撃破しました！'),
+(5, 'アイテム獲得', '「%item_name%」を %quantity% 個獲得しました');

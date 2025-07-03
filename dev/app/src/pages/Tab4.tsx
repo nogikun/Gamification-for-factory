@@ -12,9 +12,11 @@ import { shieldOutline, shieldCheckmark } from 'ionicons/icons';
 
 // redux
 import { useSelector } from 'react-redux';
+import { envReducer } from '@reduxjs/toolkit';
 
 // components
 import { MenuTile } from '../stories/Menu/MenuTile';
+import { APIKeyCard } from '../stories/Settings/APIKeyCard';
 
 // ngrok認証フック
 import { useNgrokAuth } from '../lib/useNgrokAuth';
@@ -263,6 +265,14 @@ const Tab4: React.FC = () => {
                     port={port}
                     width="100%"
                     height="300px"
+                />
+                
+                <br />
+
+                <APIKeyCard
+                    width="100%"
+                    height="300px"
+                    title="Gemini API設定"
                 />
                 
                 {/* ngrok認証ボタンとAPI通信テスト */}

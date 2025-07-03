@@ -384,5 +384,5 @@ INSERT INTO game_logs (user_id, log_type_id, details) VALUES
 -- アイテム獲得 (log_type_id = 5)
 INSERT INTO game_logs (user_id, log_type_id, details) VALUES
 ('11111111-1111-1111-1111-111111111111', 5,
- '{"item_name": "回復薬"}');
+ '{"item_name": "回復薬", "quantity": 3}');
 

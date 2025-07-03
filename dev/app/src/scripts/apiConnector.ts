@@ -1,8 +1,16 @@
 import axios from "axios";
-
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../redux/store";
 
 // APIのベースURLを設定
-const API_BASE_URL = "http://localhost:3000"; // sample
+// APIのベースURLをReduxストアから取得
+export const getApiBaseUrl = (state: RootState) => {
+    const host = state.server.host || 'localhost';
+    const port = state.server.port || 3000;
+    return port ? `http://${host}:${port}` : `http://${host}`;
+};
+
+const API_BASE_URL = 'http://localhost:3000'; // デフォルトURL
 export const apiConnector = axios.create({
     baseURL: API_BASE_URL,
     headers: {

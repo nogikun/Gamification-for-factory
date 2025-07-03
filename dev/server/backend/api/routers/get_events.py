@@ -16,7 +16,7 @@ from src.classes.db_connector import DBConnector
 # Routerを作成
 router = APIRouter()
 
-@router.post("/get-events")
+@router.post("/get-events", operation_id="get_events_by_date")
 async def get_event(target_date: DateModel) -> List[EventSchema]:
     """
     イベント取得エンドポイント - 指定された日付のイベントリストをデータベースから取得します

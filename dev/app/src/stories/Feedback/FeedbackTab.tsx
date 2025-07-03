@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { useIonRouter } from "@ionic/react";
+import type React from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
 import type { RootState } from "../../redux/store";
+import { apiConnector } from "../../scripts/apiConnector";
 
 // components
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Tab } from "@mui/material";
+import { Box, Tab, IconButton } from "@mui/material";
+import { Refresh } from "@mui/icons-material";
 
 // css
 import "./FeedbackTab.css";
@@ -39,10 +40,7 @@ export const FeedbackTab = ({
     maxHeight = "300px", // デフォルトの最大高さ
     darkMode = 'auto', // デフォルトの自動ダークモード設定
 	onClick,
-	...props
 }: FeedbackTabProps) => {
-	// router
-	const ionRouter = useIonRouter();
 	// Redux
 	const dispatch = useDispatch(); // 状態を更新するためのdispatch関数を取得
 	
@@ -110,8 +108,30 @@ export const FeedbackTab = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string>("");
 
+	// エラーレポート送信関数
+	const sendErrorReport = useCallback(async (error: string, details: unknown) => {
+		try {
+			const params = new URLSearchParams({
+				error: error,
+				message: `Component: FeedbackTab, UserId: ${userId}`,
+				debug_info: JSON.stringify(details),
+				timestamp: new Date().toISOString()
+			});
+			
+			await apiConnector.get(`/debug/error-report?${params.toString()}`);
+		} catch (reportErr) {
+			console.error("エラーレポート送信失敗:", reportErr);
+		}
+	}, [userId]);
+
+	// APIコネクタのベースURL更新
+	useEffect(() => {
+		const newBaseUrl = port ? `${host}:${port}` : `${host}`;
+		apiConnector.defaults.baseURL = newBaseUrl;
+	}, [host, port]);
+
 	// AIレビューデータ取得関数
-	const fetchAiReview = async () => {
+	const fetchAiReview = useCallback(async () => {
 		if (!userId) {
 			setError("ユーザーIDが設定されていません");
 			return;
@@ -121,28 +141,37 @@ export const FeedbackTab = ({
 		setError("");
 		
 		try {
-			const apiUrl = `${host}:${port}/func/ai-review/${userId}`;
-			const response = await axios.get(apiUrl);
+			const response = await apiConnector.post('/func/ai-review', {
+				user_id: userId
+			});
 			
-			if (response.data && response.data.comment) {
+			if (response.data?.comment) {
 				setAiReviewData(response.data.comment);
 			} else {
 				setError("AIレビューデータの取得に失敗しました");
 			}
 		} catch (err) {
 			console.error("AIレビュー取得エラー:", err);
-			setError("APIエラー: " + (err as Error).message);
+			const errorMessage = `APIエラー: ${(err as Error).message}`;
+			setError(errorMessage);
+			
+			// エラーレポートを送信
+			await sendErrorReport(errorMessage, {
+				apiUrl: '/func/ai-review',
+                errorType: 'API_ERROR',
+                originalError: err
+			});
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [userId, sendErrorReport]);
 
 	// コンポーネントマウント時にAPIを呼び出し
 	useEffect(() => {
 		fetchAiReview();
-	}, [userId]); // userIdが変更された場合も再取得
+	}, [fetchAiReview]);
 
-	const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+	const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
 		dispatch({ type: 'feedbackTab/changeTab', payload: newValue }); // タブIDを更新
 	};
 
@@ -211,12 +240,36 @@ export const FeedbackTab = ({
 							padding: '20px', 
 							lineHeight: '1.6',
 							backgroundColor: currentTheme.background,
-							color: currentTheme.text
+							color: currentTheme.text,
+							position: 'relative'
 						}}>
+							{/* リロードボタン */}
+							<IconButton
+								onClick={fetchAiReview}
+								disabled={loading}
+								sx={{
+									position: 'absolute',
+									top: '10px',
+									right: '10px',
+									color: currentTheme.text,
+									backgroundColor: currentTheme.tabBackground,
+									'&:hover': {
+										backgroundColor: isDarkMode ? '#424242' : '#f5f5f5'
+									},
+									'&:disabled': {
+										opacity: 0.5
+									}
+								}}
+								title="AIレビューを再生成"
+							>
+								<Refresh />
+							</IconButton>
+							
 							{loading ? (
 								<div style={{ 
 									textAlign: 'center', 
-									color: currentTheme.loadingText
+									color: currentTheme.loadingText,
+									marginTop: '40px'
 								}}>
 									AIレビューを読み込み中...
 								</div>
@@ -225,14 +278,16 @@ export const FeedbackTab = ({
 									color: currentTheme.errorText, 
 									backgroundColor: currentTheme.errorBackground, 
 									borderRadius: '4px',
-									padding: '10px'
+									padding: '10px',
+									marginTop: '40px'
 								}}>
 									エラー: {error}
 								</div>
 							) : (
 								<div style={{ 
 									whiteSpace: 'pre-wrap',
-									color: currentTheme.text
+									color: currentTheme.text,
+									marginTop: '40px'
 								}}>
 									{aiReviewData || aiReview || "AIレビューデータがありません"}
 								</div>

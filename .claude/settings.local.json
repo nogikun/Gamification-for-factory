@@ -6,5 +6,12 @@
       "Bash(mv:*)"
     ],
     "deny": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "playwright",
+    "markitdown",
+    "arxiv-mcp-server",
+    "context7",
+    "youtube"
+  ]
 }

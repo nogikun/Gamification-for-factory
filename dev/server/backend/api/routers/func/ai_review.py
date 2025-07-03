@@ -2,22 +2,25 @@ from fastapi import APIRouter, HTTPException, Query
 import os
 from datetime import datetime
 from typing import List, Dict, Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # local imports
 from src.classes.db_connector import DBConnector
 from src.schemas.api.ai_review import (
     Review,
     ReviewList,
-    AIReview
+    AIReview,
+    AIReviewRequest
 )
 
 # Routerを作成
 router = APIRouter()
 
-@router.get("/func/ai-review/{user_id}", response_model=AIReview)
+@router.post("/func/ai-review", response_model=AIReview)
 async def ai_review(
-    user_id: str,
-    custom_prompt: Optional[str] = Query(None, description="カスタムプロンプト（オプション）")
+    request: AIReviewRequest
 ) -> AIReview:
     """
     AIレビューエンドポイント - レビュー用のデータを受け取り、AIによるレビュー結果を返します
@@ -25,6 +28,10 @@ async def ai_review(
     """
     
     try:
+        # リクエストボディからuser_idとcustom_promptを取得
+        user_id = request.user_id
+        custom_prompt = request.custom_prompt
+        
         # user_idの基本的な検証
         if not user_id or user_id.strip() == "":
             return AIReview(comment="ユーザーIDが指定されていません。")
@@ -38,6 +45,9 @@ async def ai_review(
         
         # データベース接続の準備
         db_url = os.getenv("DATABASE_URL")
+        if not db_url:
+            db_url = "postgresql://postgres:postgres@postgres:5432/gamification"
+        
         db_connector = DBConnector(db_url, debug=True)
         
         # reviewee_idが指定されたuser_idと一致するレビューを取得

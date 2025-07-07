@@ -1,0 +1,58 @@
+name: 💻 Developmentタスクを設定する
+description: 開発タスクを定義する。
+labels: ["development", "PBI"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        タスクの作成には以下の情報を記入してください。
+  
+  - type: textarea
+    id: overview
+    attributes:
+      label: 概要
+      description: 取り組む機能の内容を詳しく説明してください
+      placeholder: できるだけ具体的に記述してください
+    validations:
+      required: true
+
+  - type: textarea
+    id: purpose
+    attributes:
+      label: 目的
+      description: この機能を実装する目的を説明してください
+      placeholder: できるだけ具体的に記述してください
+    validations:
+      required: true
+
+  - type: textarea
+    id: task
+    attributes:
+      label: タスクの説明
+      description: この機能開発に必要なタスクを箇条書きしてください
+      placeholder: |
+        - [ ] '...' の対応
+        - [ ] '...' の対応
+        - [ ] '...' の対応
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ基準（達成目標）
+      description: 達成目標を具体的に記述してください
+      placeholder: |
+        - [ ] '...' ができる
+        - [ ] '...' ができる
+        - [ ] '...' ができる
+    validations:
+      required: true
+
+  - type: textarea
+    id: other
+    attributes:
+      label: その他の情報
+      description: スクリーンショットや参考資料などがあれば追加してください
+    validations:
+      required: false

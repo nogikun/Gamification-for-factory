@@ -1,0 +1,711 @@
+.training-screen {
+  width: 100%;
+  max-width: 412px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'DotGothic16', monospace;
+  color: #ffffff;
+  background-color: #000000;
+}
+
+/* 上部：戦闘エリア（背景・プレイヤー・敵） */
+.training-battle-area {
+  position: relative;
+  height: 40vh;
+  min-height: 250px;
+  overflow: hidden;
+}
+
+/* 背景画像 */
+.training-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.stage-background {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* プレイヤー表示（戦闘画面と同じ位置） */
+.training-player {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 2;
+}
+
+.player-image {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* 敵（案山子）表示（戦闘画面の敵位置） */
+.training-enemy {
+  position: absolute;
+  top: 50%;
+  right: 30px;
+  transform: translateY(calc(-50% + 40px));
+  z-index: 2;
+}
+
+.enemy-image {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* 下部：クイズエリア */
+.training-quiz-area {
+  flex: 1;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.95), rgba(20, 20, 20, 0.95));
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 16px;
+  overflow-y: auto;
+  min-height: 300px;
+}
+
+/* ヘッダー */
+.training-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(5px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.back-btn {
+  background: linear-gradient(135deg, #000000, #1a1a1a);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'DotGothic16', monospace;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: linear-gradient(135deg, #ffffff, #f0f0f0);
+  color: #000000;
+}
+
+.training-title {
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* クイズコンテナ */
+.quiz-container {
+  background: rgba(20, 20, 20, 0.8);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+/* 進捗表示 */
+.quiz-progress {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.progress-text, .progress-score {
+  font-size: 14px;
+  color: #cccccc;
+}
+
+/* 問題表示 */
+.quiz-question {
+  margin-bottom: 20px;
+}
+
+.quiz-question h3 {
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 0;
+  color: #ffffff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* 選択肢 */
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.option-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(40, 40, 40, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: 'DotGothic16', monospace;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.option-btn:hover:not(:disabled) {
+  background: rgba(60, 60, 60, 0.9);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.option-btn.selected {
+  background: rgba(33, 150, 243, 0.3);
+  border-color: #2196F3;
+  box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+}
+
+.option-btn.correct {
+  background: rgba(76, 175, 80, 0.3);
+  border-color: #4CAF50;
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+.option-btn.incorrect {
+  background: rgba(244, 67, 54, 0.3);
+  border-color: #F44336;
+  box-shadow: 0 0 15px rgba(244, 67, 54, 0.3);
+}
+
+.option-btn:disabled {
+  cursor: not-allowed;
+}
+
+.option-letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.option-text {
+  flex: 1;
+  line-height: 1.3;
+}
+
+/* 回答ボタン */
+.quiz-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #ff8c00, #ff6b00);
+  color: #ffffff;
+  border: 2px solid #ffaa00;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'DotGothic16', monospace;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffaa00, #ff8c00);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 140, 0, 0.6);
+}
+
+.submit-btn:disabled {
+  background: #333333;
+  color: #666666;
+  border-color: #666666;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* 結果表示 */
+.quiz-result {
+  text-align: center;
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.result-message {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.result-message.correct {
+  color: #4CAF50;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.result-message.incorrect {
+  color: #F44336;
+  text-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+}
+
+.explanation {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  color: #cccccc;
+  text-align: left;
+}
+
+.next-btn {
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  color: #ffffff;
+  border: 2px solid #42A5F5;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: 'DotGothic16', monospace;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.next-btn:hover {
+  background: linear-gradient(135deg, #42A5F5, #2196F3);
+  transform: translateY(-1px);
+}
+
+/* 完了画面 */
+.quiz-complete {
+  text-align: center;
+  background: rgba(20, 20, 20, 0.8);
+  border-radius: 12px;
+  padding: 24px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+.complete-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4CAF50;
+  margin-bottom: 20px;
+  text-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+}
+
+.final-score {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 15px;
+}
+
+.score-message {
+  font-size: 14px;
+  color: #cccccc;
+  line-height: 1.4;
+  margin-bottom: 25px;
+}
+
+.complete-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.restart-btn, .finish-btn {
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: 'DotGothic16', monospace;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid;
+}
+
+.restart-btn {
+  background: linear-gradient(135deg, #ff8c00, #ff6b00);
+  color: #ffffff;
+  border-color: #ffaa00;
+}
+
+.restart-btn:hover {
+  background: linear-gradient(135deg, #ffaa00, #ff8c00);
+  transform: translateY(-1px);
+}
+
+.finish-btn {
+  background: linear-gradient(135deg, #000000, #1a1a1a);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.finish-btn:hover {
+  background: linear-gradient(135deg, #ffffff, #f0f0f0);
+  color: #000000;
+}
+
+/* ローディング・エラー */
+.loading-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+}
+
+.loading-text, .error-text {
+  font-size: 18px;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Pixel7向け最適化 */
+@media (max-width: 450px) {
+  .training-battle-area {
+    height: 35vh;
+    min-height: 200px;
+  }
+  
+  .training-quiz-area {
+    padding: 12px;
+  }
+  
+  .quiz-container, .quiz-complete {
+    padding: 12px;
+  }
+  
+  .quiz-question h3 {
+    font-size: 15px;
+  }
+  
+  .option-btn {
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  .option-letter {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+  
+  .submit-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .player-image {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .enemy-image {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .training-header {
+    padding: 10px 12px;
+  }
+  
+  .training-title {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .training-battle-area {
+    height: 30vh;
+    min-height: 180px;
+  }
+  
+  .training-quiz-area {
+    padding: 10px;
+  }
+  
+  .quiz-container, .quiz-complete {
+    padding: 10px;
+  }
+  
+  .option-btn {
+    padding: 8px;
+    font-size: 12px;
+    gap: 8px;
+  }
+  
+  .option-letter {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+  
+  .player-image {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .enemy-image {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .complete-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .restart-btn, .finish-btn {
+    width: 100%;
+  }
+  
+  .quiz-question h3 {
+    font-size: 14px;
+  }
+  
+  .submit-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+}
+
+/* ガチャ演出スタイル - チャット欄風 */
+.gacha-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  font-family: 'DotGothic16', monospace;
+}
+
+.gacha-container {
+  background: #000000;
+  border: 3px solid #ffffff;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  max-width: 450px;
+  width: 90%;
+  position: relative;
+}
+
+.gacha-container::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  background: #ffffff;
+  border-radius: 8px;
+  z-index: -1;
+}
+
+.gacha-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 25px;
+  text-shadow: none;
+  letter-spacing: 1px;
+}
+
+/* スピン演出 - チャット欄風 */
+.gacha-spinning {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.gacha-spinner {
+  width: 80px;
+  height: 80px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top: 4px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.gacha-text {
+  font-size: 16px;
+  color: #ffffff;
+  font-weight: normal;
+  letter-spacing: 2px;
+}
+
+/* 結果表示 - チャット欄風 */
+.gacha-result {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.weapon-reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.gacha-weapon-image {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.3));
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 5px;
+}
+
+.gacha-weapon-info {
+  color: #ffffff;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.gacha-weapon-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.gacha-weapon-rarity {
+  font-size: 14px;
+  color: #cccccc;
+  margin-bottom: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 2px 8px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.gacha-weapon-attribute {
+  font-size: 12px;
+  color: #aaaaaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.no-weapon-message {
+  color: #ffffff;
+  font-size: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* モバイル対応 - チャット欄風 */
+@media (max-width: 450px) {
+  .gacha-container {
+    padding: 25px 15px;
+    width: 95%;
+    border-width: 2px;
+  }
+  
+  .gacha-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  .gacha-spinner {
+    width: 60px;
+    height: 60px;
+    border-width: 3px;
+  }
+  
+  .gacha-weapon-image {
+    width: 80px;
+    height: 80px;
+    border-width: 1px;
+    padding: 3px;
+  }
+  
+  .gacha-weapon-name {
+    font-size: 16px;
+  }
+  
+  .gacha-weapon-rarity {
+    font-size: 12px;
+    padding: 1px 6px;
+  }
+  
+  .gacha-weapon-attribute {
+    font-size: 11px;
+  }
+  
+  .gacha-text {
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+  
+  .weapon-reveal {
+    gap: 10px;
+    padding: 8px;
+  }
+  
+  .no-weapon-message {
+    font-size: 14px;
+    padding: 15px;
+  }
+}

@@ -3,10 +3,8 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import type { Preview } from '@storybook/react';
 
-import { menuReducer } from '../src/redux/menuSlice'; // メニューのリデューサーをインポート
-import { searchDateReducer } from '../src/redux/searchDateSlice'; // 検索日付のリデューサーをインポート
-import { themeReducer } from '../src/redux/themeSlice'; // テーマのリデューサーをインポート
-import { serverReducer } from '../src/redux/serverSlice'; // サーバーのリデューサーをインポート
+// 動的リデューサー登録を使用
+import { autoReducers } from '../src/redux/autoReducers';
 
 // // メニュー状態用のリデューサー
 // const menuReducer = (state = { isOpen: false }, action: any) => {
@@ -18,14 +16,9 @@ import { serverReducer } from '../src/redux/serverSlice'; // サーバーのリ�
 //   }
 // };
 
-// Storybook専用のモックストアを作成
+// Storybook専用のモックストアを作成（動的リデューサー使用）
 const mockStore = configureStore({
-  reducer: {
-    menu: menuReducer,
-    searchDate: searchDateReducer,
-    theme: themeReducer,
-    server: serverReducer,
-  }
+  reducer: autoReducers, // 自動的に全リデューサーを登録
 });
 
 // すべてのストーリーにグローバルに適用されるデコレーター

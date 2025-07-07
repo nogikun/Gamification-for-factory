@@ -12,7 +12,7 @@ class DBConnector:
     PostgreSQLデータベースにSQLAlchemyを用いて接続するためのクラス
     """
     def __init__(self, db_url: str, debug: bool = False):
-        self.db_url = db_url                                # PostgreSQLの接続文字列
+        self.db_url = db_url  # PostgreSQLの接続文字列
         
         try:
             self.engine = create_engine(
@@ -110,6 +110,9 @@ if __name__ == "__main__":
     
     # データベース接続のテスト
     db_url = os.getenv("DATABASE_URL")
+    if not db_url:
+        db_url = "postgresql://postgres:postgres@postgres:5432/gamification"
+    
     db_connector = DBConnector(db_url)
 
     # テーブルのデータを選択

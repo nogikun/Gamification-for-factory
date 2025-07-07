@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import styles from "./DashboardCalendar.module.scss";
-import { apiRequest } from "../config";
+import { apiRequest, API_BASE_URL } from "../config";
 
 const jaWeekdays = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -20,9 +20,10 @@ export default function DashboardCalendar() {
       setError(null);
       
       try {
+        // API_BASE_URL を利用してバックエンドへアクセス
         const [eventsResponse, usersResponse] = await Promise.all([
-          fetch('http://localhost:8000/event'),
-          fetch('http://localhost:8000/api/users')
+          fetch(`${API_BASE_URL}/event`),
+          fetch(`${API_BASE_URL}/api/users`)
         ]);
 
         let eventsData = [];

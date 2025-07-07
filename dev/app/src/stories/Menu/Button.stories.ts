@@ -59,7 +59,7 @@ export const Primary : Story ={
 export const Ranks : Story ={
     args: {
         primary: true,
-        label: "ランク",
+        label: "ログ",
         backgroundColor: "#FCAA1B",
         disabled: false,
         variant: 'primary',

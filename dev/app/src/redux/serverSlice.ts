@@ -9,7 +9,7 @@ export const serverSlice = createSlice({
     name: "server", // スライスの名前
     initialState: {
         host: "http://localhost", // ホストを初期値に設定
-        port: "8000", // ポート番号を初期値に設定
+        port: "3000", // ポート番号を初期値に設定
     } as ServerState,
     reducers: {
         setServerUrl: (state, action) => {

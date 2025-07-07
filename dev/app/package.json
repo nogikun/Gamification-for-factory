@@ -6,7 +6,7 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "test.e2e": "cypress run",
     "test.unit": "vitest",
@@ -17,6 +17,7 @@
   "dependencies": {
     "@capacitor/android": "7.2.0",
     "@capacitor/app": "7.0.1",
+    "@capacitor/browser": "^7.0.1",
     "@capacitor/core": "^7.2.0",
     "@capacitor/haptics": "7.0.1",
     "@capacitor/ios": "7.2.0",
@@ -28,8 +29,10 @@
     "@ionic/react": "^8.5.5",
     "@ionic/react-router": "^8.5.5",
     "@mui/icons-material": "^7.0.2",
-    "@mui/material": "^7.0.2",
+    "@mui/lab": "^7.0.0-beta.14",
+    "@mui/material": "^7.1.2",
     "@mui/styled-engine-sc": "^7.0.2",
+    "@mui/x-charts": "^8.5.3",
     "@reduxjs/toolkit": "^2.7.0",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
@@ -42,7 +45,8 @@
     "react-router-dom": "^5.3.4",
     "react-scripts": "^5.0.1",
     "redux": "^5.0.1",
-    "styled-components": "^6.1.17"
+    "styled-components": "^6.1.17",
+    "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
     "@capacitor/cli": "^7.2.0",

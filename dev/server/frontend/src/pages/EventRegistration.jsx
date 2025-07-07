@@ -5,7 +5,7 @@ import 'react-calendar/dist/Calendar.css';
 import styles from "./EventRegistration.module.scss";
 import { usePageAnimation } from "../hooks/usePageAnimation";
 import { Pencil, Trash, Upload } from "phosphor-react";
-import { apiRequest } from "../config";
+import { apiRequest, API_BASE_URL } from "../config";
 
 const jaWeekdays = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -89,7 +89,7 @@ export default function EventRegistration() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:8000/event');
+      const response = await fetch(`${API_BASE_URL}/event`);
       if (!response.ok) {
         throw new Error('イベントの取得に失敗しました');
       }
@@ -268,12 +268,16 @@ export default function EventRegistration() {
       const apiFormData = {
         ...formData,
         // タグをJSONとして送信
-        tags: JSON.stringify(formData.tags)
+        tags: JSON.stringify(formData.tags),
+        // required_qualificationsを文字列からリストに変換
+        required_qualifications: formData.required_qualifications 
+          ? formData.required_qualifications.split(',').map(q => q.trim()).filter(q => q.length > 0)
+          : []
       };
       
       const url = editMode 
-        ? `http://localhost:8000/event/${formData.event_id}` 
-        : 'http://localhost:8000/event';
+        ? `${API_BASE_URL}/event/${formData.event_id}`
+        : `${API_BASE_URL}/event`;
       
       const method = editMode ? 'PUT' : 'POST';
       
@@ -353,7 +357,7 @@ export default function EventRegistration() {
       setError(null);
       
       try {
-        const response = await fetch(`http://localhost:8000/event/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/event/${id}`, {
           method: 'DELETE'
         });
         
@@ -711,7 +715,7 @@ export default function EventRegistration() {
                     name="required_qualifications"
                     value={formData.required_qualifications || ""}
                     onChange={handleInputChange}
-                    placeholder="必要な資格や条件を入力" 
+                    placeholder="必要な資格や条件をカンマ区切りで入力（例：普通自動車免許, 英語検定2級, パソコン操作）" 
                     required
                     className={styles.formTextarea} 
                     rows={2} 

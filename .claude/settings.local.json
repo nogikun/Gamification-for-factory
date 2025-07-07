@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(mv:*)"
+    ],
+    "deny": []
+  },
+  "enabledMcpjsonServers": [
+    "playwright",
+    "markitdown",
+    "arxiv-mcp-server",
+    "context7",
+    "youtube"
+  ]
+}

@@ -1,2 +1,0 @@
-# PostgreSQLドライバーを明示的にインストール
-RUN uv pip install --no-cache --system asyncpg psycopg2-binary

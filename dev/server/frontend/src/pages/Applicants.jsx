@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ApplicantDetailDrawer from "./ApplicantDetailDrawer";
 import styles from "./Applicants.module.scss";
 import { usePageAnimation } from "../hooks/usePageAnimation";
-import { apiRequest } from "../config";
+import { apiRequest, API_BASE_URL } from "../config";
 
 // ステータスの定義（バックエンドのapplication_statusに合わせる）
 const APPLICATION_STATUS = {
@@ -37,7 +37,7 @@ export default function Applicants() {
       setError(null);
       try {
         // 応募者一覧を取得
-        const applicantsResponse = await fetch('http://localhost:8000/applications');
+        const applicantsResponse = await fetch(`${API_BASE_URL}/applications`);
         
         if (!applicantsResponse.ok) {
           throw new Error('応募者データの取得に失敗しました');
@@ -58,7 +58,7 @@ export default function Applicants() {
         }
         
         // イベント一覧を取得（フィルター用）
-        const eventsResponse = await fetch('http://localhost:8000/event');
+        const eventsResponse = await fetch(`${API_BASE_URL}/event`);
         
         if (!eventsResponse.ok) {
           throw new Error('イベントデータの取得に失敗しました');
@@ -117,7 +117,7 @@ export default function Applicants() {
       };
       
       // PUT リクエストでステータス更新
-      const response = await fetch(`http://localhost:8000/applications/${applicationId}`, {
+      const response = await fetch(`${API_BASE_URL}/applications/${applicationId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ export default function Applicants() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/applications');
+      const response = await fetch(`${API_BASE_URL}/applications`);
       if (!response.ok) {
         throw new Error('応募データの再取得に失敗しました');
       }

@@ -1,0 +1,12 @@
+# Core dependencies
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv
+psycopg2-binary
+
+# Google Gemini AI integration
+google-generativeai
+
+# Additional utility packages
+python-multipart

@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text, Enum as SAEnum, ForeignKey, JSON, LargeBinary, UUID, Float
+from sqlalchemy import Column, Integer, String, DateTime, Text, Enum as SAEnum, ForeignKey, JSON, LargeBinary, UUID, Float, Index
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
 from datetime import datetime
@@ -66,7 +67,8 @@ class Application(Base):
     processed_at = Column(DateTime, nullable=True)
     processed_by = Column(UUID(as_uuid=True), nullable=True)
     
-    # SQLAlchemyのリレーションシップは今後必要に応じて追加
+    # リレーションシップの追加
+    applicant = relationship("Applicant", back_populates="applications")
 
 # TODO: Companyモデルも必要に応じて定義する (company_idのForeignKeyのため)
 # class Company(Base):
@@ -87,13 +89,16 @@ class Applicant(Base):
     birth_date = Column(DateTime, nullable=True)
     license = Column(Text, nullable=True)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    
+    # リレーションシップの追加
+    applications = relationship("Application", back_populates="applicant")
 
 # レビューリクエストモデル
 class ReviewRequest(Base):
     __tablename__ = "review_requests"
     __table_args__ = {"schema": "public"}
     
-    review_request_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    review_request_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     application_id = Column(UUID(as_uuid=True), ForeignKey("applications.application_id"), nullable=False)
     requested_by = Column(UUID(as_uuid=True), nullable=False)
     requested_at = Column(DateTime, server_default=func.now())
@@ -103,15 +108,24 @@ class ReviewRequest(Base):
 # レビューモデル
 class Review(Base):
     __tablename__ = "reviews"
-    __table_args__ = {"schema": "public"}
+    __table_args__ = (
+        # パフォーマンス最適化用インデックス
+        Index('idx_reviews_reviewee_id', 'reviewee_id'),
+        Index('idx_reviews_reviewer_id', 'reviewer_id'),
+        Index('idx_reviews_event_id', 'event_id'),
+        Index('idx_reviews_created_at', 'created_at'),
+        Index('idx_reviews_reviewee_event', 'reviewee_id', 'event_id'),
+        {"schema": "public"}
+    )
     
-    review_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    application_id = Column(UUID(as_uuid=True), ForeignKey("applications.application_id"), nullable=False)
-    reviewer_id = Column(UUID(as_uuid=True), nullable=False)
-    rating = Column(Float, nullable=False)
-    comment = Column(Text, nullable=True)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    review_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    reviewee_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=False, comment="レビュイーID（企業、個人）")
+    reviewer_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=False, comment="レビュアーID（企業、個人）")
+    event_id = Column(UUID(as_uuid=True), ForeignKey("events.event_id"), nullable=True, comment="対象となるイベントID")
+    rating = Column(Float, nullable=False, comment="評価点（1.0〜5.0）")
+    comment = Column(Text, nullable=True, comment="レビューコメント")
+    created_at = Column(DateTime, server_default=func.now(), comment="作成日時")
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), comment="更新日時")
 
 class Participant(Base):
     __tablename__ = "participants"
@@ -122,6 +136,9 @@ class Participant(Base):
     status = Column(SAEnum(ParticipantStatusEnum, name="participants_status"), nullable=False, default=ParticipantStatusEnum.PENDING)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    
+    # リレーションシップの追加
+    user = relationship("User", back_populates="participants")
 
 class User(Base):
     __tablename__ = "users"
@@ -132,3 +149,6 @@ class User(Base):
     created_at = Column(DateTime, nullable=True)
     login_time = Column(DateTime, nullable=True)
     ai_advice = Column(Text, nullable=True)
+    
+    # リレーションシップの追加
+    participants = relationship("Participant", back_populates="user")

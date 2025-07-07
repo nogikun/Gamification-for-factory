@@ -15,6 +15,7 @@ import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
 import Tab4 from './pages/Tab4';
+import EventPage from './pages/EventPage';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -102,6 +103,12 @@ const App: React.FC = () => (
 					<Route exact path="/">
 						<Redirect to="/tab1" />
 					</Route>
+                    <Route path="/event/:eventId" exact={true}>
+                        <EventPage />
+                    </Route>
+                    <Route exact path="/event">
+                        <div>イベントIDが指定されていません。</div>
+                    </Route>
 				</IonRouterOutlet>
 				{/* <IonTabBar slot="bottom">
 					<IonTabButton tab="tab1" href="/tab1">

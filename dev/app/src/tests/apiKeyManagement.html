@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APIキー管理機能テスト</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            border-left: 4px solid #007bff;
+            padding-left: 16px;
+            margin: 20px 0;
+        }
+        .success {
+            border-left-color: #28a745;
+            background: #f8fff9;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #fff8f8;
+        }
+        .warning {
+            border-left-color: #ffc107;
+            background: #fffdf5;
+        }
+        .test-result {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 APIキー管理機能テスト</h1>
+    
+    <div class="test-container">
+        <h2>環境確認</h2>
+        <div id="environment-check"></div>
+    </div>
+
+    <div class="test-grid">
+        <div class="test-container">
+            <h3>🔐 暗号化機能テスト</h3>
+            <button onclick="testEncryptionFunction()">暗号化テスト実行</button>
+            <div id="encryption-results" class="test-result"></div>
+        </div>
+
+        <div class="test-container">
+            <h3>✅ バリデーション機能テスト</h3>
+            <button onclick="testValidationFunction()">バリデーションテスト実行</button>
+            <div id="validation-results" class="test-result"></div>
+        </div>
+
+        <div class="test-container">
+            <h3>🎭 マスキング機能テスト</h3>
+            <button onclick="testMaskingFunction()">マスキングテスト実行</button>
+            <div id="masking-results" class="test-result"></div>
+        </div>
+
+        <div class="test-container">
+            <h3>📄 LocalStorage テスト</h3>
+            <button onclick="testLocalStorageFunction()">ストレージテスト実行</button>
+            <div id="storage-results" class="test-result"></div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>総合テスト実行</h2>
+        <button onclick="runAllTests()" style="background: #28a745; font-size: 16px; padding: 15px 30px;">
+            🚀 全テスト実行
+        </button>
+        <button onclick="clearResults()" style="background: #6c757d;">
+            🗑️ 結果クリア
+        </button>
+        <div id="overall-results" class="test-result"></div>
+    </div>
+
+    <script>
+        // 環境確認
+        function checkEnvironment() {
+            const results = [];
+            
+            // Web Crypto API サポート確認
+            const hasCrypto = typeof crypto !== 'undefined' && 
+                             typeof crypto.subtle !== 'undefined' &&
+                             typeof crypto.getRandomValues === 'function';
+            results.push(`Web Crypto API: ${hasCrypto ? '✅ サポート' : '❌ 非サポート'}`);
+            
+            // localStorage サポート確認
+            const hasLocalStorage = typeof localStorage !== 'undefined';
+            results.push(`localStorage: ${hasLocalStorage ? '✅ サポート' : '❌ 非サポート'}`);
+            
+            // TextEncoder/TextDecoder サポート確認
+            const hasTextEncoder = typeof TextEncoder !== 'undefined' && typeof TextDecoder !== 'undefined';
+            results.push(`TextEncoder/Decoder: ${hasTextEncoder ? '✅ サポート' : '❌ 非サポート'}`);
+            
+            document.getElementById('environment-check').innerHTML = results.join('<br>');
+            
+            return hasCrypto && hasLocalStorage && hasTextEncoder;
+        }
+
+        // 暗号化・復号化のテスト
+        async function testEncryptionFunction() {
+            const resultsDiv = document.getElementById('encryption-results');
+            resultsDiv.innerHTML = '実行中...';
+            
+            try {
+                // 簡単な暗号化・復号化テスト
+                const testData = 'APIkey_test_12345';
+                
+                // AES-GCM テスト
+                const algorithm = 'AES-GCM';
+                const key = await crypto.subtle.generateKey(
+                    { name: algorithm, length: 256 },
+                    true,
+                    ['encrypt', 'decrypt']
+                );
+                
+                const encoder = new TextEncoder();
+                const decoder = new TextDecoder();
+                const dataBuffer = encoder.encode(testData);
+                const iv = crypto.getRandomValues(new Uint8Array(12));
+                
+                // 暗号化
+                const encryptedBuffer = await crypto.subtle.encrypt(
+                    { name: algorithm, iv },
+                    key,
+                    dataBuffer
+                );
+                
+                // 復号化
+                const decryptedBuffer = await crypto.subtle.decrypt(
+                    { name: algorithm, iv },
+                    key,
+                    encryptedBuffer
+                );
+                const decryptedData = decoder.decode(decryptedBuffer);
+                
+                const success = decryptedData === testData;
+                resultsDiv.innerHTML = success ? 
+                    '✅ 暗号化・復号化テスト成功\\n' +
+                    `元データ: ${testData}\\n` +
+                    `復号後: ${decryptedData}\\n` +
+                    `結果: ${success ? '一致' : '不一致'}` :
+                    '❌ 暗号化・復号化テスト失敗';
+                    
+            } catch (error) {
+                resultsDiv.innerHTML = `❌ エラー: ${error.message}`;
+            }
+        }
+
+        // バリデーション機能のテスト
+        function testValidationFunction() {
+            const resultsDiv = document.getElementById('validation-results');
+            
+            // テスト用のバリデーション関数（envSliceから抜粋）
+            function validateGeminiApiKey(apiKey) {
+                if (!apiKey || typeof apiKey !== 'string') {
+                    return { isValid: false, error: 'APIキーが必要です' };
+                }
+                
+                const trimmed = apiKey.trim();
+                if (trimmed.length === 0) {
+                    return { isValid: false, error: 'APIキーが空です' };
+                }
+                
+                if (!trimmed.startsWith('AIzaSy')) {
+                    return { isValid: false, error: 'Gemini APIキーは"AIzaSy"で始まる必要があります' };
+                }
+                
+                if (trimmed.length < 20 || trimmed.length > 50) {
+                    return { isValid: false, error: 'APIキーの長さが不正です（20-50文字）' };
+                }
+                
+                if (!/^[A-Za-z0-9_-]+$/.test(trimmed)) {
+                    return { isValid: false, error: 'APIキーに無効な文字が含まれています' };
+                }
+                
+                return { isValid: true };
+            }
+            
+            // テストケース
+            const testCases = [
+                { input: 'AIzaSyDtestkey123456789abcdefghijklmnop', expected: true, description: '有効なAPIキー' },
+                { input: '', expected: false, description: '空文字' },
+                { input: 'invalid_key', expected: false, description: '無効なプレフィックス' },
+                { input: 'AIzaSy', expected: false, description: '短すぎる' },
+                { input: 'AIzaSyD' + 'a'.repeat(100), expected: false, description: '長すぎる' },
+                { input: 'AIzaSyDtest key with spaces', expected: false, description: 'スペース含む' },
+                { input: 'AIzaSyDtest@key', expected: false, description: '無効文字含む' }
+            ];
+            
+            let results = [];
+            let passCount = 0;
+            
+            testCases.forEach(testCase => {
+                const result = validateGeminiApiKey(testCase.input);
+                const passed = result.isValid === testCase.expected;
+                if (passed) passCount++;
+                
+                results.push(
+                    `${passed ? '✅' : '❌'} ${testCase.description}: ` +
+                    `期待=${testCase.expected}, 実際=${result.isValid}` +
+                    (result.error ? ` (${result.error})` : '')
+                );
+            });
+            
+            resultsDiv.innerHTML = 
+                `${passCount}/${testCases.length} テスト通過\\n\\n` +
+                results.join('\\n');
+        }
+
+        // マスキング機能のテスト
+        function testMaskingFunction() {
+            const resultsDiv = document.getElementById('masking-results');
+            
+            // マスキング関数（apiKeyStorageから抜粋）
+            function maskApiKey(apiKey, visibleChars = 4) {
+                if (!apiKey || apiKey.length <= visibleChars) {
+                    return apiKey;
+                }
+                
+                const maskedLength = apiKey.length - visibleChars;
+                const visiblePart = apiKey.slice(-visibleChars);
+                const maskedPart = '*'.repeat(Math.min(maskedLength, 12));
+                
+                return maskedPart + visiblePart;
+            }
+            
+            const testCases = [
+                { input: 'AIzaSyDtestkey123456789abcdefghijklmnop', visibleChars: 4 },
+                { input: 'AIzaSyDtestkey123456789abcdefghijklmnop', visibleChars: 6 },
+                { input: 'short', visibleChars: 4 },
+                { input: '', visibleChars: 4 },
+                { input: 'A', visibleChars: 4 }
+            ];
+            
+            let results = [];
+            
+            testCases.forEach(testCase => {
+                const masked = maskApiKey(testCase.input, testCase.visibleChars);
+                results.push(
+                    `入力: "${testCase.input}" (表示文字数: ${testCase.visibleChars})\\n` +
+                    `結果: "${masked}"\\n`
+                );
+            });
+            
+            resultsDiv.innerHTML = results.join('\\n');
+        }
+
+        // LocalStorage機能のテスト
+        function testLocalStorageFunction() {
+            const resultsDiv = document.getElementById('storage-results');
+            
+            try {
+                const testKey = 'apikey_test_' + Date.now();
+                const testValue = { apiKey: 'AIzaSyDtest123', timestamp: new Date().toISOString() };
+                
+                // 保存テスト
+                localStorage.setItem(testKey, JSON.stringify(testValue));
+                
+                // 読み込みテスト
+                const retrieved = JSON.parse(localStorage.getItem(testKey));
+                
+                // 削除テスト
+                localStorage.removeItem(testKey);
+                const afterDelete = localStorage.getItem(testKey);
+                
+                const testPassed = 
+                    retrieved.apiKey === testValue.apiKey && 
+                    retrieved.timestamp === testValue.timestamp &&
+                    afterDelete === null;
+                
+                resultsDiv.innerHTML = testPassed ?
+                    '✅ localStorage テスト成功\\n' +
+                    `保存データ: ${JSON.stringify(testValue)}\\n` +
+                    `読み込み結果: ${JSON.stringify(retrieved)}\\n` +
+                    `削除確認: ${afterDelete === null ? 'OK' : 'NG'}` :
+                    '❌ localStorage テスト失敗';
+                    
+            } catch (error) {
+                resultsDiv.innerHTML = `❌ エラー: ${error.message}`;
+            }
+        }
+
+        // 全テスト実行
+        async function runAllTests() {
+            const resultsDiv = document.getElementById('overall-results');
+            resultsDiv.innerHTML = '全テスト実行中...';
+            
+            const startTime = Date.now();
+            
+            try {
+                await testEncryptionFunction();
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                testValidationFunction();
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                testMaskingFunction();
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                testLocalStorageFunction();
+                
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                
+                resultsDiv.innerHTML = 
+                    '🎉 全テスト実行完了\\n' +
+                    `実行時間: ${duration}ms\\n` +
+                    '各テスト結果は上記の個別セクションを確認してください。';
+                    
+            } catch (error) {
+                resultsDiv.innerHTML = `❌ 全テスト実行中にエラー: ${error.message}`;
+            }
+        }
+
+        // 結果クリア
+        function clearResults() {
+            const resultDivs = [
+                'encryption-results',
+                'validation-results',
+                'masking-results',
+                'storage-results',
+                'overall-results'
+            ];
+            
+            resultDivs.forEach(id => {
+                const div = document.getElementById(id);
+                if (div) div.innerHTML = '';
+            });
+        }
+
+        // ページ読み込み時に環境確認を実行
+        window.onload = function() {
+            const envSupported = checkEnvironment();
+            if (!envSupported) {
+                document.querySelector('h1').innerHTML += ' ⚠️ 環境制限あり';
+            }
+        };
+    </script>
+</body>
+</html>

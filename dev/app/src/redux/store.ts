@@ -1,19 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { menu } from "ionicons/icons";
+import { autoReducers } from "./autoReducers"; // 動的リデューサー登録を使用
 
-import { menuReducer } from "./menuSlice"; // メニューのリデューサーをインポート
-import { searchDateReducer } from "./searchDateSlice"; // 検索日付のリデューサーをインポート
-import { themeReducer } from "./themeSlice";
-import { serverReducer } from "./serverSlice"; // サーバーのリデューサーをインポート
-
-// storeの作成
+// storeの作成（動的リデューサー登録を使用）
 export const store = configureStore({
-    reducer: {
-        menu: menuReducer, // メニューのリデューサーを追加
-        searchDate: searchDateReducer, // 検索日付のリデューサーを追加
-        theme: themeReducer, // テーマのリデューサーを追加
-        server: serverReducer, // サーバーのリデューサーを追加
-    },
+    reducer: autoReducers, // 全リデューサーを自動登録
 });
 
 // RootStateの型を定義

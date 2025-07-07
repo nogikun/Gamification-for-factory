@@ -26,6 +26,6 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
         host: 'http://localhost',
-        port: '8000',
+        port: '3000',
     },
 };

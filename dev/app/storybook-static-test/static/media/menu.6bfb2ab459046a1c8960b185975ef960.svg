@@ -1,0 +1,35 @@
+var _rect, _rect2, _rect3, _rect4;
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+import * as React from "react";
+const SvgMenu = props => /*#__PURE__*/React.createElement("svg", _extends({
+  xmlns: "http://www.w3.org/2000/svg",
+  width: 60,
+  height: 60,
+  fill: "none"
+}, props), _rect || (_rect = /*#__PURE__*/React.createElement("rect", {
+  width: 27.5,
+  height: 27.5,
+  fill: "#A3A3A3",
+  rx: 9
+})), _rect2 || (_rect2 = /*#__PURE__*/React.createElement("rect", {
+  width: 27.5,
+  height: 27.5,
+  y: 32,
+  fill: "#D9D9D9",
+  rx: 9
+})), _rect3 || (_rect3 = /*#__PURE__*/React.createElement("rect", {
+  width: 27.5,
+  height: 27.5,
+  x: 32,
+  fill: "#D9D9D9",
+  rx: 9
+})), _rect4 || (_rect4 = /*#__PURE__*/React.createElement("rect", {
+  width: 27.5,
+  height: 27.5,
+  x: 32,
+  y: 32,
+  fill: "#A3A3A3",
+  rx: 9
+})));
+export { SvgMenu as ReactComponent };
+export default "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI3LjUiIGhlaWdodD0iMjcuNSIgcng9IjkiIGZpbGw9IiNBM0EzQTMiLz4KPHJlY3QgeT0iMzIiIHdpZHRoPSIyNy41IiBoZWlnaHQ9IjI3LjUiIHJ4PSI5IiBmaWxsPSIjRDlEOUQ5Ii8+CjxyZWN0IHg9IjMyIiB3aWR0aD0iMjcuNSIgaGVpZ2h0PSIyNy41IiByeD0iOSIgZmlsbD0iI0Q5RDlEOSIvPgo8cmVjdCB4PSIzMiIgeT0iMzIiIHdpZHRoPSIyNy41IiBoZWlnaHQ9IjI3LjUiIHJ4PSI5IiBmaWxsPSIjQTNBM0EzIi8+Cjwvc3ZnPgo=";

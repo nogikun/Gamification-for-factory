@@ -263,17 +263,17 @@ const Tab4: React.FC = () => {
                 <HostServerCard
                     host={host}
                     port={port}
-                    width="100%"
+                    width="95%"
                     height="300px"
                 />
                 
                 <br />
 
-                <APIKeyCard
+                {/* <APIKeyCard
                     width="100%"
                     height="300px"
                     title="Gemini API設定"
-                />
+                /> */}
                 
                 {/* ngrok認証ボタンとAPI通信テスト */}
 				<div style={{ padding: '20px', textAlign: 'center' }}>

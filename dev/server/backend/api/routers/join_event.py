@@ -16,7 +16,7 @@ router = APIRouter()
 
 
 # --- イベント参加エンドポイント --- #
-@router.post("/join-event")
+@router.post("/join-event", operation_id="join_event_application")
 async def join_event_api(
     request: JoinEventRequest,
     db: Session = Depends(get_db)

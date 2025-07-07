@@ -18,6 +18,11 @@ class ReviewList(BaseModel):
     reviews: List[Review] = Field(..., description="List of reviews")
     total_count: int = Field(..., description="Total number of reviews")
 
+class AIReviewRequest(BaseModel):
+    """Model for AI review request"""
+    user_id: str = Field(..., description="User ID to get reviews for")
+    custom_prompt: Optional[str] = Field(None, description="Custom prompt for AI analysis")
+
 class AIReview(BaseModel):
     """Model for AI review"""
     comment: str = Field(..., description="Review comment")

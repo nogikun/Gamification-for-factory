@@ -3,6 +3,9 @@ import os
 import json
 import base64
 from typing import List
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Local imports
 from src.schemas.api.base import DateModel
@@ -13,7 +16,7 @@ from src.classes.db_connector import DBConnector
 # Routerを作成
 router = APIRouter()
 
-@router.post("/get-events")
+@router.post("/get-events", operation_id="get_events_by_date")
 async def get_event(target_date: DateModel) -> List[EventSchema]:
     """
     イベント取得エンドポイント - 指定された日付のイベントリストをデータベースから取得します
@@ -25,6 +28,9 @@ async def get_event(target_date: DateModel) -> List[EventSchema]:
     print("target_date type:", type(target_date.target_date))
     
     database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        database_url = "postgresql://postgres:postgres@postgres:5432/gamification"
+    
     db_connector = DBConnector(
         db_url = database_url,  # 環境変数からデータベースURLを取得
         debug = False           # デバッグモードを有効にする

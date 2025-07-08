@@ -1,6 +1,35 @@
+<<<<<<< Updated upstream
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab3.css';
+=======
+import * as React from "react";
+
+// 新しく作成した InternParticipantsHorizontalBarChart コンポーネントをインポート
+import InternParticipantsHorizontalBarChart from "../stories/Charts/InternParticipantsHorizontalBarChart";
+import AiDiagnosisResult from "../stories/Charts/AiDiagnosisResult";
+import { Gauge } from "@mui/x-charts/Gauge";
+import { gameProgressData } from "@/dummy_data/chartData";
+import {
+	Typography,
+	useMediaQuery,
+	createTheme,
+	ThemeProvider,
+	CssBaseline,
+} from "@mui/material";
+import GameLog from "../stories/Charts/GameLog";
+import CompanyEvaluations from "../stories/Charts/CompanyEvaluations";
+
+import {
+	IonContent,
+	IonHeader,
+	IonPage,
+	IonTitle,
+	IonToolbar,
+} from "@ionic/react";
+import ExploreContainer from "../components/ExploreContainer";
+import "./Tab3.css";
+>>>>>>> Stashed changes
 
 // components
 import { MenuTile } from '../stories/Menu/MenuTile';

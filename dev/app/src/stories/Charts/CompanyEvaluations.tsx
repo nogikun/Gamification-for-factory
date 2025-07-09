@@ -5,7 +5,11 @@ import ListItem from '@mui/material/ListItem';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Rating from '@mui/material/Rating';
+<<<<<<< HEAD
 import { companyEvaluations, CompanyEvaluationData } from '../../dummy_data/chartData';
+=======
+import { companyEvaluations, CompanyEvaluationData } from '../../dataset/chartData';
+>>>>>>> c1a0b1a338e0e2acebc18e2b01b3b7dd497997d3
 
 /**
  * 企業評価の表示プロパティ

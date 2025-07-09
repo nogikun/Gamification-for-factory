@@ -1,0 +1,14 @@
+var _path;
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+import * as React from "react";
+const SvgCrown = props => /*#__PURE__*/React.createElement("svg", _extends({
+  xmlns: "http://www.w3.org/2000/svg",
+  width: 24,
+  height: 24,
+  fill: "#FFF",
+  viewBox: "0 -960 960 960"
+}, props), _path || (_path = /*#__PURE__*/React.createElement("path", {
+  d: "M200-160v-80h560v80zm0-140-51-321q-2 0-4.5.5t-4.5.5q-25 0-42.5-17.5T80-680t17.5-42.5T140-740t42.5 17.5T200-680q0 7-1.5 13t-3.5 11l125 56 125-171q-11-8-18-21t-7-28q0-25 17.5-42.5T480-880t42.5 17.5T540-820q0 15-7 28t-18 21l125 171 125-56q-2-5-3.5-11t-1.5-13q0-25 17.5-42.5T820-740t42.5 17.5T880-680t-17.5 42.5T820-620q-2 0-4.5-.5t-4.5-.5l-51 321zm68-80h424l26-167-105 46-133-183-133 183-105-46zm212 0"
+})));
+export { SvgCrown as ReactComponent };
+export default "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNMjAwLTE2MHYtODBoNTYwdjgwSDIwMFptMC0xNDAtNTEtMzIxcS0yIDAtNC41LjV0LTQuNS41cS0yNSAwLTQyLjUtMTcuNVQ4MC02ODBxMC0yNSAxNy41LTQyLjVUMTQwLTc0MHEyNSAwIDQyLjUgMTcuNVQyMDAtNjgwcTAgNy0xLjUgMTN0LTMuNSAxMWwxMjUgNTYgMTI1LTE3MXEtMTEtOC0xOC0yMXQtNy0yOHEwLTI1IDE3LjUtNDIuNVQ0ODAtODgwcTI1IDAgNDIuNSAxNy41VDU0MC04MjBxMCAxNS03IDI4dC0xOCAyMWwxMjUgMTcxIDEyNS01NnEtMi01LTMuNS0xMXQtMS41LTEzcTAtMjUgMTcuNS00Mi41VDgyMC03NDBxMjUgMCA0Mi41IDE3LjVUODgwLTY4MHEwIDI1LTE3LjUgNDIuNVQ4MjAtNjIwcS0yIDAtNC41LS41dC00LjUtLjVsLTUxIDMyMUgyMDBabTY4LTgwaDQyNGwyNi0xNjctMTA1IDQ2LTEzMy0xODMtMTMzIDE4My0xMDUtNDYgMjYgMTY3Wm0yMTIgMFoiLz48L3N2Zz4=";

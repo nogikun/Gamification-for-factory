@@ -4,7 +4,11 @@ import { Typography } from '@mui/material'; // MUIのTypographyをインポー�
 
 // サンプルのデータセットとフォーマッター
 // ご自身のプロジェクトのデータに合わせてインポートし直してください
+<<<<<<< HEAD
 import { dataset, valueFormatter } from '../dummy_data/chartData';
+=======
+import { dataset, valueFormatter } from '../dataset/chartData';
+>>>>>>> c1a0b1a338e0e2acebc18e2b01b3b7dd497997d3
 
 // グラフの共通設定
 const chartSetting = {

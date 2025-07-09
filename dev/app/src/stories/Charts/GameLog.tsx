@@ -5,7 +5,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
+<<<<<<< HEAD
 import { gameLogData, GameLogItem } from '../../dummy_data/chartData';
+=======
+import { gameLogData, GameLogItem } from '../../dataset/chartData';
+>>>>>>> c1a0b1a338e0e2acebc18e2b01b3b7dd497997d3
 
 /**
  * ゲームログの表示プロパティ

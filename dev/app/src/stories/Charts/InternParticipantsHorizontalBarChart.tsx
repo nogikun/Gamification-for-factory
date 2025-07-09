@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { Typography } from '@mui/material';
+<<<<<<< HEAD
 import { dataset, valueFormatter } from '../../dummy_data/chartData';
+=======
+import { dataset, valueFormatter } from '../../dataset/chartData';
+>>>>>>> c1a0b1a338e0e2acebc18e2b01b3b7dd497997d3
 
 /**
  * インターン参加データの型定義

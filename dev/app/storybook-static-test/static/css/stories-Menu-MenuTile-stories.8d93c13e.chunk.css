@@ -1,0 +1,105 @@
+.top-buttons, .bottom-buttons {
+  display: flex;
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(+20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(+20px);
+  }
+}
+
+/* middle-accordion のスタイルはすべてPropsで管理されるようになりました */
+.middle-accrdion {
+    position: absolute;
+    display: 'flex';
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    margin: 0em;
+    justify-content: center;
+    align-items: center;
+}
+
+/* bottom-buttons のmargin-topもPropsで管理されるようになりました */
+.storybook-button {
+    display: inline-block;
+    cursor: pointer;
+    border: 0;
+    border-radius: 3em;
+    font-weight: 700;
+    line-height: 1;
+    font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+  .storybook-memu-button--primary {
+    background-color: #555ab9;
+    color: white;
+  }
+  .storybook-memu-button--secondary {
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset;
+    background-color: transparent;
+    color: #333;
+  }
+  
+	/* ラベルに関するテンプレートスタイル（使用しない） */
+  .storybook-menu-button__label {
+    display: inline-block;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+.storybook-accordion {
+    display: inline-block;
+    cursor: pointer;
+    border: 0;
+    border-radius: 3em;
+    font-weight: 700;
+    line-height: 1;
+    font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+  .storybook-accordion--primary {
+    background-color: #555ab9;
+    color: white;
+  }
+  .storybook-accordion--secondary {
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset;
+    background-color: transparent;
+    color: #333;
+  }
+  .storybook-accordion--small {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+  .storybook-accordion--medium {
+    padding: 11px 20px;
+    font-size: 14px;
+  }
+  .storybook-accordion--large {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+  
+
+/*# sourceMappingURL=stories-Menu-MenuTile-stories.8d93c13e.chunk.css.map*/

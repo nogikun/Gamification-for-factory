@@ -21,6 +21,7 @@ class ReviewList(BaseModel):
 
 class AIReviewRequest(BaseModel):
     """Model for AI review request"""
+<<<<<<< HEAD
     user_id: str = Field(..., description="User ID to analyze reviews for")
     custom_prompt: Optional[str] = Field(None, description="Custom prompt for AI analysis")
     
@@ -32,6 +33,10 @@ class AIReviewRequest(BaseModel):
             return v
         except ValueError:
             raise ValueError(f"Invalid UUID format for user_id: {v}")
+=======
+    user_id: str = Field(..., description="User ID to get reviews for")
+    custom_prompt: Optional[str] = Field(None, description="Custom prompt for AI analysis")
+>>>>>>> c1a0b1a338e0e2acebc18e2b01b3b7dd497997d3
 
 class AIReview(BaseModel):
     """Model for AI review response"""

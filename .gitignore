@@ -2,3 +2,12 @@
 *.log
 mcp/
 .env
+
+# Log directories and error reports
+logs/*.log
+logs/*.txt
+dev/server/backend/api/logs/*.log
+dev/server/backend/api/logs/*.txt
+dev/server/backend/api/logs/error/*.txt
+!dev/server/backend/api/logs/error/.gitkeep
+!dev/server/backend/api/logs/error/README.md

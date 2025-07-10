@@ -81,6 +81,7 @@ app.include_router(demo_join_event.router)  # /demo/join-event
 app.include_router(participation_internship.router)  # /charts/participation_internship
 app.include_router(game_progress.router)  # /charts/game_progress
 app.include_router(game_logs.router)  # /charts/game_logs
+app.include_router(company_evaluations.router)  # /charts/company_evaluations
 
 # ---------------------------------------------------------------------
 #  Custom Handlers

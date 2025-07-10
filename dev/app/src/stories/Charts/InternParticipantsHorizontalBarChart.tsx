@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { Typography } from '@mui/material';
-<<<<<<< HEAD
 import { dataset, valueFormatter } from '../../dummy_data/chartData';
-=======
-import { dataset, valueFormatter } from '../../dataset/chartData';
->>>>>>> c1a0b1a338e0e2acebc18e2b01b3b7dd497997d3
 
 /**
  * インターン参加データの型定義
@@ -71,6 +67,13 @@ export default function InternParticipantsHorizontalBarChart({
     }],
     margin: {
       right: rightMargin,
+      left: 10, // 左側の余白も調整
+      top: 10, // 上部の余白
+      bottom: 20, // 下部の余白
+    },
+    layout: {
+      paddingLeft: 5, // グラフ内の左パディング
+      paddingRight: 5, // グラフ内の右パディング
     },
   } as const;
 

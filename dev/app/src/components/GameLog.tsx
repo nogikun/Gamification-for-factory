@@ -4,11 +4,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
-<<<<<<< HEAD
 import { gameLogData } from '../dummy_data/chartData'; // データファイルをインポート
-=======
-import { gameLogData } from '../dataset/chartData'; // データファイルをインポート
->>>>>>> c1a0b1a338e0e2acebc18e2b01b3b7dd497997d3
 
 /**
  * ゲームログを表示するコンポーネント

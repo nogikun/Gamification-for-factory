@@ -3,7 +3,11 @@
     "allow": [
       "Bash(npm run build:*)",
       "Bash(npx tsc:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(docker-compose:*)",
+      "Bash(curl:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker exec:*)"
     ],
     "deny": []
   },
@@ -12,6 +16,9 @@
     "markitdown",
     "arxiv-mcp-server",
     "context7",
-    "youtube"
+    "youtube",
+    "mcp-taskmanager",
+    "sequential-thinking",
+    "browsermcp"
   ]
 }

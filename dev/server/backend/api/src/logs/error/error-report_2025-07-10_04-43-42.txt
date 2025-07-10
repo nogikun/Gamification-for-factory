@@ -1,0 +1,39 @@
+============================================
+ERROR REPORT
+============================================
+Report ID: report_f73b00af-6602-44a3-a6ad-b0b800cebdad
+Timestamp: 2025-07-10 04:43:42.700000+00:00
+Generated: 2025-07-10T04:43:42.709025
+
+USER INFORMATION:
+- User ID: 11111111-1111-1111-1111-111111111111
+
+ERROR DETAILS:
+- Message: Network Error
+- Type: NetworkError
+- API Endpoint: http://localhost:3000/charts/participation_internship/11111111-1111-1111-1111-111111111111
+- Request Method: GET
+- Response Status: Unknown
+
+PAGE INFORMATION:
+- Page URL: http://localhost:5174/tab3
+- Browser Info: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
+
+STACK TRACE:
+AxiosError: Network Error
+    at XMLHttpRequest.handleError (http://localhost:5174/node_modules/.vite/deps/axios.js?v=ebed2660:1602:14)
+    at Axios.request (http://localhost:5174/node_modules/.vite/deps/axios.js?v=ebed2660:2130:41)
+    at async http://localhost:5174/src/pages/Tab3.tsx?t=1752122620949:114:24
+
+ADDITIONAL CONTEXT:
+{
+  "component": "Tab3",
+  "function": "fetchParticipationData",
+  "error_details": {
+    "code": "ERR_NETWORK",
+    "request_url": "http://localhost:3000/charts/participation_internship/11111111-1111-1111-1111-111111111111",
+    "request_method": "get"
+  }
+}
+
+============================================

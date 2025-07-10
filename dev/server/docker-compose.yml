@@ -9,6 +9,7 @@ services:
       - "3000:3000"
     volumes:
       - "./backend/api:/app"
+      - "./backend/api/logs:/app/logs"
     environment:
       - NODE_ENV=development
       - HOST=0.0.0.0

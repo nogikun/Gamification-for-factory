@@ -45,11 +45,9 @@ interface UseChartDataResult<T> {
   refetch: () => void;
 }
 
-const API_BASE_URL = 'http://localhost:3000';
-
 // Generic fetch function
-const fetchData = async <T>(endpoint: string): Promise<T> => {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`);
+const fetchData = async <T>(endpoint: string, baseUrl: string): Promise<T> => {
+  const response = await fetch(`${baseUrl}${endpoint}`);
   
   if (!response.ok) {
     throw new Error(`API Error: ${response.status} ${response.statusText}`);
@@ -64,12 +62,16 @@ const useChartData = <T>(endpoint: string): UseChartDataResult<T> => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
+  // Get server configuration from Redux store
+  const { host, port } = useSelector((state: RootState) => state.server);
+  const baseUrl = port ? `${host}:${port}` : host;
+  
   const fetchChartData = async () => {
     setLoading(true);
     setError(null);
     
     try {
-      const result = await fetchData<T>(endpoint);
+      const result = await fetchData<T>(endpoint, baseUrl);
       setData(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -80,7 +82,7 @@ const useChartData = <T>(endpoint: string): UseChartDataResult<T> => {
 
   useEffect(() => {
     fetchChartData();
-  }, [endpoint]);
+  }, [endpoint, baseUrl]);
 
   return {
     data,

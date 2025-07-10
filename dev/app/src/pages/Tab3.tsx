@@ -20,13 +20,11 @@ interface ParticipationData {
 }
 import {
 	Typography,
-	Container,
 	Paper,
 	Box,
 	useMediaQuery,
 	createTheme,
 	ThemeProvider,
-	CssBaseline,
 } from "@mui/material";
 
 import {
@@ -183,28 +181,33 @@ const Tab3: React.FC = () => {
 	}, [fetchParticipationData, fetchGameProgress]);
 	
 	return (
-		<ThemeProvider theme={theme}>
-			<CssBaseline />
-			<IonPage>
-				<IonHeader>
+		<IonPage>
+			<IonHeader>
+				<IonToolbar>
+					{/* <IonTitle>Tab 3</IonTitle> */}
+				</IonToolbar>
+			</IonHeader>
+			<IonContent fullscreen>
+				<IonHeader collapse="condense">
 					<IonToolbar>
-						{/* <IonTitle>Tab 3</IonTitle> */}
+						<IonTitle size="large">Tab 3</IonTitle>
 					</IonToolbar>
 				</IonHeader>
-				<IonContent fullscreen>
-					<IonHeader collapse="condense">
-						<IonToolbar>
-							<IonTitle size="large">Tab 3</IonTitle>
-						</IonToolbar>
-					</IonHeader>
 
-					<Container 
-						maxWidth="lg" 
-						sx={{ 
-							py: { xs: 2, md: 3 },
-							px: { xs: 2, md: 3 },
-						}}
-					>
+				<div style={{
+					justifyContent: 'space-between',
+					padding: 'auto 20px',
+					textAlign: 'center',
+				}}>
+					<ThemeProvider theme={theme}>
+						<Box sx={{ 
+							width: '100%',
+							maxWidth: '100%',
+							overflow: 'hidden',
+							boxSizing: 'border-box',
+							m: 0,
+							p: { xs: 1, md: 2 },
+						}}>
 						<Typography 
 							variant="h4" 
 							component="h1" 
@@ -360,41 +363,55 @@ const Tab3: React.FC = () => {
 								</Paper>
 							</Box>
 						</Box>
-					</Container>
+					</Box>
+				</ThemeProvider>
+				</div>
+                
+                {/* 空白分を確保する必要がある（現在は臨時） */}
+                <br />
 
-					<FeedbackTab
-						primary
-						color="#6100ff"
-						backgroundColor="#6100ff"
-						width="100%"
-						height="100%"
-						aiReview="AIによるレビュー内容がここに表示されます。"
-						onClick={() => {}}
-					/>
+                {/* フィードバックタブ */}
+				<FeedbackTab
+					primary
+					color="#6100ff"
+					backgroundColor="#6100ff"
+					width="100%"
+					height="100%"
+					aiReview="AIによるレビュー内容がここに表示されます。"
+					onClick={() => {}}
+				/>
 
-					<MenuTile
-						primary
-						backgroundColor="#6100ff"
-						bottomMarginTop=""
-						height="100%"
-						label="Button"
-						menuAlignItems="center"
-						menuBtnLeft="50%"
-						menuBtnTop=""
-						menuJustifyContent="center"
-						menuMargin="0em"
-						menuTransform="translate(-50%, -50%)"
-						menuZIndex={10}
-						onClick={() => {}}
-						position="fixed"
-						accordionPosition="absolute"
-						bottom="0px"
-						variant="primary"
-						width="100vw"
-					/>
-				</IonContent>
-			</IonPage>
-		</ThemeProvider>
+				{/* 空白分を確保する必要がある（現在は臨時） */}
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+
+				<MenuTile
+					primary
+					backgroundColor="#6100ff"
+					bottomMarginTop=""
+					height="100%"
+					label="Button"
+					menuAlignItems="center"
+					menuBtnLeft="50%"
+					menuBtnTop=""
+					menuJustifyContent="center"
+					menuMargin="0em"
+					menuTransform="translate(-50%, -50%)"
+					menuZIndex={10}
+					onClick={() => {}}
+					position="fixed"
+					accordionPosition="absolute"
+					bottom="0px"
+					variant="primary"
+					width="100vw"
+				/>
+			</IonContent>
+		</IonPage>
 	);
 };
 

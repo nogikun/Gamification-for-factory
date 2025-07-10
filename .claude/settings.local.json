@@ -7,7 +7,11 @@
       "Bash(docker-compose:*)",
       "Bash(curl:*)",
       "Bash(docker logs:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(find:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_take_screenshot"
     ],
     "deny": []
   },

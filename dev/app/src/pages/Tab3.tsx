@@ -7,7 +7,7 @@ import InternParticipantsHorizontalBarChart from "../stories/Charts/InternPartic
 import GameLog from "../stories/Charts/GameLog";
 import CompanyEvaluations from "../stories/Charts/CompanyEvaluations";
 import { Gauge } from "@mui/x-charts/Gauge";
-import { gameProgressData, dataset, gameLogData, companyEvaluations } from "@/dummy_data/chartData";
+import { gameProgressData, dataset, gameLogData as dummyGameLogData, companyEvaluations as dummyCompanyEvaluations } from "@/dummy_data/chartData";
 
 // エラーレポートユーティリティのインポート
 import { sendErrorReport, createErrorReportFromAxiosError } from "../utils/errorReporting";
@@ -26,6 +26,9 @@ import {
 	createTheme,
 	ThemeProvider,
 } from "@mui/material";
+
+// アイコンのインポート
+import { Refresh } from "@mui/icons-material";
 
 import {
 	IonContent,
@@ -118,6 +121,17 @@ const Tab3: React.FC = () => {
 	// ゲーム進捗のステート管理
 	const [gameProgress, setGameProgress] = React.useState(gameProgressData.value);
 	const [gameProgressLoading, setGameProgressLoading] = React.useState(false);
+
+	// 企業評価のステート管理
+	const [companyEvaluations, setCompanyEvaluations] = React.useState(dummyCompanyEvaluations);
+	const [evaluationsLoading, setEvaluationsLoading] = React.useState(false);
+
+	// ゲームログのステート管理
+	const [gameLogData, setGameLogData] = React.useState(dummyGameLogData);
+	const [gameLogLoading, setGameLogLoading] = React.useState(false);
+	
+	// 再取得用のリフレッシュキー
+	const [refreshKey, setRefreshKey] = React.useState(0);
 	
 	// 固定のユーザーID
 	const userId = "11111111-1111-1111-1111-111111111111";
@@ -173,12 +187,58 @@ const Tab3: React.FC = () => {
 			setGameProgressLoading(false);
 		}
 	}, [baseUrl]);
+
+	// 企業評価を取得する関数
+	const fetchCompanyEvaluations = React.useCallback(async () => {
+		setEvaluationsLoading(true);
+		try {
+			const response = await axios.get(`${baseUrl}/charts/company_evaluations/${userId}`);
+			if (response.data?.evaluations) {
+				setCompanyEvaluations(response.data.evaluations);
+			}
+		} catch (err) {
+			console.error('Failed to fetch company evaluations:', err);
+			setCompanyEvaluations(dummyCompanyEvaluations); // エラー時はダミーデータ
+		} finally {
+			setEvaluationsLoading(false);
+		}
+	}, [baseUrl, userId]);
+
+	// ゲームログを取得する関数
+	const fetchGameLogData = React.useCallback(async () => {
+		setGameLogLoading(true);
+		try {
+			const response = await axios.get(`${baseUrl}/charts/game_log/${userId}`);
+			if (response.data?.logs) {
+				setGameLogData(response.data.logs);
+			}
+		} catch (err) {
+			console.error('Failed to fetch game log data:', err);
+			setGameLogData(dummyGameLogData); // エラー時はダミーデータ
+		} finally {
+			setGameLogLoading(false);
+		}
+	}, [baseUrl, userId]);
 	
 	// コンポーネントマウント時にデータを取得
 	React.useEffect(() => {
 		fetchParticipationData();
 		fetchGameProgress();
-	}, [fetchParticipationData, fetchGameProgress]);
+		fetchCompanyEvaluations();
+		fetchGameLogData();
+	}, [fetchParticipationData, fetchGameProgress, fetchCompanyEvaluations, fetchGameLogData]);
+	
+	// すべてのデータを再取得する関数
+	const refreshAllData = React.useCallback(() => {
+		// リフレッシュキーを更新して子コンポーネントを再マウント
+		setRefreshKey(prevKey => prevKey + 1);
+		
+		// 自身が管理しているデータを再取得
+		fetchParticipationData();
+		fetchGameProgress();
+		fetchCompanyEvaluations();
+		fetchGameLogData();
+	}, [fetchParticipationData, fetchGameProgress, fetchCompanyEvaluations, fetchGameLogData]);
 	
 	return (
 		<IonPage>
@@ -306,6 +366,7 @@ const Tab3: React.FC = () => {
 										</Box>
 									) : null}
 									<InternParticipantsHorizontalBarChart
+										key={`participants-${refreshKey}`}
 										data={participationData}
 										title="インターン参加回数"
 										height={isMobile ? 280 : 330}
@@ -336,9 +397,11 @@ const Tab3: React.FC = () => {
 									justifyContent: 'center',
 								}}>
 									<CompanyEvaluations
+										key={`evaluations-${refreshKey}`}
 										evaluations={companyEvaluations}
 										title="企業からの評価"
 										userId={userId}
+										loading={evaluationsLoading}
 									/>
 								</Paper>
 
@@ -354,11 +417,13 @@ const Tab3: React.FC = () => {
 									justifyContent: 'center',
 								}}>
 									<GameLog
+										key={`gamelog-${refreshKey}`}
 										logs={gameLogData}
 										title="最近のゲームログ"
 										titleAlign="center"
 										maxItems={isMobile ? 5 : 7}
 										userId={userId}
+										loading={gameLogLoading}
 									/>
 								</Paper>
 							</Box>
@@ -369,6 +434,29 @@ const Tab3: React.FC = () => {
                 
                 {/* 空白分を確保する必要がある（現在は臨時） */}
                 <br />
+
+                {/* リロードボタン */}
+                <Box sx={{ padding: { xs: '0 16px', md: '0 24px' }, marginBottom: 2 }}>
+                    <Paper 
+                        sx={{
+                            p: 2,
+                            backgroundColor: '#6100ff',
+                            color: 'white',
+                            borderRadius: 2,
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s',
+                            '&:hover': {
+                                backgroundColor: '#5000d9',
+                            }
+                        }}
+                        onClick={refreshAllData}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Refresh sx={{ mr: 1 }} />
+                            <Typography variant="body1">データを更新</Typography>
+                        </Box>
+                    </Paper>
+                </Box>
 
                 {/* フィードバックタブ */}
 				<FeedbackTab

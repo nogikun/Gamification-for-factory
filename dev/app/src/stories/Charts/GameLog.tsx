@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import List from '@mui/material/List';
 import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
+import { Stack } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -30,16 +30,16 @@ interface ApiGameLogsResponse {
 }
 
 // アイコン文字列をReactElementに変換する関数
-function getIconComponent(iconName: string): React.ReactElement {
-  const iconMap: Record<string, React.ReactElement> = {
-    campaign: <CampaignIcon />,
-    military_tech: <MilitaryTechIcon />,
-    trending_up: <TrendingUpIcon />,
-    security: <SecurityIcon />,
-    diamond: <DiamondIcon />,
-    info: <InfoIcon />,
+function getIconComponent(iconName: string): React.ComponentType {
+  const iconMap: Record<string, React.ComponentType> = {
+    campaign: CampaignIcon,
+    military_tech: MilitaryTechIcon,
+    trending_up: TrendingUpIcon,
+    security: SecurityIcon,
+    diamond: DiamondIcon,
+    info: InfoIcon,
   };
-  return iconMap[iconName] || <InfoIcon />;
+  return iconMap[iconName] || InfoIcon;
 }
 
 /**
@@ -110,12 +110,15 @@ export default function GameLog({
       const response = await axios.get<ApiGameLogsResponse>(`${baseUrl}/charts/game_logs/${userId}`);
       if (response.data?.logs) {
         // APIデータをGameLogItem形式に変換
-        const convertedLogs: GameLogItem[] = response.data.logs.map(apiLog => ({
-          date: apiLog.date,
-          icon: getIconComponent(apiLog.icon),
-          color: apiLog.color,
-          text: apiLog.text,
-        }));
+        const convertedLogs: GameLogItem[] = response.data.logs.map(apiLog => {
+          const IconComponent = getIconComponent(apiLog.icon);
+          return {
+            date: apiLog.date,
+            icon: <IconComponent />,
+            color: apiLog.color,
+            text: apiLog.text,
+          };
+        });
         setGameLogsData(convertedLogs);
       }
     } catch (err) {
@@ -184,10 +187,13 @@ export default function GameLog({
                 {item.date}
               </Typography>
               <Avatar sx={{ bgcolor: item.color, width: avatarSize, height: avatarSize }}>
-                {React.cloneElement(
-                  item.icon as React.ReactElement<import('@mui/material/SvgIcon').SvgIconProps>, 
-                  { fontSize: "small" }
-                )}
+                {React.isValidElement(item.icon) 
+                  ? React.cloneElement(
+                      item.icon as React.ReactElement<import('@mui/material/SvgIcon').SvgIconProps>, 
+                      { fontSize: "small" }
+                    )
+                  : <InfoIcon fontSize="small" />
+                }
               </Avatar>
               <Typography variant="body2" sx={{ flexGrow: 1 }}>
                 {item.text}

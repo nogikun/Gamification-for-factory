@@ -1,4 +1,32 @@
 services:
+  # server logo
+  server-logo:
+    image: node:alpine
+    container_name: server-logo
+    command: npx oh-my-logo "F-VATE" mono --filled && echo "version 0.2.0"
+    depends_on:
+      - postgres
+      - frontend
+      - adminer
+      - api
+      - portainer
+    networks:
+      - default
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    ports:
+      - "9443:9443"
+      - "8000:8000"
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: always
+    networks:
+      - default
+
   # APIサーバー - ユーザーデータやステータス情報の処理
   api:
     build:
@@ -83,3 +111,4 @@ networks:
 
 volumes:
   postgres-data:
+  portainer_data:

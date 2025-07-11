@@ -12,7 +12,9 @@
     "test.unit": "vitest",
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "ios": "npm run build && npx cap sync ios",
+    "android": "npm run build && npx cap sync android"
   },
   "dependencies": {
     "@capacitor/android": "7.2.0",

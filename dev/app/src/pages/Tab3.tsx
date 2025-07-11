@@ -1,6 +1,6 @@
 import * as React from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
+import { apiConnector } from "../scripts/apiConnector";
 
 // Charts コンポーネントをインポート
 import InternParticipantsHorizontalBarChart from "../stories/Charts/InternParticipantsHorizontalBarChart";
@@ -106,11 +106,13 @@ const Tab3: React.FC = () => {
 	const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 	
 	// Redux storeからサーバー設定を取得
-	const { host, port } = useSelector((state: any) => state.server);
+	const host = useSelector((state: any) => state.server.host);
+    const port = useSelector((state: any) => state.server.port);
 	
-	// ベースURLを構築
-	const baseUrl = React.useMemo(() => {
-		return port ? `${host}:${port}` : host;
+	// APIコネクタのベースURL更新
+	React.useEffect(() => {
+		const newBaseUrl = port ? `${host}:${port}` : `${host}`;
+		apiConnector.defaults.baseURL = newBaseUrl;
 	}, [host, port]);
 	
 	// 参加データのステート管理
@@ -141,10 +143,10 @@ const Tab3: React.FC = () => {
 		setIsLoading(true);
 		setError(null);
 		
-		const apiEndpoint = `${baseUrl}/charts/participation_internship/${userId}`;
+		const apiEndpoint = `/charts/participation_internship/${userId}`;
 		
 		try {
-			const response = await axios.get(apiEndpoint);
+			const response = await apiConnector.get(apiEndpoint);
 			if (response.data?.internships) {
 				setParticipationData(response.data.internships);
 			}
@@ -168,14 +170,14 @@ const Tab3: React.FC = () => {
 		} finally {
 			setIsLoading(false);
 		}
-	}, [baseUrl, userId]);
+	}, [userId]);
 	
 	// ゲーム進捗を取得する関数
 	const fetchGameProgress = React.useCallback(async () => {
 		setGameProgressLoading(true);
 		
 		try {
-			const response = await axios.get(`${baseUrl}/charts/game_progress/${userId}`);
+			const response = await apiConnector.get(`/charts/game_progress/${userId}`);
 			if (response.data?.value !== undefined) {
 				setGameProgress(response.data.value);
 			}
@@ -186,13 +188,13 @@ const Tab3: React.FC = () => {
 		} finally {
 			setGameProgressLoading(false);
 		}
-	}, [baseUrl]);
+	}, [userId]);
 
 	// 企業評価を取得する関数
 	const fetchCompanyEvaluations = React.useCallback(async () => {
 		setEvaluationsLoading(true);
 		try {
-			const response = await axios.get(`${baseUrl}/charts/company_evaluations/${userId}`);
+			const response = await apiConnector.get(`/charts/company_evaluations/${userId}`);
 			if (response.data?.evaluations) {
 				setCompanyEvaluations(response.data.evaluations);
 			}
@@ -202,13 +204,13 @@ const Tab3: React.FC = () => {
 		} finally {
 			setEvaluationsLoading(false);
 		}
-	}, [baseUrl, userId]);
+	}, [userId]);
 
 	// ゲームログを取得する関数
 	const fetchGameLogData = React.useCallback(async () => {
 		setGameLogLoading(true);
 		try {
-			const response = await axios.get(`${baseUrl}/charts/game_log/${userId}`);
+			const response = await apiConnector.get(`/charts/game_logs/${userId}`);
 			if (response.data?.logs) {
 				setGameLogData(response.data.logs);
 			}
@@ -218,7 +220,7 @@ const Tab3: React.FC = () => {
 		} finally {
 			setGameLogLoading(false);
 		}
-	}, [baseUrl, userId]);
+	}, [userId]);
 	
 	// コンポーネントマウント時にデータを取得
 	React.useEffect(() => {
@@ -229,28 +231,38 @@ const Tab3: React.FC = () => {
 	}, [fetchParticipationData, fetchGameProgress, fetchCompanyEvaluations, fetchGameLogData]);
 	
 	// すべてのデータを再取得する関数
-	const refreshAllData = React.useCallback(() => {
-		// リフレッシュキーを更新して子コンポーネントを再マウント
-		setRefreshKey(prevKey => prevKey + 1);
+	const refreshAllData = React.useCallback(async () => {
+		console.log('データ更新開始');
 		
-		// 自身が管理しているデータを再取得
-		fetchParticipationData();
-		fetchGameProgress();
-		fetchCompanyEvaluations();
-		fetchGameLogData();
+		// データを再取得（並列実行）
+		try {
+			await Promise.all([
+				fetchParticipationData(),
+				fetchGameProgress(),
+				fetchCompanyEvaluations(),
+				fetchGameLogData()
+			]);
+			
+			// データ取得完了後にリフレッシュキーを更新
+			setRefreshKey(prevKey => prevKey + 1);
+			
+			console.log('データ更新完了');
+		} catch (error) {
+			console.error('データ更新エラー:', error);
+		}
 	}, [fetchParticipationData, fetchGameProgress, fetchCompanyEvaluations, fetchGameLogData]);
 	
 	return (
 		<IonPage>
 			<IonHeader>
 				<IonToolbar>
-					{/* <IonTitle>Tab 3</IonTitle> */}
+					<IonTitle>Logs</IonTitle>
 				</IonToolbar>
 			</IonHeader>
 			<IonContent fullscreen>
 				<IonHeader collapse="condense">
 					<IonToolbar>
-						<IonTitle size="large">Tab 3</IonTitle>
+						{/* <IonTitle size="large">Tab 3</IonTitle> */}
 					</IonToolbar>
 				</IonHeader>
 
@@ -401,7 +413,6 @@ const Tab3: React.FC = () => {
 										evaluations={companyEvaluations}
 										title="企業からの評価"
 										userId={userId}
-										loading={evaluationsLoading}
 									/>
 								</Paper>
 
@@ -423,7 +434,6 @@ const Tab3: React.FC = () => {
 										titleAlign="center"
 										maxItems={isMobile ? 5 : 7}
 										userId={userId}
-										loading={gameLogLoading}
 									/>
 								</Paper>
 							</Box>

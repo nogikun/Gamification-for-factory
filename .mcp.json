@@ -67,6 +67,34 @@
             "args": [
                 "@browsermcp/mcp@latest"
             ]
+        },
+        "filesystem": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-filesystem",
+            "/Users/mcp/Documents"
+          ]
+        },
+        "time": {
+          "command": "uvx",
+          "args": [
+            "mcp-server-time"
+          ]
+        },
+        "puppeteer": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-puppeteer"
+          ]
+        },
+        "memory": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
         }
     }
 }

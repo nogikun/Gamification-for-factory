@@ -254,7 +254,7 @@ const Tab4: React.FC = () => {
 				{/* <Accordion label="This is Menu" borderRadius={50} width="100px" height="100px" backgroundColor='#262626'/> */}
 				<IonHeader collapse="condense">
 					<IonToolbar>
-						<IonTitle size="large">Tab 4</IonTitle>
+						{/* <IonTitle size="large">Tab 4</IonTitle> */}
 					</IonToolbar>
 				</IonHeader>
 

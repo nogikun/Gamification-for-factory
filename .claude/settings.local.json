@@ -23,6 +23,10 @@
     "youtube",
     "mcp-taskmanager",
     "sequential-thinking",
-    "browsermcp"
+    "browsermcp",
+    "filesystem",
+    "time",
+    "puppeteer",
+    "memory"
   ]
 }

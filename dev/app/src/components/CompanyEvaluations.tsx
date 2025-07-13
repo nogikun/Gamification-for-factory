@@ -5,7 +5,7 @@ import ListItem from '@mui/material/ListItem';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Rating from '@mui/material/Rating';
-import { companyEvaluations } from '../dataset/chartData'; // 作成したデータをインポート
+import { companyEvaluations } from '../dummy_data/chartData'; // 作成したデータをインポート
 
 /**
  * 企業からの評価リストを表示するコンポーネント

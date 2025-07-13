@@ -83,33 +83,40 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  decorators: [(Story, { args }) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
+  decorators: [(Story) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
+  args: {
+    userId: "11111111-1111-1111-1111-111111111111",
+  },
 };
 
 export const CustomData: Story = {
-  decorators: [(Story, { args }) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
+  decorators: [(Story) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
   args: {
     evaluations: customEvaluations,
+    userId: "11111111-1111-1111-1111-111111111111",
   },
 };
 
 export const HighRating: Story = {
-  decorators: [(Story, { args }) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
+  decorators: [(Story) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
   args: {
     maxRating: 10,
     precision: 0.1,
+    userId: "11111111-1111-1111-1111-111111111111",
   },
 };
 
 export const Outlined: Story = {
-  decorators: [(Story, { args }) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
+  decorators: [(Story) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
   args: {
     variant: 'outlined',
+    userId: "11111111-1111-1111-1111-111111111111",
   },
 };
 
 export const DarkMode: Story = {
-  decorators: [(Story, { args }) => <ReduxWrapper theme="dark"><Story /></ReduxWrapper>],
+  decorators: [(Story) => <ReduxWrapper theme="dark"><Story /></ReduxWrapper>],
+  args: {
+    userId: "11111111-1111-1111-1111-111111111111",
+  },
 };
-
-export {};

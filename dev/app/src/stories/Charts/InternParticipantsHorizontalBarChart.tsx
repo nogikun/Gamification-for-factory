@@ -1,7 +1,9 @@
 import * as React from 'react';
+import axios from 'axios';
 import { BarChart } from '@mui/x-charts/BarChart';
-import { Typography } from '@mui/material';
-import { dataset, valueFormatter } from '../../dataset/chartData';
+import { Typography, Box } from '@mui/material';
+import { dataset, valueFormatter } from '../../dummy_data/chartData';
+import { useServerConfig, useErrorReporting } from '../../hooks/useChart';
 
 /**
  * インターン参加データの型定義
@@ -10,6 +12,16 @@ export interface InternParticipantsData {
   month: string;
   internParticipants: number;
   [key: string]: string | number; // インデックスシグネチャを追加
+}
+
+// APIレスポンスの型定義
+interface ApiInternParticipantsData {
+  month: string;
+  participants: number;
+}
+
+interface ApiParticipationResponse {
+  internships: ApiInternParticipantsData[];
 }
 
 /**
@@ -38,6 +50,8 @@ export interface InternParticipantsHorizontalBarChartProps {
   containerJustify?: 'flex-start' | 'center' | 'flex-end';
   /** 値のフォーマッター関数 */
   valueFormatter?: (value: number | null) => string;
+  /** ユーザーID（APIからデータを取得する場合） */
+  userId?: string;
 }
 
 /**
@@ -55,7 +69,61 @@ export default function InternParticipantsHorizontalBarChart({
   legendPosition = 'top',
   containerJustify = 'center',
   valueFormatter: customValueFormatter = valueFormatter,
+  userId = "11111111-1111-1111-1111-111111111111", // デフォルトユーザーID
 }: InternParticipantsHorizontalBarChartProps) {
+  // Hooksを使用
+  const { baseUrl } = useServerConfig();
+  const { sendApiErrorReport } = useErrorReporting();
+  
+  // ステート管理
+  const [participationData, setParticipationData] = React.useState<InternParticipantsData[]>(data);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  // APIからデータを取得する関数
+  const fetchParticipationData = React.useCallback(async () => {
+    if (!userId) return;
+    
+    setIsLoading(true);
+    setError(null);
+    
+    const apiEndpoint = `${baseUrl}/charts/participation_internship/${userId}`;
+    
+    try {
+      const response = await axios.get<ApiParticipationResponse>(apiEndpoint);
+      if (response.data?.internships) {
+        // APIデータをInternParticipantsData形式に変換
+        const convertedData: InternParticipantsData[] = response.data.internships.map(apiData => ({
+          month: apiData.month,
+          internParticipants: apiData.participants,
+        }));
+        setParticipationData(convertedData);
+      }
+    } catch (err) {
+      console.error('Failed to fetch participation data:', err);
+      
+      // エラーレポートを送信
+      await sendApiErrorReport(err, {
+        user_id: userId,
+        api_endpoint: apiEndpoint,
+        request_method: 'GET',
+        component: 'InternParticipantsHorizontalBarChart',
+        function: 'fetchParticipationData',
+      });
+      
+      setError('データの取得に失敗しました');
+      // エラー時はプロップスのデータを使用
+      setParticipationData(data);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [baseUrl, userId, data, sendApiErrorReport]);
+
+  // コンポーネントマウント時にデータを取得
+  React.useEffect(() => {
+    fetchParticipationData();
+  }, [fetchParticipationData]);
+
   // グラフの設定をpropsから生成
   const chartSetting = {
     height: height,
@@ -67,7 +135,11 @@ export default function InternParticipantsHorizontalBarChart({
     }],
     margin: {
       right: rightMargin,
+      left: 10, // 左側の余白も調整
+      top: 10, // 上部の余白
+      bottom: 20, // 下部の余白
     },
+    layout: 'vertical' as const, // 縦方向レイアウト
   } as const;
 
   // スタイル定義をpropsから生成
@@ -95,8 +167,27 @@ export default function InternParticipantsHorizontalBarChart({
           {title}
         </Typography>
 
+        {isLoading && (
+          <Box sx={{ textAlign: 'center', mb: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              データを読み込み中...
+            </Typography>
+          </Box>
+        )}
+
+        {error && (
+          <Box sx={{ textAlign: 'center', mb: 2 }}>
+            <Typography color="error" variant="body2" sx={{ mb: 1 }}>
+              {error}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              ダミーデータを表示しています
+            </Typography>
+          </Box>
+        )}
+
         <BarChart
-          dataset={data}
+          dataset={participationData}
           xAxis={[{ scaleType: 'band', dataKey: 'month' }]}
           series={[{ 
             dataKey: 'internParticipants', 

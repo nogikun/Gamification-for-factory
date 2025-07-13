@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
-import { Typography } from '@mui/material'; // MUIのTypographyをインポート
+import { Typography, CircularProgress, Alert } from '@mui/material';
+import { useParticipationInternshipData } from '../hooks/useChartData';
 
-// サンプルのデータセットとフォーマッター
-// ご自身のプロジェクトのデータに合わせてインポートし直してください
-import { dataset, valueFormatter } from '../dataset/chartData';
 
 // グラフの共通設定
 const chartSetting = {
@@ -35,23 +33,85 @@ const chartWrapperStyle = {
 
 
 export default function InternParticipantsVerticalBarChart() {
+  // デフォルトのテストユーザーIDを使用
+  const userId = "11111111-1111-1111-1111-111111111111";
+  const { data, loading, error } = useParticipationInternshipData(userId);
+
+
+  // ローディング中の表示
+  if (loading) {
+    return (
+      <div style={containerStyle}>
+        <div style={chartWrapperStyle}>
+          <Typography variant="h6" component="h2" align="center" gutterBottom>
+            インターン参加回数
+          </Typography>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+            <CircularProgress />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // エラー時の表示
+  if (error) {
+    return (
+      <div style={containerStyle}>
+        <div style={chartWrapperStyle}>
+          <Typography variant="h6" component="h2" align="center" gutterBottom>
+            インターン参加回数
+          </Typography>
+          <Alert severity="error" style={{ margin: '1rem 0' }}>
+            データの取得に失敗しました: {error}
+          </Alert>
+        </div>
+      </div>
+    );
+  }
+
+  // データが存在しない場合
+  if (!data || !data.internships || data.internships.length === 0) {
+    return (
+      <div style={containerStyle}>
+        <div style={chartWrapperStyle}>
+          <Typography variant="h6" component="h2" align="center" gutterBottom>
+            インターン参加回数
+          </Typography>
+          <Alert severity="info" style={{ margin: '1rem 0' }}>
+            表示するデータがありません
+          </Alert>
+        </div>
+      </div>
+    );
+  }
+
+  // データ加工
+  const chartData = data.internships.map(item => ({
+    month: item.month,
+    internParticipants: item.internParticipants
+  }));
+  
   return (
     <div style={containerStyle}>
       <div style={chartWrapperStyle}>
-        {/* グラフタイトルをここに表示 */}
-        <Typography
-          variant="h6"
-          component="h2"
-          align="center"
-          gutterBottom
-        >
+        <Typography variant="h6" component="h2" align="center" gutterBottom>
           インターン参加回数
         </Typography>
 
         <BarChart
-          dataset={dataset}
+          dataset={chartData}
           xAxis={[{ scaleType: 'band', dataKey: 'month' }]}
-          series={[{ dataKey: 'internParticipants', label: 'インターン参加回数', valueFormatter }]}
+          series={[{ 
+            dataKey: 'internParticipants', 
+            label: 'インターン参加回数', 
+            valueFormatter: (value) => {
+              if (value === null || value === undefined) {
+                return '0回';
+              }
+              return `${value}回`;
+            }
+          }]}
           {...chartSetting}
         />
       </div>

@@ -1,0 +1,28 @@
+============================================
+ERROR REPORT
+============================================
+Report ID: report_d8e6b5d6-87ef-4c2a-82a3-08bc48064fbd
+Timestamp: 2025-07-10 13:35:00+00:00
+Generated: 2025-07-10T04:44:18.589814
+
+USER INFORMATION:
+- User ID: test-user-file-logging
+
+ERROR DETAILS:
+- Message: Test error for file logging
+- Type: FILE_LOGGING_TEST
+- API Endpoint: /test/file-logging
+- Request Method: Unknown
+- Response Status: Unknown
+
+PAGE INFORMATION:
+- Page URL: Unknown
+- Browser Info: Unknown
+
+STACK TRACE:
+Test stack trace for file logging functionality
+
+ADDITIONAL CONTEXT:
+No additional context
+
+============================================

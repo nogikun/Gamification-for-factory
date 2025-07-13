@@ -8,8 +8,8 @@ from src.schemas.database.applicant import Applicant as ApplicantSchema
 from src.database import get_db
 
 # endpoint imports
-from routers.applications import get_applicants_api
-from routers.reviews import get_reviews_api
+from ..applications import get_applicants_api
+from ..reviews import get_reviews_api
 
 # API Router with prefix
 api_router = APIRouter(prefix="/api")

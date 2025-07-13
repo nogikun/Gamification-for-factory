@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typing import Optional, List
 from datetime import date
+import uuid
 
 
 class Review(BaseModel):
@@ -20,9 +21,28 @@ class ReviewList(BaseModel):
 
 class AIReviewRequest(BaseModel):
     """Model for AI review request"""
-    user_id: str = Field(..., description="User ID to get reviews for")
+    user_id: str = Field(..., description="User ID to analyze reviews for")
     custom_prompt: Optional[str] = Field(None, description="Custom prompt for AI analysis")
+    
+    @validator('user_id')
+    def validate_user_id(cls, v):
+        """Validate that user_id is a valid UUID format"""
+        try:
+            uuid.UUID(v)
+            return v
+        except ValueError:
+            raise ValueError(f"Invalid UUID format for user_id: {v}")
 
 class AIReview(BaseModel):
-    """Model for AI review"""
-    comment: str = Field(..., description="Review comment")
+    """Model for AI review response"""
+    comment: str = Field(..., description="AI-generated review comment")
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "comment": "このユーザーは総合的に高い評価を受けています。特に技術力と協調性において優れた評価を得ており..."
+            }
+        }
+
+# Alias for better semantic naming
+AIReviewResponse = AIReview

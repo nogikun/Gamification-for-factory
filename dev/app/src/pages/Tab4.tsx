@@ -247,14 +247,14 @@ const Tab4: React.FC = () => {
 		<IonPage>
 			<IonHeader>
 				<IonToolbar>
-					<IonTitle>Tab 4</IonTitle>
+					<IonTitle>Settings</IonTitle>
 				</IonToolbar>
 			</IonHeader>
 			<IonContent fullscreen>
 				{/* <Accordion label="This is Menu" borderRadius={50} width="100px" height="100px" backgroundColor='#262626'/> */}
 				<IonHeader collapse="condense">
 					<IonToolbar>
-						<IonTitle size="large">Tab 4</IonTitle>
+						{/* <IonTitle size="large">Tab 4</IonTitle> */}
 					</IonToolbar>
 				</IonHeader>
 

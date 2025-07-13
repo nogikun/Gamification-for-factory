@@ -125,7 +125,31 @@ BEGIN
 -- 9
 (company_id3, 'INTERNSHIP', '2Daysハッカソンチャレンジ', NULL, 'チームでアイデアを形にする短期集中型', '2025-05-21 09:00', '2025-05-22 18:00', '渋谷Lab', '20000円', 'プログラミング経験', 12, '["ハッカソン", "開発", "チーム"]'),
 -- 10
-(company_id1, 'SEMINAR', '大手企業の最新働き方紹介セミナー', NULL, 'テレワークやフレックス制度などの紹介', '2025-05-23 11:00', '2025-05-23 13:00', 'YouTube配信', '', '', 300, '["働き方", "説明会", "制度"]');
+(company_id1, 'SEMINAR', '大手企業の最新働き方紹介セミナー', NULL, 'テレワークやフレックス制度などの紹介', '2025-05-23 11:00', '2025-05-23 13:00', 'YouTube配信', '', '', 300, '["働き方", "説明会", "制度"]'),
+-- 11
+(company_id2, 'INTERNSHIP', 'Webアプリ開発ハンズオン', NULL, 'ReactとNode.jsを使ったWebアプリ開発体験', '2025-07-10 10:00', '2025-07-10 18:00', 'オンライン', '10000円', 'JavaScriptの基礎知識', 20, '["Web開発", "React", "Node.js"]'),
+-- 12
+(company_id3, 'SEMINAR', 'ゲーム業界研究セミナー', NULL, '最新のゲーム業界の動向とキャリアについて', '2025-07-11 14:00', '2025-07-11 16:00', 'オンライン', '', '', 100, '["ゲーム業界", "キャリア", "セミナー"]'),
+-- 13
+(company_id1, 'INTERNSHIP', 'クラウドインフラ構築インターン', NULL, 'AWSを用いたインフラ構築の実践', '2025-07-12 09:00', '2025-07-12 17:00', '東京本社', '12000円', 'Linuxの基本操作', 15, '["AWS", "インフラ", "クラウド"]'),
+-- 14
+(company_id2, 'SEMINAR', 'UI/UXデザイン入門セミナー', NULL, 'Figmaを使ったUI/UXデザインの基礎を学ぶ', '2025-07-13 13:00', '2025-07-13 15:00', 'オンライン', '', '', 50, '["UI/UX", "デザイン", "Figma"]'),
+-- 15
+(company_id3, 'INTERNSHIP', 'VR/ARコンテンツ開発インターン', NULL, 'UnityとVR/ARデバイスを使ったコンテンツ開発', '2025-07-14 10:00', '2025-07-16 17:00', '名古屋支社', '30000円', 'UnityとC#の基礎知識', 10, '["VR", "AR", "Unity"]'),
+-- 16
+(company_id1, 'SEMINAR', 'データサイエンティストの仕事紹介', NULL, 'データ分析の現場で働く社員が語る', '2025-07-15 19:00', '2025-07-15 21:00', 'オンライン', '', '', 80, '["データサイエンス", "キャリア", "セミナー"]'),
+-- 17
+(company_id2, 'INTERNSHIP', 'モバイルアプリ開発インターン（iOS）', NULL, 'SwiftUIを使ったiOSアプリ開発体験', '2025-07-16 09:30', '2025-07-17 17:30', '大阪オフィス', '20000円', 'Swiftの基礎知識', 10, '["iOS", "モバイルアプリ", "SwiftUI"]'),
+-- 18
+(company_id3, 'SEMINAR', 'ITコンサルタント入門', NULL, 'ITコンサルタントの仕事内容やキャリアパスを解説', '2025-07-10 15:00', '2025-07-10 17:00', 'オンライン', '', '', 50, '["ITコンサル", "キャリア", "セミナー"]'),
+-- 19
+(company_id1, 'INTERNSHIP', 'セキュリティエンジニア体験', NULL, 'サイバーセキュリティの基礎を学ぶハンズオン', '2025-07-11 10:00', '2025-07-11 18:00', '東京本社', '15000円', 'ネットワークの基礎知識', 15, '["セキュリティ", "エンジニア", "ハンズオン"]'),
+-- 20
+(company_id3, 'INTERNSHIP', 'ゲームプランナー長期インターン', NULL, 'ヒットゲームの企画立案に挑戦', '2025-07-14 10:00', '2025-08-14 17:00', '名古屋支社', '月給20万円', 'ゲーム企画経験者', 5, '["ゲームプランナー", "長期インターン", "企画"]'),
+-- 21
+(company_id1, 'INTERNSHIP', '5Days Web開発ブートキャンプ', NULL, '5日間でWebアプリケーションを開発する集中プログラム', '2025-07-14 09:00', '2025-07-18 18:00', 'オンライン', '50000円', 'HTML/CSS, JavaScriptの基礎', 10, '["Web開発", "ブートキャンプ", "5Days"]'),
+-- 22
+(company_id2, 'INTERNSHIP', '2Days UI/UXデザインワークショップ', NULL, '実践的なUI/UXデザインのスキルを2日間で学ぶ', '2025-07-15 10:00', '2025-07-16 17:00', '大阪オフィス', '20000円', 'デザインに興味がある方', 12, '["UI/UX", "デザイン", "ワークショップ"]');
 
 END $$;
 
@@ -218,15 +242,91 @@ END $$;
 
 -- applicationsダミーデータ
 -- 既に上記で適切なデータを挿入済み
-INSERT INTO participants (
-    event_id,
-    user_id,
-    status
-) VALUES (
-    (SELECT event_id FROM events LIMIT 1),
-    '11111111-1111-1111-1111-111111111111',
-    'ACTIVE'
-);
+
+-- participantsテーブルに月別のテストデータを追加（user_id: 11111111-1111-1111-1111-111111111111）
+DO $$
+DECLARE
+    target_user_id UUID := '11111111-1111-1111-1111-111111111111';
+    event_id1 UUID;
+    event_id2 UUID;
+    event_id3 UUID;
+    event_id4 UUID;
+    event_id5 UUID;
+BEGIN
+    -- eventsテーブルから異なるイベントIDを取得
+    SELECT event_id INTO event_id1 FROM events LIMIT 1 OFFSET 0;
+    SELECT event_id INTO event_id2 FROM events LIMIT 1 OFFSET 1;
+    SELECT event_id INTO event_id3 FROM events LIMIT 1 OFFSET 2;
+    SELECT event_id INTO event_id4 FROM events LIMIT 1 OFFSET 3;
+    SELECT event_id INTO event_id5 FROM events LIMIT 1 OFFSET 4;
+    
+    -- 1月のデータ（2件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id1, target_user_id, 'COMPLETED', '2025-01-15 10:00:00', '2025-01-15 17:00:00'),
+    (event_id2, target_user_id, 'COMPLETED', '2025-01-25 09:00:00', '2025-01-25 16:00:00');
+    
+    -- 2月のデータ（3件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id3, target_user_id, 'COMPLETED', '2025-02-05 10:00:00', '2025-02-05 17:00:00'),
+    (event_id4, target_user_id, 'ACTIVE', '2025-02-12 09:00:00', '2025-02-12 16:00:00'),
+    (event_id5, target_user_id, 'COMPLETED', '2025-02-20 14:00:00', '2025-02-20 18:00:00');
+    
+    -- 3月のデータ（1件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id1, target_user_id, 'ACTIVE', '2025-03-10 10:00:00', '2025-03-10 17:00:00');
+    
+    -- 4月のデータ（4件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id2, target_user_id, 'COMPLETED', '2025-04-05 09:00:00', '2025-04-05 17:00:00'),
+    (event_id3, target_user_id, 'COMPLETED', '2025-04-15 10:00:00', '2025-04-15 16:00:00'),
+    (event_id4, target_user_id, 'ACTIVE', '2025-04-22 13:00:00', '2025-04-22 18:00:00'),
+    (event_id5, target_user_id, 'PENDING', '2025-04-28 11:00:00', '2025-04-28 15:00:00');
+    
+    -- 5月のデータ（2件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id1, target_user_id, 'ACTIVE', '2025-05-08 10:00:00', '2025-05-08 17:00:00'),
+    (event_id2, target_user_id, 'COMPLETED', '2025-05-18 09:00:00', '2025-05-18 16:00:00');
+    
+    -- 6月のデータ（3件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id3, target_user_id, 'COMPLETED', '2025-06-08 10:00:00', '2025-06-08 17:00:00'),
+    (event_id4, target_user_id, 'COMPLETED', '2025-06-15 09:00:00', '2025-06-15 16:00:00'),
+    (event_id5, target_user_id, 'ACTIVE', '2025-06-25 14:00:00', '2025-06-25 18:00:00');
+    
+    -- 7月のデータ（4件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id1, target_user_id, 'COMPLETED', '2025-07-03 10:00:00', '2025-07-03 17:00:00'),
+    (event_id2, target_user_id, 'COMPLETED', '2025-07-12 09:00:00', '2025-07-12 16:00:00'),
+    (event_id3, target_user_id, 'ACTIVE', '2025-07-20 13:00:00', '2025-07-20 18:00:00'),
+    (event_id4, target_user_id, 'PENDING', '2025-07-28 11:00:00', '2025-07-28 15:00:00');
+    
+    -- 8月のデータ（2件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id5, target_user_id, 'COMPLETED', '2025-08-05 10:00:00', '2025-08-05 17:00:00'),
+    (event_id1, target_user_id, 'ACTIVE', '2025-08-18 09:00:00', '2025-08-18 16:00:00');
+    
+    -- 9月のデータ（3件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id2, target_user_id, 'COMPLETED', '2025-09-08 10:00:00', '2025-09-08 17:00:00'),
+    (event_id3, target_user_id, 'COMPLETED', '2025-09-15 09:00:00', '2025-09-15 16:00:00'),
+    (event_id4, target_user_id, 'ACTIVE', '2025-09-25 14:00:00', '2025-09-25 18:00:00');
+    
+    -- 10月のデータ（2件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id5, target_user_id, 'COMPLETED', '2025-10-10 10:00:00', '2025-10-10 17:00:00'),
+    (event_id1, target_user_id, 'PENDING', '2025-10-22 09:00:00', '2025-10-22 16:00:00');
+    
+    -- 11月のデータ（1件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id2, target_user_id, 'ACTIVE', '2025-11-12 10:00:00', '2025-11-12 17:00:00');
+    
+    -- 12月のデータ（3件）
+    INSERT INTO participants (event_id, user_id, status, created_at, updated_at) VALUES 
+    (event_id3, target_user_id, 'COMPLETED', '2025-12-05 10:00:00', '2025-12-05 17:00:00'),
+    (event_id4, target_user_id, 'COMPLETED', '2025-12-15 09:00:00', '2025-12-15 16:00:00'),
+    (event_id5, target_user_id, 'ACTIVE', '2025-12-22 14:00:00', '2025-12-22 18:00:00');
+    
+END $$;
 
 -- player用デモデータの挿入
 INSERT INTO player (
@@ -331,6 +431,25 @@ BEGIN
             'チームでの協力が求められる場面で、リーダーシップを発揮していました。もう少し他のメンバーとの連携を意識するとさらに良くなるでしょう。' as comment
         FROM applications a2 
         WHERE a2.application_id = app_id2;
+        
+        -- 追加のレビューデータを挿入（企業評価データを増やすため）
+        INSERT INTO reviews (
+            reviewee_id,
+            reviewer_id,
+            event_id,
+            rating,
+            comment
+        ) VALUES
+        -- 田中太郎への追加レビュー
+        ('11111111-1111-1111-1111-111111111111', 'c0000002-0000-0000-0000-000000000002', 
+         (SELECT event_id FROM events LIMIT 1 OFFSET 2), 4.2, 
+         'コミュニケーション能力が高く、チームワークに貢献していました。'),
+        ('11111111-1111-1111-1111-111111111111', 'c0000003-0000-0000-0000-000000000003', 
+         (SELECT event_id FROM events LIMIT 1 OFFSET 3), 4.8, 
+         '非常に意欲的で、技術的な質問も的確でした。素晴らしい参加者です。'),
+        ('11111111-1111-1111-1111-111111111111', '12345678-1234-1234-1234-123456789012', 
+         (SELECT event_id FROM events LIMIT 1 OFFSET 4), 3.9, 
+         '真面目に取り組んでいましたが、もう少し積極性があると良いでしょう。');
         
         RAISE NOTICE 'レビューテストデータを正常に挿入しました。';
     ELSE

@@ -87,39 +87,47 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  decorators: [(Story, { args }) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
+  decorators: [(Story) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
+  args: {
+    userId: "11111111-1111-1111-1111-111111111111",
+  },
 };
 
 export const CustomData: Story = {
-  decorators: [(Story, { args }) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
+  decorators: [(Story) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
   args: {
     logs: customLogs,
+    userId: "11111111-1111-1111-1111-111111111111",
   },
 };
 
 export const LimitedItems: Story = {
-  decorators: [(Story, { args }) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
+  decorators: [(Story) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
   args: {
     maxItems: 3,
+    userId: "11111111-1111-1111-1111-111111111111",
   },
 };
 
 export const LeftAligned: Story = {
-  decorators: [(Story, { args }) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
+  decorators: [(Story) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
   args: {
     titleAlign: 'left',
+    userId: "11111111-1111-1111-1111-111111111111",
   },
 };
 
 export const LargeAvatars: Story = {
-  decorators: [(Story, { args }) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
+  decorators: [(Story) => <ReduxWrapper theme="light"><Story /></ReduxWrapper>],
   args: {
     avatarSize: 48,
+    userId: "11111111-1111-1111-1111-111111111111",
   },
 };
 
 export const DarkMode: Story = {
-  decorators: [(Story, { args }) => <ReduxWrapper theme="dark"><Story /></ReduxWrapper>],
+  decorators: [(Story) => <ReduxWrapper theme="dark"><Story /></ReduxWrapper>],
+  args: {
+    userId: "11111111-1111-1111-1111-111111111111",
+  },
 };
-
-export {};

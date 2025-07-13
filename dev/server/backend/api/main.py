@@ -11,11 +11,11 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from dotenv import load_dotenv
 
-# Routers
-from routers.sys import root, health
-from routers.debug import error_report
-from routers.func import ai_review
-from routers import (
+# src.routers
+from src.routers.sys import root, health
+from src.routers.debug import error_report
+from src.routers.func import ai_review
+from src.routers import (
     event,
     applicant,
     application,
@@ -25,10 +25,16 @@ from routers import (
     get_events,
     join_event,
 )
-from routers.api import prefix as api_prefix
-from routers.demo import (
+from src.routers.api import prefix as api_prefix
+from src.routers.demo import (
     get_events as demo_get_events,
     join_event as demo_join_event,
+)
+from src.routers.charts import (
+    participation_internship,
+    game_progress,
+    game_logs,
+    company_evaluations,
 )
 
 load_dotenv()  # .envファイルから環境変数を読み込む
@@ -53,7 +59,7 @@ app.add_middleware(
 )
 
 # ---------------------------------------------------------------------
-#  Register routers
+#  Register src.routers
 # ---------------------------------------------------------------------
 app.include_router(root.router)  # /sys/root
 app.include_router(health.router)  # /sys/health
@@ -72,7 +78,10 @@ app.include_router(join_event.router)  # /join-event
 app.include_router(api_prefix.api_router)  # /api（APIプレフィックス付きルーター）
 app.include_router(demo_get_events.router)  # /demo/get-events
 app.include_router(demo_join_event.router)  # /demo/join-event
-
+app.include_router(participation_internship.router)  # /charts/participation_internship
+app.include_router(game_progress.router)  # /charts/game_progress
+app.include_router(game_logs.router)  # /charts/game_logs
+app.include_router(company_evaluations.router)  # /charts/company_evaluations
 
 # ---------------------------------------------------------------------
 #  Custom Handlers

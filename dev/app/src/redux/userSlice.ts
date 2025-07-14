@@ -23,14 +23,14 @@ export const userSlice = createSlice({
         userId: "11111111-1111-1111-1111-111111111111", // デフォルトのテスト用UUID
         user_id: "11111111-1111-1111-1111-111111111111", // 互換性のため同じ値
         isLoggedIn: true,
-        last_name: undefined,
-        first_name: undefined,
-        mail_address: undefined,
-        phone_number: undefined,
-        address: undefined,
-        birth_date: undefined,
-        license: undefined,
-        updated_at: undefined,
+        last_name: "田中",
+        first_name: "太郎", 
+        mail_address: "tanaka.tarou@example.com",
+        phone_number: "090-1234-5678",
+        address: "東京都渋谷区1-1-1",
+        birth_date: "1990-01-01",
+        license: "普通自動車免許\n危険物取扱者",
+        updated_at: new Date().toISOString(),
     } as UserState,
     reducers: {
         setUserId: (state, action) => {

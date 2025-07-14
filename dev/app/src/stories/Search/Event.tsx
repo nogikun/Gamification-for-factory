@@ -147,6 +147,7 @@ export const Event = ({
     const darkTheme = useSelector((state: RootState) => state.theme.isDarkMode);
     const host = useSelector((state: RootState) => state.server.host);
     const portState = useSelector((state: RootState) => state.server.port);
+    const userInfo = useSelector((state: RootState) => state.user);
 
     // useEffect
     useEffect(() => {
@@ -445,6 +446,17 @@ export const Event = ({
     };
 
     const handleApplyButtonClick = () => {
+        // ユーザー情報をフォームに自動設定
+        setFormData({
+            lastName: userInfo.last_name || '',
+            firstName: userInfo.first_name || '',
+            email: userInfo.mail_address || '',
+            phoneNumber: userInfo.phone_number || '',
+            birthDate: userInfo.birth_date || '',
+            address: userInfo.address || '',
+            licenses: userInfo.license || '',
+            motivation: '',
+        });
         setShowForm(true);
         // 元のonClickはここでは実行しないか、または別の形で利用
     };

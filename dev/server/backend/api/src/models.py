@@ -106,7 +106,7 @@ class ReviewRequest(Base):
     __tablename__ = "review_requests"
     __table_args__ = {"schema": "public"}
     
-    review_request_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    request_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     application_id = Column(UUID(as_uuid=True), ForeignKey("applications.application_id"), nullable=False)
     requested_by = Column(UUID(as_uuid=True), nullable=False)
     requested_at = Column(DateTime, server_default=func.now())

@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
+import uuid
 
 # Local imports
 from src.schemas.database.review import Review as ReviewDetail
 from src.schemas.database.applicant import Applicant as ApplicantSchema
+from src.schemas.database.review_notification import ReviewNotificationDetail
 from src.database import get_db
+from src.crud import get_review_notifications
 
 # endpoint imports
 from ..applications import get_applicants_api
@@ -34,3 +37,15 @@ async def get_api_reviews(
 ) -> List[ReviewDetail]:
     """API endpoint to get a list of reviews with API prefix."""
     return await get_reviews_api(skip=skip, limit=limit, db=db)
+
+
+@api_router.get("/review-notification", response_model=List[ReviewNotificationDetail])
+async def get_review_notification_api(
+    user_id: Optional[uuid.UUID] = None,
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+) -> List[ReviewNotificationDetail]:
+    """API endpoint to get review notifications. Each call triggers notification."""
+    notifications = get_review_notifications(db=db, user_id=user_id, skip=skip, limit=limit)
+    return notifications

@@ -19,5 +19,12 @@ export const serverSlice = createSlice({
         }
     },
 });
+
+// セレクター関数
+export const selectServerUrl = (state: any): string => {
+    const { host, port } = state.server;
+    return port ? `${host}:${port}` : host;
+};
+
 export const { setServerUrl } = serverSlice.actions; // アクションをエクスポート
 export const serverReducer = serverSlice.reducer; // リデューサーをエクスポート

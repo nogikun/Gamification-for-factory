@@ -17,6 +17,8 @@ from src.models import (
   Application as ApplicationModel,
   ApplicationStatusEnum, Event as EventModel,
   EventTypeEnum, Review as ReviewModel,
+  ReviewRequest as ReviewRequestModel,
+  ReviewStatusEnum,
   User as UserModel, UserTypeEnum
 )
 from src.schemas.database.application import (
@@ -579,6 +581,69 @@ def delete_review(db: Session, review_id: uuid.UUID) -> bool:
     db.delete(review)
     db.commit()
     return True
+
+
+# レビュー通知を取得する関数
+def get_review_notifications(
+    db: Session,
+    user_id: Optional[uuid.UUID] = None,
+    skip: int = 0,
+    limit: int = 100
+) -> List[Dict]:
+    """Get review notifications with application, event, and applicant details."""
+    print(f"DEBUG: Getting review notifications for user_id: {user_id}")
+    
+    # ReviewRequest, Application, Event, Applicantを結合してクエリ
+    query = (
+        db.query(
+            ReviewRequestModel.request_id.label("review_request_id"),
+            ReviewRequestModel.application_id,
+            ReviewRequestModel.requested_by.label("reviewer_id"),
+            ReviewRequestModel.requested_at,
+            ReviewRequestModel.request_message,
+            ReviewRequestModel.status,
+            ApplicationModel.user_id.label("reviewee_id"),
+            EventModel.title.label("event_title"),
+            ApplicantModel.last_name.label("applicant_last_name"),
+            ApplicantModel.first_name.label("applicant_first_name")
+        )
+        .join(ApplicationModel, ReviewRequestModel.application_id == ApplicationModel.application_id)
+        .join(EventModel, ApplicationModel.event_id == EventModel.event_id)
+        .join(ApplicantModel, ApplicationModel.user_id == ApplicantModel.user_id)
+    )
+    
+    # APPROVEDステータスの応募のみを対象とする（承認された応募のレビューのみ通知）
+    query = query.filter(ApplicationModel.status == ApplicationStatusEnum.APPROVED)
+    
+    # 特定のユーザーのリクエストのみ取得する場合
+    # 通知を受け取るのはレビューされる人（reviewee）なので、application.user_idでフィルタリング
+    if user_id:
+        query = query.filter(ApplicationModel.user_id == user_id)
+    
+    # REQUESTEDステータスのもののみ取得（通知対象）
+    query = query.filter(ReviewRequestModel.status == ReviewStatusEnum.REQUESTED)
+    
+    # ページング
+    results = query.offset(skip).limit(limit).all()
+    print(f"DEBUG: Query results count: {len(results)}")
+    
+    # 結果をDict形式に変換
+    notification_list = []
+    for row in results:
+        notification_dict = {
+            "review_request_id": row.review_request_id,
+            "application_id": row.application_id,
+            "reviewee_id": row.reviewee_id,
+            "reviewer_id": row.reviewer_id,
+            "requested_at": row.requested_at,
+            "request_message": row.request_message,
+            "status": row.status.value if hasattr(row.status, 'value') else row.status,
+            "event_title": row.event_title,
+            "applicant_name": f"{row.applicant_last_name} {row.applicant_first_name}"
+        }
+        notification_list.append(notification_dict)
+    
+    return notification_list
 
 
 # 応募者を更新する関数

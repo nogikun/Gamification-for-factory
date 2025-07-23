@@ -1,0 +1,37 @@
+.review-page-container {
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure the form is responsive */
+.review-page-container .InternshipReviewForm {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .review-page-container {
+    padding: 10px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .review-page-container {
+    background-color: #1e1e1e;
+  }
+}
+
+/* iOS safe area adjustments */
+.review-page-container {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}

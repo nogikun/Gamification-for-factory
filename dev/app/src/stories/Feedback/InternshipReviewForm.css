@@ -1,0 +1,185 @@
+.InternshipReviewForm {
+  font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.InternshipReviewForm * {
+  box-sizing: border-box;
+}
+
+.InternshipReviewForm .MuiPaper-root {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+.InternshipReviewForm .MuiCard-root {
+  box-shadow: none;
+  border-radius: 8px;
+}
+
+.InternshipReviewForm .MuiTextField-root {
+  margin-bottom: 8px;
+}
+
+.InternshipReviewForm .MuiOutlinedInput-root {
+  border-radius: 8px;
+}
+
+.InternshipReviewForm .MuiButton-root {
+  border-radius: 8px;
+  text-transform: none;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.InternshipReviewForm .MuiButton-contained {
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+.InternshipReviewForm .MuiButton-contained:hover {
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.4);
+  transform: translateY(-1px);
+}
+
+.InternshipReviewForm .MuiRating-root {
+  gap: 4px;
+}
+
+.InternshipReviewForm .MuiRating-iconFilled {
+  color: #ffd700;
+}
+
+.InternshipReviewForm .MuiRating-iconHover {
+  color: #ffed4e;
+}
+
+.InternshipReviewForm .MuiRating-iconEmpty {
+  color: rgba(0, 0, 0, 0.26);
+}
+
+.InternshipReviewForm .MuiFormHelperText-root {
+  margin-left: 0;
+  margin-top: 4px;
+}
+
+.InternshipReviewForm .MuiDivider-root {
+  margin: 24px 0;
+}
+
+.InternshipReviewForm .MuiTypography-h4 {
+  font-weight: 600;
+  color: #1976d2;
+  margin-bottom: 8px;
+}
+
+.InternshipReviewForm .MuiTypography-subtitle1 {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.InternshipReviewForm .MuiTypography-h6 {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.InternshipReviewForm .MuiSnackbar-root {
+  max-width: 600px;
+}
+
+.InternshipReviewForm .MuiAlert-root {
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Dark mode adjustments */
+.InternshipReviewForm .MuiPaper-root[data-mui-color-scheme="dark"] {
+  background-color: #1e1e1e;
+}
+
+.InternshipReviewForm .MuiTypography-h4[data-mui-color-scheme="dark"] {
+  color: #90caf9;
+}
+
+.InternshipReviewForm .MuiTypography-subtitle1[data-mui-color-scheme="dark"] {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.InternshipReviewForm .MuiRating-iconEmpty[data-mui-color-scheme="dark"] {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Loading state */
+.InternshipReviewForm .MuiCircularProgress-root {
+  color: inherit;
+}
+
+/* Form spacing */
+.InternshipReviewForm .MuiStack-root > .MuiFormControl-root {
+  margin-bottom: 0;
+}
+
+/* Input icons */
+.InternshipReviewForm .MuiInputAdornment-root svg {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.InternshipReviewForm .MuiInputAdornment-root[data-mui-color-scheme="dark"] svg {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Focus states */
+.InternshipReviewForm .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #1976d2;
+  border-width: 2px;
+}
+
+.InternshipReviewForm .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #1976d2;
+  border-width: 2px;
+}
+
+/* Error states */
+.InternshipReviewForm .MuiOutlinedInput-root.Mui-error .MuiOutlinedInput-notchedOutline {
+  border-color: #d32f2f;
+}
+
+.InternshipReviewForm .MuiFormHelperText-root.Mui-error {
+  color: #d32f2f;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .InternshipReviewForm .MuiPaper-root {
+    margin: 8px;
+    padding: 16px;
+  }
+  
+  .InternshipReviewForm .MuiTypography-h4 {
+    font-size: 1.75rem;
+  }
+  
+  .InternshipReviewForm .MuiButton-root {
+    min-width: 160px;
+    font-size: 14px;
+  }
+  
+  .InternshipReviewForm .MuiRating-root {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .InternshipReviewForm {
+    padding: 8px;
+  }
+  
+  .InternshipReviewForm .MuiTypography-h4 {
+    font-size: 1.5rem;
+  }
+  
+  .InternshipReviewForm .MuiTypography-subtitle1 {
+    font-size: 0.9rem;
+  }
+}

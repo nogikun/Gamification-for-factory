@@ -28,7 +28,7 @@ import {
 } from "@mui/material";
 
 // アイコンのインポート
-import { Refresh } from "@mui/icons-material";
+import { Refresh, NotificationImportant, RateReview } from "@mui/icons-material";
 
 import {
 	IonContent,
@@ -37,11 +37,15 @@ import {
 	IonTitle,
 	IonToolbar,
 } from "@ionic/react";
+import { useHistory } from "react-router-dom";
 import "./Tab3.css";
 
 // components
 import { MenuTile } from '../stories/Menu/MenuTile';
 import { FeedbackTab } from '../stories/Feedback/FeedbackTab';
+
+// Review notification hook
+import { useReviewNotification } from '../hooks/useReviewNotification';
 
 // テーマカスタマイゼーション
 const createCustomTheme = (mode: 'light' | 'dark') => {
@@ -105,6 +109,9 @@ const Tab3: React.FC = () => {
 	const theme = React.useMemo(() => createCustomTheme(prefersDarkMode ? 'dark' : 'light'), [prefersDarkMode]);
 	const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 	
+	// React Router history hook
+	const history = useHistory();
+	
 	// Redux storeからサーバー設定を取得
 	const host = useSelector((state: any) => state.server.host);
     const port = useSelector((state: any) => state.server.port);
@@ -137,6 +144,14 @@ const Tab3: React.FC = () => {
 	
 	// 固定のユーザーID
 	const userId = "11111111-1111-1111-1111-111111111111";
+
+	// Review notification hook
+	const { 
+		fetchAndShowNotifications, 
+		loading: notificationLoading,
+		error: notificationError,
+		notifications 
+	} = useReviewNotification();
 	
 	// APIからデータを取得する関数
 	const fetchParticipationData = React.useCallback(async () => {
@@ -230,6 +245,13 @@ const Tab3: React.FC = () => {
 		fetchGameLogData();
 	}, [fetchParticipationData, fetchGameProgress, fetchCompanyEvaluations, fetchGameLogData]);
 	
+	// レビュー通知をチェックする関数
+	const checkReviewNotifications = React.useCallback(async () => {
+		console.log('レビュー通知チェック開始');
+		await fetchAndShowNotifications(userId, true);
+		console.log('レビュー通知チェック完了');
+	}, [fetchAndShowNotifications, userId]);
+
 	// すべてのデータを再取得する関数
 	const refreshAllData = React.useCallback(async () => {
 		console.log('データ更新開始');
@@ -251,6 +273,11 @@ const Tab3: React.FC = () => {
 			console.error('データ更新エラー:', error);
 		}
 	}, [fetchParticipationData, fetchGameProgress, fetchCompanyEvaluations, fetchGameLogData]);
+
+	// レビューページへの遷移関数
+	const navigateToReview = React.useCallback(() => {
+		history.push('/review');
+	}, [history]);
 	
 	return (
 		<IonPage>
@@ -445,8 +472,9 @@ const Tab3: React.FC = () => {
                 {/* 空白分を確保する必要がある（現在は臨時） */}
                 <br />
 
-                {/* リロードボタン */}
-                <Box sx={{ padding: { xs: '0 16px', md: '0 24px' }, marginBottom: 2 }}>
+                {/* ボタン群 */}
+                <Box sx={{ padding: { xs: '0 16px', md: '0 24px' }, marginBottom: 2, gap: 2, display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
+                    {/* リロードボタン */}
                     <Paper 
                         sx={{
                             p: 2,
@@ -457,13 +485,61 @@ const Tab3: React.FC = () => {
                             transition: 'background-color 0.3s',
                             '&:hover': {
                                 backgroundColor: '#5000d9',
-                            }
+                            },
+                            flex: { sm: 1 }
                         }}
                         onClick={refreshAllData}
                     >
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <Refresh sx={{ mr: 1 }} />
                             <Typography variant="body1">データを更新</Typography>
+                        </Box>
+                    </Paper>
+
+                    {/* レビュー通知ボタン */}
+                    <Paper 
+                        sx={{
+                            p: 2,
+                            backgroundColor: '#ff6100',
+                            color: 'white',
+                            borderRadius: 2,
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s',
+                            '&:hover': {
+                                backgroundColor: '#e55500',
+                            },
+                            flex: { sm: 1 },
+                            opacity: notificationLoading ? 0.7 : 1
+                        }}
+                        onClick={checkReviewNotifications}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <NotificationImportant sx={{ mr: 1 }} />
+                            <Typography variant="body1">
+                                {notificationLoading ? 'チェック中...' : 'レビュー通知チェック'}
+                            </Typography>
+                        </Box>
+                    </Paper>
+
+                    {/* レビュー投稿ボタン */}
+                    <Paper 
+                        sx={{
+                            p: 2,
+                            backgroundColor: '#2e7d32',
+                            color: 'white',
+                            borderRadius: 2,
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s',
+                            '&:hover': {
+                                backgroundColor: '#1b5e20',
+                            },
+                            flex: { sm: 1 }
+                        }}
+                        onClick={navigateToReview}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <RateReview sx={{ mr: 1 }} />
+                            <Typography variant="body1">レビュー投稿</Typography>
                         </Box>
                     </Paper>
                 </Box>

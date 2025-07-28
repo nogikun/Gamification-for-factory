@@ -24,3 +24,6 @@ public class ExampleInstrumentedTest {
         assertEquals("com.getcapacitor.app", appContext.getPackageName());
     }
 }
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

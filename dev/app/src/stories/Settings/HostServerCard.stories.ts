@@ -29,3 +29,5 @@ export const Primary: Story = {
         port: '3000',
     },
 };
+// Copyright (c) 2025 nogi, nogikun
+// All rights reserved.

@@ -70,3 +70,6 @@ def test_review_converter():
 if __name__ == "__main__":
     check_database_schema()
     test_review_converter()
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

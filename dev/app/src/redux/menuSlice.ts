@@ -22,3 +22,5 @@ export const menuSlice = createSlice({
 });
 export const { toggleMenu, toggleTopButtons } = menuSlice.actions; // アクションをエクスポート
 export const menuReducer = menuSlice.reducer; // リデューサーをエクスポート
+// Copyright (c) 2025 nogi
+// All rights reserved.

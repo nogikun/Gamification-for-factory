@@ -59,3 +59,5 @@ async def get_company_evaluations_by_user(
         )
     
     return CompanyEvaluationsModel(evaluations=evaluations)
+# Copyright (c) 2025 nogi
+# All rights reserved.

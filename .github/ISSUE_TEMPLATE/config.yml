@@ -15,3 +15,5 @@ defaults:
   - template: "add_development_task.yml"
     name: "💻 Developmentタスクを設定する"
     about: "開発タスクを定義する"
+# Copyright (c) 2025 nogi
+# All rights reserved.

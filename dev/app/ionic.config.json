@@ -3,5 +3,10 @@
   "integrations": {
     "capacitor": {}
   },
-  "type": "react"
+  "type": "react",
+  "_copyright": {
+    "notice": "Copyright (c) 2025 nogi, KazuakiTakahashi",
+    "message": "All rights reserved.",
+    "generated": "2025-07-28T02:24:49.724734"
+  }
 }

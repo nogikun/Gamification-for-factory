@@ -127,3 +127,5 @@ export const validateOpenaiApiKey = (apiKey: string): boolean => {
     const openaiKeyPattern = /^sk-[A-Za-z0-9]{48}$/;
     return openaiKeyPattern.test(apiKey);
 };
+// Copyright (c) 2025 nogi
+// All rights reserved.

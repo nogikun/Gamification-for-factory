@@ -190,3 +190,6 @@ export default function DashboardCalendar() {
     </div>
   );
 }
+
+// Copyright (c) 2025 nogi, Kaito220009
+// All rights reserved.

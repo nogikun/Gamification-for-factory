@@ -149,3 +149,6 @@ def test_create_review(application_id, reviewer_id):
     except Exception as e:
         print(f"Error: {e}")
         assert False
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

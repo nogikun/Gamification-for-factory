@@ -14,3 +14,6 @@ window.matchMedia =
 			removeListener: function () {},
 		};
 	};
+
+// Copyright (c) 2025 nogi, KazuakiTakahashi
+// All rights reserved.

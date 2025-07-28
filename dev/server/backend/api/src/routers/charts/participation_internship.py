@@ -62,3 +62,5 @@ async def get_participation_internship_by_user(
         )
     
     return ParticipationInternshipsModel(internships=internships)
+# Copyright (c) 2025 nogi
+# All rights reserved.

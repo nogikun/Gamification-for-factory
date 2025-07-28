@@ -158,3 +158,5 @@ The game component from `game/game.tiiki/` has been integrated into the mobile a
 ### UI Design Constraints
 - **Tab1 UI must remain unchanged** - do not modify Tab1's appearance or functionality
 - Other tab UIs should be preserved unless explicitly requested to change
+<!-- Copyright (c) 2025 Kaito220009 -->
+<!-- All rights reserved. -->

@@ -1049,3 +1049,6 @@ var S = n.reduce(
 export {
   S as globalsModuleInfoMap
 };
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

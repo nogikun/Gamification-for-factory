@@ -148,3 +148,5 @@ if __name__ == "__main__":
     from datetime import date
     event_data = db_connector.select_events_by_date(date(2025, 5, 11))
     print(f"【テスト】2025-05-11: {event_data.__len__()}件のイベントが見つかりました。")
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

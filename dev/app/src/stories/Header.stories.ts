@@ -31,3 +31,6 @@ export const LoggedIn: Story = {
 };
 
 export const LoggedOut: Story = {};
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

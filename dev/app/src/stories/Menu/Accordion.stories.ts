@@ -68,3 +68,5 @@ export const MenuButton: Story = {
         borderWidth: 3
     }
 };
+// Copyright (c) 2025 nogi, KazuakiTakahashi, nogikun
+// All rights reserved.

@@ -41589,3 +41589,6 @@ z.addEventListener("error", (e) => {
 z.addEventListener("unhandledrejection", ({ reason: e }) => {
   z.sendTelemetryError(e);
 });
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

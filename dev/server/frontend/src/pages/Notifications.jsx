@@ -237,3 +237,6 @@ export default function Notifications() {
     </div>
   );
 }
+
+// Copyright (c) 2025 nogi, nogikun, Kaito220009
+// All rights reserved.

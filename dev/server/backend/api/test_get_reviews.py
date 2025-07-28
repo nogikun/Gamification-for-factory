@@ -37,3 +37,6 @@ except Exception as e:
 
 finally:
     db_session.close()
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

@@ -44,3 +44,6 @@ class Applicant(ApplicantBase):
 
     class Config:
         from_attributes = True
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

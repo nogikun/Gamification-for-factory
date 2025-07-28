@@ -7743,3 +7743,6 @@ Ff();
 export {
   Ff as setup
 };
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

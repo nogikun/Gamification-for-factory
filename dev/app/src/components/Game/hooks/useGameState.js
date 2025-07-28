@@ -424,3 +424,5 @@ export const useGameState = () => {
     updateGameValues
   };
 }; 
+// Copyright (c) 2025 Kaito220009
+// All rights reserved.

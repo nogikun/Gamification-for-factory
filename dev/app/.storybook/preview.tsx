@@ -42,3 +42,5 @@ const preview: Preview = {
 };
 
 export default preview;
+// Copyright (c) 2025 nogi
+// All rights reserved.

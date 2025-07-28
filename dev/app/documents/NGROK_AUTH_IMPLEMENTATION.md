@@ -113,3 +113,6 @@ interface NgrokAuthState {
 
 ## バージョン
 1.0.0
+
+<!-- Copyright (c) 2025 nogi -->
+<!-- All rights reserved. -->

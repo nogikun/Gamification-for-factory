@@ -123,3 +123,6 @@ urllib3==2.5.0
     # via requests
 uvicorn==0.34.0
     # via api
+
+# Copyright (c) 2025 nogi, Hiro-tonton, nogikun
+# All rights reserved.

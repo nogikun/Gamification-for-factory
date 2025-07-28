@@ -27,3 +27,6 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

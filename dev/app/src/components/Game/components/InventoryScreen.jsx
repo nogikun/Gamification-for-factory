@@ -147,3 +147,5 @@ const InventoryScreen = ({ gameState, onEquipWeapon, onUnequipWeapon, onChangeSc
 };
 
 export default InventoryScreen; 
+// Copyright (c) 2025 Kaito220009
+// All rights reserved.

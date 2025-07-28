@@ -46,3 +46,5 @@ class AIReview(BaseModel):
 
 # Alias for better semantic naming
 AIReviewResponse = AIReview
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

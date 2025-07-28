@@ -260,3 +260,6 @@ export const DesktopView: Story = {
     theme: 'light'
   }
 };
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

@@ -91,3 +91,6 @@ const Tab1: React.FC = () => {
 };
 
 export default Tab1;
+
+// Copyright (c) 2025 nogi, KazuakiTakahashi, nogikun
+// All rights reserved.

@@ -51,3 +51,5 @@ class CompanyEvaluationModel(BaseModel):
 class CompanyEvaluationsModel(BaseModel):
     """ `/charts/company_evaluations` APIのレスポンスモデル """
     evaluations: List[CompanyEvaluationModel] = Field(..., description="Array of company evaluations")
+# Copyright (c) 2025 nogi
+# All rights reserved.

@@ -17,3 +17,5 @@ EXPOSE 5173
 
 # Vite開発サーバーを起動
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+# Copyright (c) 2025 nogi, Kaito220009
+# All rights reserved.

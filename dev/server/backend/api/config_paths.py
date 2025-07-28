@@ -42,3 +42,6 @@ def get_api_schema_module(module_name: str):
     """Get API schema module by name"""
     import importlib
     return importlib.import_module(f"schemas.api.{module_name}")
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

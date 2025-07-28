@@ -396,3 +396,5 @@ const SettingsScreen = ({ gameState, onChangeScreen, onUpdateGameValues, onAddWe
 };
 
 export default SettingsScreen;
+// Copyright (c) 2025 Kaito220009
+// All rights reserved.

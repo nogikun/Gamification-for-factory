@@ -20,3 +20,6 @@ const Tab2: React.FC = () => {
 };
 
 export default Tab2;
+
+// Copyright (c) 2025 nogi, KazuakiTakahashi, Kaito220009
+// All rights reserved.

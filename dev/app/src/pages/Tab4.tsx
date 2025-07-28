@@ -403,3 +403,6 @@ const Tab4: React.FC = () => {
 };
 
 export default Tab4;
+
+// Copyright (c) 2025 nogi, KazuakiTakahashi, nogikun
+// All rights reserved.

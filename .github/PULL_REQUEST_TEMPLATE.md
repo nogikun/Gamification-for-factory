@@ -43,3 +43,6 @@ Figma:
 
 # その他
 <!-- レビュアーへのメッセージや一言などあれば -->
+
+<!-- Copyright (c) 2025 nogi -->
+<!-- All rights reserved. -->

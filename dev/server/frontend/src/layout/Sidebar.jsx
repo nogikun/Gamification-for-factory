@@ -69,3 +69,6 @@ export default function Sidebar({ open, onClose }) {
     </aside>
   );
 }
+
+// Copyright (c) 2025 nogi, Kaito220009
+// All rights reserved.

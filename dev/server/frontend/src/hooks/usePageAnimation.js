@@ -67,3 +67,6 @@ export function usePageAnimation({ containerRef, titleRef, contentRefs = [] }) {
     };
   }, [location.pathname]); // Only depend on pathname change
 }
+
+// Copyright (c) 2025 nogi, Kaito220009
+// All rights reserved.

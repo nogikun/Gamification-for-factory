@@ -16,3 +16,6 @@ logs/*.txt
 logs/error/*.txt
 !logs/error/.gitkeep
 !logs/error/README.md
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

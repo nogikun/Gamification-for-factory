@@ -57,3 +57,6 @@ except Exception as e:
 finally:
     db_session.close()
     print("\n=== テスト完了 ===")
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

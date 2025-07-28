@@ -36,5 +36,10 @@
     "tailwindcss": "^4.1.4",
     "vite": "^6.2.0",
     "vite-plugin-css-modules": "^0.0.1"
+  },
+  "_copyright": {
+    "notice": "Copyright (c) 2025 nogi, Kaito220009",
+    "message": "All rights reserved.",
+    "generated": "2025-07-28T02:24:49.212328"
   }
 }

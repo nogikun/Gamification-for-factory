@@ -36,3 +36,6 @@ export const Primary : Story = {
         width: "500px"
     },
 };
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

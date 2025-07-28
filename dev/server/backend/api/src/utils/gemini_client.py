@@ -324,3 +324,6 @@ def create_review_summary(
             "comments_count": len([c for c in review_comments if c and c.strip()]),
             "model_used": "unknown"
         }
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

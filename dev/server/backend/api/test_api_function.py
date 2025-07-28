@@ -48,3 +48,6 @@ async def test_api_function():
 # 非同期関数を実行
 if __name__ == "__main__":
     asyncio.run(test_api_function())
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

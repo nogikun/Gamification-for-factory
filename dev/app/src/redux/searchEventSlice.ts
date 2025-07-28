@@ -20,3 +20,5 @@ export const searchEventSlice = createSlice({
 });
 export const { setEventId, clearEventId } = searchEventSlice.actions; // アクションをエクスポート
 export const searchEventReducer = searchEventSlice.reducer; // リデューサーをエクスポート
+// Copyright (c) 2025 nogi
+// All rights reserved.

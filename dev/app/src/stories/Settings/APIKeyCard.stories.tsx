@@ -241,3 +241,6 @@ export const FullWidth: Story = {
         ),
     ]
 };
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

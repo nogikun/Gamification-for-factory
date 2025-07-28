@@ -30,3 +30,6 @@ export const LoggedIn: Story = {
 		await expect(logoutButton).toBeInTheDocument();
 	},
 };
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

@@ -4,3 +4,5 @@ export default {
     autoprefixer: {},
   },
 }
+// Copyright (c) 2025 nogikun
+// All rights reserved.

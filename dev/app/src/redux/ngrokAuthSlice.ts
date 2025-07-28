@@ -100,3 +100,6 @@ export const {
 
 // リデューサーをエクスポート
 export const ngrokAuthReducer = ngrokAuthSlice.reducer;
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

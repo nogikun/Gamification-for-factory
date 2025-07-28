@@ -12046,3 +12046,6 @@ var as = ls, { document: N0 } = se, R0 = N0.getElementById("root");
 setTimeout(() => {
   Md(R0, new as());
 }, 0);
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

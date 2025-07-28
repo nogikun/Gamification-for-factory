@@ -10,3 +10,6 @@ google-generativeai
 
 # Additional utility packages
 python-multipart
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

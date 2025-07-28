@@ -132,3 +132,5 @@ eas build --platform android
 - [Capacitor Android Development](https://capacitorjs.com/docs/android)
 - [Android Command Line Tools](https://developer.android.com/studio/command-line)
 - [Gradle Build Tool](https://gradle.org/) 
+<!-- Copyright (c) 2025 Kaito220009 -->
+<!-- All rights reserved. -->

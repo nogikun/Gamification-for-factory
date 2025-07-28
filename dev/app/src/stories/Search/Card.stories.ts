@@ -69,3 +69,5 @@ export const Dark: Story = {
         campany: "Automation 株式会社"
     }
 };
+// Copyright (c) 2025 nogi
+// All rights reserved.

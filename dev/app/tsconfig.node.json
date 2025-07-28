@@ -5,5 +5,12 @@
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.ts"]
+  "include": [
+    "vite.config.ts"
+  ],
+  "_copyright": {
+    "notice": "Copyright (c) 2025 nogi",
+    "message": "All rights reserved.",
+    "generated": "2025-07-28T02:24:49.668620"
+  }
 }

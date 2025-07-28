@@ -29,3 +29,6 @@ class JoinEventRequest(BaseModel):
     """Join event request model matching frontend structure"""
     applicant: FrontendApplicant
     event_id_model: EventIdModel
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

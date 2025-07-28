@@ -306,3 +306,5 @@ function parseTags(tagsData: string | string[]): string[] {
 
     return processedTags.filter((tag): tag is string => tag !== null && tag.trim() !== '');
 }
+// Copyright (c) 2025 nogi, nogikun
+// All rights reserved.

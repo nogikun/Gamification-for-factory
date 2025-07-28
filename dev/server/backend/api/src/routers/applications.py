@@ -56,3 +56,6 @@ async def get_applicants_api(
     db_applicants = get_applicants(db, skip=skip, limit=limit)
     return [ApplicantSchema.model_validate(applicant)
             for applicant in db_applicants]
+
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

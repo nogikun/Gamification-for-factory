@@ -74,3 +74,6 @@ const CardFooter = React.forwardRef<
 CardFooter.displayName = "CardFooter"
 
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+
+// Copyright (c) 2025 nogikun
+// All rights reserved.

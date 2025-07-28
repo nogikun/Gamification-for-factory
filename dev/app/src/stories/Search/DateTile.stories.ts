@@ -28,3 +28,5 @@ export const Primary: Story = {
         horizonMargin: "10px"
     },
 };
+// Copyright (c) 2025 nogi
+// All rights reserved.

@@ -40,3 +40,6 @@ class ReviewDetail(Review):
     """Review detail model with related information"""
     event_title: Optional[str] = None
     applicant_name: Optional[str] = None
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

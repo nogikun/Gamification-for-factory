@@ -44,3 +44,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
+
+<!-- Copyright (c) 2025 nogi -->
+<!-- All rights reserved. -->

@@ -21,3 +21,5 @@ export const themeSlice = createSlice({
 });
 export const { toggleDarkMode, setDarkMode } = themeSlice.actions; // アクションをエクスポート
 export const themeReducer = themeSlice.reducer; // リデューサーをエクスポート
+// Copyright (c) 2025 nogi
+// All rights reserved.

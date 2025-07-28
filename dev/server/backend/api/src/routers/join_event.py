@@ -94,3 +94,6 @@ async def join_event_api(
             detail=f"Error creating application: {str(e)}"
         ) from e
     return {"message": "Successfully joined the event"}
+
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

@@ -309,3 +309,6 @@ export default function Applicants() {
     </div>
   );
 }
+
+// Copyright (c) 2025 nogi, Kaito220009
+// All rights reserved.

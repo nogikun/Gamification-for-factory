@@ -112,3 +112,5 @@ function App() {
 }
 
 export default App; 
+// Copyright (c) 2025 Kaito220009
+// All rights reserved.

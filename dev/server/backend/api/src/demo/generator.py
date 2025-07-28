@@ -139,3 +139,5 @@ class EventGenerator:
             event_data = self.generate_event_data(target_date)
             event_list.append(event_data)
         return event_list
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

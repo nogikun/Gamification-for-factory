@@ -196,3 +196,6 @@ fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait
 fi
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

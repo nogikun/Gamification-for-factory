@@ -9,3 +9,5 @@ export default {
   },
   plugins: [],
 }
+// Copyright (c) 2025 nogikun
+// All rights reserved.

@@ -28,3 +28,6 @@ export {
   trackViewportChanges
 };
 //# sourceMappingURL=keyboard2-HNXNNHUO.js.map
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

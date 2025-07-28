@@ -13,3 +13,6 @@ export {
   shadow
 };
 //# sourceMappingURL=ios.transition-JHLG6PBS.js.map
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

@@ -171,3 +171,6 @@ export function GameProgressGauge({
 }
 
 export default GameProgressGauge;
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

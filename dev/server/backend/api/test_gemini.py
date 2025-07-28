@@ -60,3 +60,6 @@ def test_gemini_connection():
 
 if __name__ == "__main__":
     test_gemini_connection()
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

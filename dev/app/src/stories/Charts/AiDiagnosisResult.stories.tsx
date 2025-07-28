@@ -80,3 +80,6 @@ export const DarkMode: Story = {
 };
 
 export {};
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

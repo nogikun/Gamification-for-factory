@@ -521,3 +521,6 @@ INSERT INTO game_logs (user_id, log_type_id, details) VALUES
 ('11111111-1111-1111-1111-111111111111', 5,
  '{"item_name": "回復薬", "quantity": 3}');
 
+
+# Copyright (c) 2025 nogi, nogikun, kanataiwamoto, Hiro-tonton, Kaito220009, kawamotodaichi, kanata
+# All rights reserved.

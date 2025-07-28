@@ -86,3 +86,5 @@ export const NotSelectedDarkDate: Story = {
         borderWidth: 3
     }
 };
+// Copyright (c) 2025 nogi
+// All rights reserved.

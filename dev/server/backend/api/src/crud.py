@@ -665,3 +665,5 @@ def delete_application(db: Session, application_id: uuid.UUID) -> bool:
     db.delete(application)
     db.commit()
     return True
+# Copyright (c) 2025 nogikun
+# All rights reserved.

@@ -117,3 +117,6 @@ if (window.runApiKeyTests) {
 };
 
 export default APIKeyTestPage;
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

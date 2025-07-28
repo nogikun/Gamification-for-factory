@@ -514,3 +514,5 @@ const Tab3: React.FC = () => {
 };
 
 export default Tab3;
+// Copyright (c) 2025 nogi, KazuakiTakahashi, Hiro-tonton, nogikun
+// All rights reserved.

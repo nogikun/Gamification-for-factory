@@ -135,3 +135,5 @@ src/
 ### git
 
 gitに上げる指示が出た際には、https://github.com/Kaito220009/game.tiiki/のブランチclaudecodeにプッシュまでしてください
+<!-- Copyright (c) 2025 Kaito220009 -->
+<!-- All rights reserved. -->

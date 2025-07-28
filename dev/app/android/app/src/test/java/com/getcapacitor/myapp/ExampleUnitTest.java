@@ -16,3 +16,6 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
     }
 }
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

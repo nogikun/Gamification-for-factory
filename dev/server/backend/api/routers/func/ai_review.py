@@ -165,3 +165,5 @@ async def ai_review(
         # その他の予期しないエラー
         error_message = f"レビューデータの取得中に予期しないエラーが発生しました: {str(e)}"
         return AIReview(comment=error_message)
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

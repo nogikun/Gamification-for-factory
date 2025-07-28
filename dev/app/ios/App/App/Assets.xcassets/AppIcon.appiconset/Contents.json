@@ -1,14 +1,19 @@
 {
-  "images" : [
+  "images": [
     {
-      "filename" : "AppIcon-512@2x.png",
-      "idiom" : "universal",
-      "platform" : "ios",
-      "size" : "1024x1024"
+      "filename": "AppIcon-512@2x.png",
+      "idiom": "universal",
+      "platform": "ios",
+      "size": "1024x1024"
     }
   ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
+  "info": {
+    "author": "xcode",
+    "version": 1
+  },
+  "_copyright": {
+    "notice": "Copyright (c) 2025 nogi",
+    "message": "All rights reserved.",
+    "generated": "2025-07-28T02:24:57.137403"
   }
 }

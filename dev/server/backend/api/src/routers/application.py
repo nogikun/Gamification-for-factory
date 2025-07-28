@@ -66,3 +66,6 @@ async def create_application_api(
             status_code=500,
             detail=f"Error creating application: {str(e)}"
         ) from e
+
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

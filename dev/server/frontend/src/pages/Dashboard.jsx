@@ -302,3 +302,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+// Copyright (c) 2025 nogi, nogikun, Kaito220009
+// All rights reserved.

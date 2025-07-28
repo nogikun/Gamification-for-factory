@@ -21,3 +21,6 @@ dependencies {
 if (hasProperty('postBuildExtras')) {
   postBuildExtras()
 }
+
+# Copyright (c) 2025 nogi, KazuakiTakahashi
+# All rights reserved.

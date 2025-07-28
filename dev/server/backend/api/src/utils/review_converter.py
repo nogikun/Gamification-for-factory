@@ -246,3 +246,6 @@ class ReviewConverter:
         except Exception as e:
             logger.error(f"Conversion integrity check failed: {e}")
             return False
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

@@ -16,3 +16,5 @@ indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
+# Copyright (c) 2025 KazuakiTakahashi
+# All rights reserved.

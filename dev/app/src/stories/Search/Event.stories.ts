@@ -37,3 +37,6 @@ export const Primary : Story ={
         zIndex: 0
     },
 };
+
+// Copyright (c) 2025 nogikun
+// All rights reserved.

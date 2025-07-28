@@ -4,3 +4,6 @@ messages:
   - role: user
     content: データベース定義（init.sql）を作成したい。postgresqlです。
 model: openai/gpt-4.1
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

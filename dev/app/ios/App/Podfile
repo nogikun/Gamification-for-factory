@@ -26,3 +26,6 @@ end
 post_install do |installer|
   assertDeploymentTarget(installer)
 end
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

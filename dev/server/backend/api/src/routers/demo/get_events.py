@@ -20,3 +20,6 @@ async def demo_get_event(target_date: DateModel) -> List[EventSchema]:
     if not generate_event_data:
         raise HTTPException(status_code=404, detail="Events not found")
     return generate_event_data
+
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

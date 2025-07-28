@@ -120,3 +120,5 @@ function GameApp() {
 }
 
 export default GameApp;
+// Copyright (c) 2025 Kaito220009
+// All rights reserved.

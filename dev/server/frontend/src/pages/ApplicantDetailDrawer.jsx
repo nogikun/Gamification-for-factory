@@ -103,3 +103,6 @@ export default function ApplicantDetailDrawer({ applicant, open, onClose, onAppr
     </div>
   );
 }
+
+// Copyright (c) 2025 nogi, Kaito220009
+// All rights reserved.

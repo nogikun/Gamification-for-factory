@@ -126,3 +126,6 @@ class Event(EventBase):
             # 既にリストの場合は何もしない
 
         return data
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

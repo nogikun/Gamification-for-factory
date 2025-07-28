@@ -26,3 +26,5 @@ ADDITIONAL CONTEXT:
 No additional context
 
 ============================================
+# Copyright (c) 2025 nogi
+# All rights reserved.

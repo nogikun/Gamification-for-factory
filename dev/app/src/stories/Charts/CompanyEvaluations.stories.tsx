@@ -120,3 +120,6 @@ export const DarkMode: Story = {
     userId: "11111111-1111-1111-1111-111111111111",
   },
 };
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

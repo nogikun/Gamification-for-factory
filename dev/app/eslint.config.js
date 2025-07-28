@@ -30,3 +30,6 @@ export default tseslint.config(
     },
   },
 )
+
+// Copyright (c) 2025 nogi, KazuakiTakahashi
+// All rights reserved.

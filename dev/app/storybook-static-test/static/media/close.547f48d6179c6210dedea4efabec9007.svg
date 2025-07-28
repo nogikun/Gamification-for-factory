@@ -12,3 +12,5 @@ const SvgClose = props => /*#__PURE__*/React.createElement("svg", _extends({
 })));
 export { SvgClose as ReactComponent };
 export default "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDhweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSI0OHB4IiBmaWxsPSIjZmZmZmZmIj48cGF0aCBkPSJtMjQ5LTIwNy00Mi00MiAyMzEtMjMxLTIzMS0yMzEgNDItNDIgMjMxIDIzMSAyMzEtMjMxIDQyIDQyLTIzMSAyMzEgMjMxIDIzMS00MiA0Mi0yMzEtMjMxLTIzMSAyMzFaIi8+PC9zdmc+";
+# Copyright (c) 2025 nogi
+# All rights reserved.

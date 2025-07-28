@@ -17,3 +17,5 @@
         <domain includeSubdomains="true">192.168.1.1</domain>
     </domain-config>
 </network-security-config>
+<!-- Copyright (c) 2025 nogi -->
+<!-- All rights reserved. -->

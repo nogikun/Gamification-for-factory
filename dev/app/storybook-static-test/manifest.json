@@ -17,5 +17,10 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#ffffff",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "_copyright": {
+    "notice": "Copyright (c) 2025 nogi",
+    "message": "All rights reserved.",
+    "generated": "2025-07-28T02:25:00.308571"
+  }
 }

@@ -35,3 +35,5 @@ class DebugModel(BaseModel):
     debug_info: Optional[str] = None
     status_code: Optional[int] = None
     timestamp: Optional[datetime] = Field(default_factory=datetime.utcnow, description="デバッグ情報のタイムスタンプ")
+# Copyright (c) 2025 nogi
+# All rights reserved.

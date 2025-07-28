@@ -35,3 +35,6 @@ export const Button = ({
     </button>
   );
 };
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

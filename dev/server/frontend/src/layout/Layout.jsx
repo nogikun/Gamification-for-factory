@@ -15,3 +15,6 @@ export default function Layout() {
     </div>
   );
 }
+
+// Copyright (c) 2025 nogi, Kaito220009
+// All rights reserved.

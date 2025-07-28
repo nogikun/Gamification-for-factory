@@ -53,3 +53,6 @@ export default function AiDiagnosisResult({
     </Box>
   );
 }
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

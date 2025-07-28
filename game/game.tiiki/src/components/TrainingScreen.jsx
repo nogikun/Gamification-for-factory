@@ -298,3 +298,5 @@ const TrainingScreen = ({ gameState, onChangeScreen, onUnlockRandomWeapon }) => 
 };
 
 export default TrainingScreen;
+// Copyright (c) 2025 Kaito220009
+// All rights reserved.

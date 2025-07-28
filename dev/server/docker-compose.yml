@@ -112,3 +112,5 @@ networks:
 volumes:
   postgres-data:
   portainer_data:
+# Copyright (c) 2025 nogi, nogikun, Hiro-tonton, Kaito220009, KazuakiTakahashi
+# All rights reserved.

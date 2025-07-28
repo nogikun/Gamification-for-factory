@@ -21,3 +21,5 @@ async def join_event(applicant: FrontendApplicant, event_id_model: EventIdModel)
     print(f"Event ID: {event_id_model.event_id}")
 
     return {"message": "Successfully joined the event"}
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

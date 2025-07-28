@@ -152,3 +152,6 @@ async def report_client_error(error_data: ErrorReportRequest):
             report_id="error_processing_failed",
             timestamp=datetime.utcnow()
         )
+
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

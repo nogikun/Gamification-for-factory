@@ -18,3 +18,5 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+// Copyright (c) 2025 nogi
+// All rights reserved.

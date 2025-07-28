@@ -7,3 +7,6 @@ __all__ = [
     "BaseResponse",
     "JoinEventRequest",
 ]
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

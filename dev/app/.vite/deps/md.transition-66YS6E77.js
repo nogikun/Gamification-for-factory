@@ -11,3 +11,6 @@ export {
   mdTransitionAnimation
 };
 //# sourceMappingURL=md.transition-66YS6E77.js.map
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

@@ -135,3 +135,6 @@ const App: React.FC = () => (
 );
 
 export default App;
+
+// Copyright (c) 2025 nogi, KazuakiTakahashi, nogikun
+// All rights reserved.

@@ -69,3 +69,5 @@ CRITICAL_DAMAGE_MULTIPLIER,2.0
 
 # Damage Stamina Cost
 DAMAGE_STAMINA_COST,2
+# Copyright (c) 2025 Kaito220009
+# All rights reserved.

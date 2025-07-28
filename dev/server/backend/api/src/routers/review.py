@@ -101,3 +101,5 @@ async def delete_review_api(
     if not success:
         raise HTTPException(status_code=404, detail="Review not found")
     return
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

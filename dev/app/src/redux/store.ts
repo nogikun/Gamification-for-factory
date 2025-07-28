@@ -8,3 +8,5 @@ export const store = configureStore({
 
 // RootStateの型を定義
 export type RootState = ReturnType<typeof store.getState>; // ストアの状態の型を取得
+// Copyright (c) 2025 nogi
+// All rights reserved.

@@ -42,3 +42,5 @@ export const apiRequest = async (url, method = 'GET', data = null) => {
     throw error;
   }
 }; 
+// Copyright (c) 2025 nogi, Kaito220009
+// All rights reserved.

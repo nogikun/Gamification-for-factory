@@ -16,3 +16,5 @@ Q005,溶接後に火花やスパッタの残り火はいつまで注意が必要
 # If OptionD is not needed, leave it empty but keep the comma
 # CorrectAnswer should be A, B, C, or D
 # Explanation should be clear and educational
+# Copyright (c) 2025 Kaito220009
+# All rights reserved.

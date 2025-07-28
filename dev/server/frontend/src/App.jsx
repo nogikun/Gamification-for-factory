@@ -27,3 +27,6 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+// Copyright (c) 2025 nogi, Kaito220009
+// All rights reserved.

@@ -48,3 +48,6 @@ export const Header = ({ user, onLogin, onLogout, onCreateAccount }: HeaderProps
 		</div>
 	</header>
 );
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

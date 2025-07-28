@@ -92,3 +92,6 @@ export const getTokenRemainingTime = (): number | null => {
         return null;
     }
 };
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

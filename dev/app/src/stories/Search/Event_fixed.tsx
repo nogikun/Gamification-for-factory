@@ -731,3 +731,6 @@ export const Event = ({
 };
 
 export default Event;
+
+// Copyright (c) 2025 nogi, nogikun
+// All rights reserved.

@@ -252,3 +252,6 @@ export function maskApiKey(apiKey: string, visibleChars: number = 4): string {
     
     return maskedPart + visiblePart;
 }
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

@@ -21,3 +21,5 @@ export const serverSlice = createSlice({
 });
 export const { setServerUrl } = serverSlice.actions; // アクションをエクスポート
 export const serverReducer = serverSlice.reducer; // リデューサーをエクスポート
+// Copyright (c) 2025 nogi, nogikun
+// All rights reserved.

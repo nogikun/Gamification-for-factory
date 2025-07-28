@@ -118,3 +118,5 @@ export default function InternParticipantsVerticalBarChart() {
     </div>
   );
 }
+// Copyright (c) 2025 nogi, Hiro-tonton
+// All rights reserved.

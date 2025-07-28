@@ -51,3 +51,6 @@ export const Small: Story = {
 		label: 'Button',
 	},
 };
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

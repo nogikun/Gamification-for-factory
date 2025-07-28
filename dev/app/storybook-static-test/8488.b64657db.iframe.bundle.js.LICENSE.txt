@@ -1,3 +1,6 @@
 /*!
  * (C) Ionic http://ionicframework.com - MIT License
  */
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

@@ -113,3 +113,6 @@ const EventDisplay: React.FC = () => {
 }
 
 export default EventPage;
+
+// Copyright (c) 2025 nogi, KazuakiTakahashi, nogikun
+// All rights reserved.

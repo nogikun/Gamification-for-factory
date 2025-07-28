@@ -104,3 +104,6 @@ testNgrokFunctionality();
 console.log('\n\n=== Tab4 APIテストシミュレーション ===');
 simulateTab4ApiTest('https://test-ngrok.ngrok-free.app');
 simulateTab4ApiTest('http://localhost:3000');
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

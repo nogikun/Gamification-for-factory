@@ -9,3 +9,5 @@ router = APIRouter()
 async def root() -> Dict[str, str]:
     """Root endpoint."""
     return {"message": "Gamification for factory API"}
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

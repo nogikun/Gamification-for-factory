@@ -194,3 +194,5 @@ class GameProgress(Base):
     
     # リレーションシップ
     user = relationship("User")
+# Copyright (c) 2025 nogi, nogikun, Kaito220009
+# All rights reserved.

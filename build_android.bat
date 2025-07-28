@@ -33,3 +33,6 @@ echo [INFO] 処理が完了しました！
 echo [INFO] Android Studio で開くには: npx cap open android
 
 pause
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

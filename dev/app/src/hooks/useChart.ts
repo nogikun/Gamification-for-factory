@@ -144,3 +144,6 @@ export const useApiCall = <T>(
     reset,
   };
 };
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

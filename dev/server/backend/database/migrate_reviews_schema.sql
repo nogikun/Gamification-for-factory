@@ -43,3 +43,6 @@ ALTER TABLE reviews DROP CONSTRAINT IF EXISTS reviews_application_id_fkey;
 ALTER TABLE reviews DROP COLUMN application_id;
 
 COMMIT;
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

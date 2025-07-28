@@ -250,3 +250,6 @@ eval "set -- $(
     )" '"$@"'
 
 exec "$JAVACMD" "$@"
+
+# Copyright (c) 2025 nogi, KazuakiTakahashi
+# All rights reserved.

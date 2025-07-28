@@ -59,3 +59,6 @@ export function getAllReducers() {
  * - userSlice.ts → export const userReducer
  * - 自動的に { user: userReducer } がストアに追加
  */
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

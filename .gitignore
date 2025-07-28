@@ -11,3 +11,5 @@ dev/server/backend/api/logs/*.txt
 dev/server/backend/api/logs/error/*.txt
 !dev/server/backend/api/logs/error/.gitkeep
 !dev/server/backend/api/logs/error/README.md
+# Copyright (c) 2025 nogi
+# All rights reserved.

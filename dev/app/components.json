@@ -17,5 +17,10 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
-  "iconLibrary": "lucide"
+  "iconLibrary": "lucide",
+  "_copyright": {
+    "notice": "Copyright (c) 2025 nogikun",
+    "message": "All rights reserved.",
+    "generated": "2025-07-28T02:24:49.716561"
+  }
 }

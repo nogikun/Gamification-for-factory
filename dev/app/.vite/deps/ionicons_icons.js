@@ -2716,3 +2716,6 @@ export {
   womanSharp
 };
 //# sourceMappingURL=ionicons_icons.js.map
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

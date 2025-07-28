@@ -24,3 +24,5 @@
 ├── join-event
 └── debug
     └── error-report
+<!-- Copyright (c) 2025 nogi, nogikun -->
+<!-- All rights reserved. -->

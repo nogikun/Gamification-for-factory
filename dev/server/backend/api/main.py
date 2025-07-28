@@ -124,3 +124,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 # ---------------------------------------------------------------------
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=3000, reload=True)
+
+# Copyright (c) 2025 nogi, Hiro-tonton, nogikun, Kaito220009
+# All rights reserved.

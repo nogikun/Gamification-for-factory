@@ -69,3 +69,5 @@ export const companyEvaluations: CompanyEvaluationData[] = [
   { id: 'eval-02', companyName: 'B3製作所', rating: 4 },
   { id: 'eval-03', companyName: '株式会社ビーチサンダル', rating: 4.5 },
 ];
+// Copyright (c) 2025 Hiro-tonton
+// All rights reserved.

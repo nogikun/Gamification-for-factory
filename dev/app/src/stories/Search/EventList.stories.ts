@@ -25,3 +25,5 @@ export const Primary: Story = {
         selectedDate: "2025-05-05",
     },
 };
+// Copyright (c) 2025 nogi
+// All rights reserved.

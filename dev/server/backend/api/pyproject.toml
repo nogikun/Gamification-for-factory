@@ -31,3 +31,6 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/api"]
+
+# Copyright (c) 2025 nogi, Hiro-tonton, nogikun, Kaito220009
+# All rights reserved.

@@ -19,3 +19,5 @@ export const feedbackTabSlice = createSlice({
 });
 export const { changeTab } = feedbackTabSlice.actions; // アクションをエクスポート
 export const feedbackTabReducer = feedbackTabSlice.reducer; // リデューサーをエクスポート
+// Copyright (c) 2025 nogi
+// All rights reserved.

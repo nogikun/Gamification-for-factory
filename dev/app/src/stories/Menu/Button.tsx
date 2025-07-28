@@ -117,3 +117,5 @@ export const Icons = {
     Steps,
 	// 他のアイコンも追加
 };
+// Copyright (c) 2025 nogi, KazuakiTakahashi
+// All rights reserved.

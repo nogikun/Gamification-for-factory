@@ -19,3 +19,6 @@ const ExploreContainer: React.FC<ContainerProps> = ({ name }) => {
 };
 
 export default ExploreContainer;
+
+// Copyright (c) 2025 nogi, KazuakiTakahashi
+// All rights reserved.

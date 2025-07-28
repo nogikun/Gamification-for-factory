@@ -1,10 +1,15 @@
 {
-    "appId": "com.example.app",
-    "appName": "app",
-    "webDir": "dist",
-    "bundledWebRuntime": false,
-    "server": {
-      "url": "http://192.168.0.4:5173",
-      "cleartext": true
-    }
+  "appId": "com.example.app",
+  "appName": "app",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "http://192.168.0.4:5173",
+    "cleartext": true
+  },
+  "_copyright": {
+    "notice": "Copyright (c) 2025 KazuakiTakahashi",
+    "message": "All rights reserved.",
+    "generated": "2025-07-28T02:24:49.710061"
   }
+}

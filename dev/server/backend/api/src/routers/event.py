@@ -162,3 +162,5 @@ async def get_event_api(
         print(f"Error during EventSchema validation for event_id {event_id}: {str(e)}")
         print(f"Payload provided for validation: {event_payload}")
         raise HTTPException(status_code=500, detail=f"Internal server error during event data processing: {str(e)}")
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

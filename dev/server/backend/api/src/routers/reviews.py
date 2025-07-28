@@ -94,3 +94,6 @@ async def create_review_api(
             status_code=400,
             detail=f"Could not create review: {str(e)}"
         )
+
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

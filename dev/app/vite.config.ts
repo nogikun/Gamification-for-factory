@@ -50,3 +50,5 @@ export default defineConfig({
     ]
   }
 })
+// Copyright (c) 2025 nogi, KazuakiTakahashi, nogikun
+// All rights reserved.

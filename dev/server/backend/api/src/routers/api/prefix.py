@@ -34,3 +34,6 @@ async def get_api_reviews(
 ) -> List[ReviewDetail]:
     """API endpoint to get a list of reviews with API prefix."""
     return await get_reviews_api(skip=skip, limit=limit, db=db)
+
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

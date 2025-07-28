@@ -43,3 +43,5 @@ export default function CompanyEvaluations() {
     </Box>
   );
 }
+// Copyright (c) 2025 nogi, Hiro-tonton
+// All rights reserved.

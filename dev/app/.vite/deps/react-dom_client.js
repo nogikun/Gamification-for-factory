@@ -37,3 +37,6 @@ var require_client = __commonJS({
 });
 export default require_client();
 //# sourceMappingURL=react-dom_client.js.map
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

@@ -98,3 +98,5 @@ export const Accordion = ({
 		</button>
 	);
 };
+// Copyright (c) 2025 nogi, KazuakiTakahashi, nogikun
+// All rights reserved.

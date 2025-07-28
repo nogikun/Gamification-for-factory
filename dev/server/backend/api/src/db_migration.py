@@ -78,3 +78,5 @@ if __name__ == "__main__":
         print("マイグレーションが正常に完了しました。")
     except Exception as e:
         print(f"マイグレーション中にエラーが発生しました: {e}") 
+# Copyright (c) 2025 nogikun, Kaito220009
+# All rights reserved.

@@ -106,3 +106,6 @@ export const selectIsNgrokAuthenticated = (state: RootState): boolean =>
 
 export const selectIsNgrokAuthenticating = (state: RootState): boolean => 
     state.ngrokAuth.status === 'authenticating';
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

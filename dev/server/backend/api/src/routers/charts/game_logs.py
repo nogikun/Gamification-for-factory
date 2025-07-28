@@ -113,3 +113,5 @@ async def get_game_logs_by_user(
         )
     
     return GameLogsModel(logs=logs)
+# Copyright (c) 2025 nogi
+# All rights reserved.

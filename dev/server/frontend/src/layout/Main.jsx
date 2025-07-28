@@ -9,3 +9,6 @@ export default function Main({ children }) {
     </main>
   );
 }
+
+// Copyright (c) 2025 nogi, Kaito220009
+// All rights reserved.

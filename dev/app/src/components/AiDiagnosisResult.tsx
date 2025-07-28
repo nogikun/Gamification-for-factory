@@ -27,3 +27,5 @@ export default function AiDiagnosisResult() {
     </Box>
   );
 }
+// Copyright (c) 2025 Hiro-tonton
+// All rights reserved.

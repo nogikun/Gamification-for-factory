@@ -20,3 +20,6 @@ root.render(
         </Provider>
 	</React.StrictMode>
 );
+
+// Copyright (c) 2025 nogi, KazuakiTakahashi
+// All rights reserved.

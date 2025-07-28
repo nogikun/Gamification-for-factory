@@ -92,3 +92,6 @@ exit /b %EXIT_CODE%
 if "%OS%"=="Windows_NT" endlocal
 
 :omega
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

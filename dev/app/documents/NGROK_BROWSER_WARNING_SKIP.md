@@ -88,3 +88,6 @@ curl https://2bf5-2400-2200-3db-9802-c9b-67d0-c9c9-9119.ngrok-free.app/health
 
 ## バージョン
 2.0.0 - Browser Warning Skip Implementation
+
+<!-- Copyright (c) 2025 nogi -->
+<!-- All rights reserved. -->

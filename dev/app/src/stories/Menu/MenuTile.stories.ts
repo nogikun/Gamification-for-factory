@@ -42,3 +42,5 @@ export const Primary : Story ={
         bottomMarginTop: ""
     },
 }
+// Copyright (c) 2025 nogi, KazuakiTakahashi, nogikun
+// All rights reserved.

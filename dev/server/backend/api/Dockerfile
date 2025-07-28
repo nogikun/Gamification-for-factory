@@ -30,3 +30,5 @@ CMD curl -f http://localhost:8000/health || exit 1
 
 # 起動コマンド
 CMD ["python", "main.py"]
+# Copyright (c) 2025 nogi, Hiro-tonton, Kaito220009
+# All rights reserved.

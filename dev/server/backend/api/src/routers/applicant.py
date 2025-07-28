@@ -66,3 +66,5 @@ async def delete_applicant_api(
     if not success:
         raise HTTPException(status_code=404, detail="Applicant not found")
     return
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

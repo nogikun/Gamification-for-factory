@@ -47,3 +47,6 @@ export {
    *)
 */
 //# sourceMappingURL=status-tap-3UTZY2I4.js.map
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

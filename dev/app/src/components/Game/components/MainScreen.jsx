@@ -191,3 +191,5 @@ const MainScreen = ({ gameState, onEnterDungeon, onChangeScreen, onUseStaminaPot
 };
 
 export default MainScreen; 
+// Copyright (c) 2025 Kaito220009
+// All rights reserved.

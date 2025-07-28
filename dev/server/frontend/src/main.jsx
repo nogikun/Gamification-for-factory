@@ -9,3 +9,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <App />
   </React.StrictMode>
 );
+
+// Copyright (c) 2025 nogi, Kaito220009
+// All rights reserved.

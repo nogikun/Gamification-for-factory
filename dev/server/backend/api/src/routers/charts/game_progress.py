@@ -38,3 +38,5 @@ async def get_game_progress_by_user(
         progress_value = 0
     
     return GameProgressModel(value=progress_value)
+# Copyright (c) 2025 nogi
+# All rights reserved.

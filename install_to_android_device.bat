@@ -83,3 +83,5 @@ echo [完了] 処理が終了しました
 echo.
 
 pause 
+# Copyright (c) 2025 Kaito220009
+# All rights reserved.

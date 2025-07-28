@@ -159,3 +159,5 @@ adb install -r app-debug.apk
 - [Capacitor - Running on Android](https://capacitorjs.com/docs/android/running)
 - [Android Debug Bridge (ADB)](https://developer.android.com/studio/command-line/adb)
 - [Android Developer Options](https://developer.android.com/studio/debug/dev-options) 
+<!-- Copyright (c) 2025 Kaito220009 -->
+<!-- All rights reserved. -->

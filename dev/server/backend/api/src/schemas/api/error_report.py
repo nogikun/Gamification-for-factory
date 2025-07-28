@@ -60,3 +60,6 @@ class ErrorReportResponse(BaseModel):
                 "timestamp": "2025-07-10T04:30:00Z"
             }
         }
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

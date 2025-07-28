@@ -123,3 +123,6 @@ if __name__ == "__main__":
     
     print("\n" + "=" * 50)
     print("テスト完了")
+
+# Copyright (c) 2025 nogikun
+# All rights reserved.

@@ -182,3 +182,5 @@ export const HostServerCard = ({
 
 // デフォルトエクスポートを追加
 export default HostServerCard;
+// Copyright (c) 2025 nogi
+// All rights reserved.

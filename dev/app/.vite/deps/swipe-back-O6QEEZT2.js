@@ -79,3 +79,6 @@ export {
    *)
 */
 //# sourceMappingURL=swipe-back-O6QEEZT2.js.map
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

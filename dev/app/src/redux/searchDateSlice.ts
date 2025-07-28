@@ -18,3 +18,5 @@ export const searchDateSlice = createSlice({
 });
 export const { setSelectedDate } = searchDateSlice.actions; // アクションをエクスポート
 export const searchDateReducer = searchDateSlice.reducer; // リデューサーをエクスポート
+// Copyright (c) 2025 nogi
+// All rights reserved.

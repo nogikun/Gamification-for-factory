@@ -156,3 +156,5 @@ export const Activity: Story = {
         onClickPath: "/tab4"
     }
 };
+// Copyright (c) 2025 nogi, KazuakiTakahashi
+// All rights reserved.

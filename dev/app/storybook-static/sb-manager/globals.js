@@ -46,3 +46,6 @@ export {
   o as globalPackages,
   _ as globalsNameReferenceMap
 };
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

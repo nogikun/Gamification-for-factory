@@ -9,3 +9,6 @@
  * https://github.com/webcomponents/webcomponentsjs/blob/4efecd7e0e/src/ShadowCSS/ShadowCSS.js
  * https://github.com/angular/angular/blob/master/packages/compiler/src/shadow_css.ts
  */
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

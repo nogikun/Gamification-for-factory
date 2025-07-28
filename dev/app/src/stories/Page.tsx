@@ -71,3 +71,6 @@ export const Page: React.FC = () => {
 		</article>
 	);
 };
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

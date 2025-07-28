@@ -19,3 +19,5 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
 
 # PostgreSQLのデフォルトポート
 EXPOSE 5432
+# Copyright (c) 2025 nogi
+# All rights reserved.

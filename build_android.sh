@@ -33,3 +33,6 @@ cd "$CURRENT_DIR"
 
 echo "✅ 処理が完了しました！"
 echo "Android Studio で開くには: npx cap open android"
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

@@ -91,3 +91,5 @@ echo - または手動でAPKファイルをデバイスに転送してインス�
 echo.
 
 pause 
+# Copyright (c) 2025 Kaito220009
+# All rights reserved.

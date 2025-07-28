@@ -140,3 +140,6 @@ const apiResponse = data as unknown as Record<string, unknown>;
 **修正タスク**: 5/5 完了 ✅
 
 ---
+
+<!-- Copyright (c) 2025 nogi -->
+<!-- All rights reserved. -->

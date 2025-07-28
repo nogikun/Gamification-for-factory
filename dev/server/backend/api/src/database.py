@@ -52,3 +52,5 @@ def reset_reviews_table():
         conn.execute(text("DROP TABLE IF EXISTS public.reviews CASCADE"))
         # 新しい構造で再作成はmodels.pyで行われる
         conn.commit() 
+# Copyright (c) 2025 Kaito220009
+# All rights reserved.

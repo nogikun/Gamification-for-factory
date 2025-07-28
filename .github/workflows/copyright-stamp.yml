@@ -155,3 +155,6 @@ jobs:
             git remote set-url origin https://x-access-token:${TOKEN}@github.com/nogikun/Gamification-for-factory.git
             git push origin HEAD:${{ github.ref_name }}
           fi
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

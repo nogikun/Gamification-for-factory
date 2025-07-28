@@ -19,3 +19,6 @@ export { store } from './store';
 
 // 型定義のエクスポート
 export type { RootState } from './store';
+
+// Copyright (c) 2025 nogi
+// All rights reserved.

@@ -140,3 +140,6 @@ async def get_event(target_date: DateModel) -> List[EventSchema]:
         )
         event_list.append(event_data)
     return event_list
+
+# Copyright (c) 2025 nogi, nogikun
+# All rights reserved.

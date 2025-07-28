@@ -6,3 +6,5 @@ declare module '*.svg' {
   const src: string;
   export default src;
 }
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

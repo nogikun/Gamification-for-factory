@@ -76,3 +76,6 @@ export const userSlice = createSlice({
 
 export const { setUserId, login, logout } = userSlice.actions; // アクションをエクスポート
 export const userReducer = userSlice.reducer; // リデューサーをエクスポート
+
+// Copyright (c) 2025 nogi, nogikun, Kaito220009
+// All rights reserved.

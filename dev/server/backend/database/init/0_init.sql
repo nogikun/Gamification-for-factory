@@ -240,3 +240,6 @@ CREATE TABLE game_logs (
     details JSON NOT NULL,                -- 詳細（JSON形式）
     created_at TIMESTAMP DEFAULT NOW()    -- 作成日時
 );
+
+# Copyright (c) 2025 nogi, nogikun, kanataiwamoto, Hiro-tonton, Kaito220009, kawamotodaichi
+# All rights reserved.

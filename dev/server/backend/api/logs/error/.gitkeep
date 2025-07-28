@@ -1,2 +1,5 @@
 # This file keeps the logs/error directory in Git
 # Actual log files should be ignored in .gitignore
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

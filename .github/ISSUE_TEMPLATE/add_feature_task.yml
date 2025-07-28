@@ -65,3 +65,6 @@ body:
       description: スクリーンショットや参考資料などがあれば追加してください
     validations:
       required: false
+
+# Copyright (c) 2025 nogi
+# All rights reserved.

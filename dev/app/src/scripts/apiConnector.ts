@@ -45,3 +45,5 @@ apiConnector.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+// Copyright (c) 2025 nogi, nogikun
+// All rights reserved.

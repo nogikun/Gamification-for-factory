@@ -206,3 +206,5 @@ export const MenuTile = ({
         </div>
     );
 }
+// Copyright (c) 2025 nogi, KazuakiTakahashi, nogikun
+// All rights reserved.

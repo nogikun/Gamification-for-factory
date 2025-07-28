@@ -337,3 +337,6 @@ export {
    *)
 */
 //# sourceMappingURL=shadow-css-QPHX7PDZ.js.map
+
+// Copyright (c) 2025 KazuakiTakahashi
+// All rights reserved.

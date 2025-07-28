@@ -1,4 +1,4 @@
-name: Add Copyright Comments (Extended)
+name: Add Copyright Comments
 on:
   workflow_dispatch:
     inputs:
@@ -19,7 +19,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.PAT_TOKEN }}
+          persist-credentials: false
+          
+      - name: Configure Git
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
           
       - name: Add copyright comments to all supported files
         run: |
@@ -136,18 +141,12 @@ jobs:
                       contributors = get_all_contributors(file_path)
                       if contributors:
                           add_copyright_comment(file_path, contributors)
+          EOF
           
-      - name: Commit changes
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Add copyright comments to all supported files'
+          branch: ${{ github.ref_name }}
         env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git add .
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Add copyright comments to all supported files"
-            git remote set-url origin https://x-access-token:$PAT_TOKEN@github.com/${{ github.repository }}.git
-            git push origin HEAD:${{ github.ref_name }}
-          fi
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

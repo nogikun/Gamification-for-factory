@@ -1,0 +1,141 @@
+name: Add Copyright Comments (Extended)
+on:
+  workflow_dispatch:
+    inputs:
+      copyright_message:
+        description: '追加のコピーライトメッセージ'
+        required: false
+        default: 'All rights reserved.'
+
+jobs:
+  add-copyright:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Add copyright comments to all supported files
+        run: |
+          python3 << 'EOF'
+          import os
+          import subprocess
+          import json
+          from datetime import datetime
+          
+          def get_all_contributors(file_path):
+              try:
+                  result = subprocess.run([
+                      'git', 'log', '--format=%an', '--follow', file_path
+                  ], capture_output=True, text=True)
+                  
+                  if result.returncode == 0:
+                      contributors = list(set(result.stdout.strip().split('\n')))
+                      return [c.strip() for c in contributors if c.strip()]
+                  return []
+              except Exception:
+                  return []
+          
+          def format_contributor_name(full_name):
+              parts = full_name.split()
+              if len(parts) >= 2:
+                  first_name = parts[0]
+                  last_name = parts[-1]
+                  return f"{first_name}{last_name}"
+              else:
+                  return full_name
+          
+          def get_comment_style(file_ext):
+              c_style = {'.js', '.ts', '.jsx', '.tsx', '.java', '.c', '.cc', '.cpp', 
+                        '.h', '.hh', '.hpp', '.cs', '.swift', '.php', '.scss', '.less', 
+                        '.coffee', '.flow', '.mjs', '.cjs', '.cts', '.mts'}
+              hash_style = {'.py', '.pyx', '.pyi', '.sh', '.fish', '.csh', '.yml', 
+                           '.yaml', '.toml', '.cfg', '.conf', '.env', '.rb', '.nix', '.nu'}
+              html_style = {'.html', '.xml', '.md', '.markdown', '.mdown', '.mdx'}
+              css_style = {'.css'}
+              
+              if file_ext in c_style:
+                  return '//'
+              elif file_ext in hash_style:
+                  return '#'
+              elif file_ext in html_style:
+                  return '<!--'
+              elif file_ext in css_style:
+                  return '/*'
+              else:
+                  return '#'
+          
+          def add_copyright_to_json(file_path, copyright_text, custom_message):
+              try:
+                  with open(file_path, 'r', encoding='utf-8') as f:
+                      data = json.load(f)
+                  
+                  if isinstance(data, dict):
+                      data['_copyright'] = {
+                          'notice': copyright_text,
+                          'message': custom_message,
+                          'generated': datetime.now().isoformat()
+                      }
+                      
+                      with open(file_path, 'w', encoding='utf-8') as f:
+                          json.dump(data, f, indent=2, ensure_ascii=False)
+              except:
+                  pass
+          
+          def should_process_file(file_path):
+              excluded = {'.exe', '.bin', '.so', '.dylib', '.png', '.jpg', '.ico', 
+                         '.mp3', '.pdf', '.zip', '.gz', '.woff', '.ttf', '.pyc', 
+                         '.DS_Store', '.class', '.jar', '.apk', '.dex', '.wasm'}
+              
+              file_ext = os.path.splitext(file_path)[1].lower()
+              return file_ext not in excluded
+          
+          def add_copyright_comment(file_path, contributors):
+              file_ext = os.path.splitext(file_path)[1].lower()
+              current_year = datetime.now().year
+              
+              formatted_contributors = [format_contributor_name(name) for name in contributors]
+              contributors_text = ', '.join(formatted_contributors)
+              copyright_text = f"Copyright (c) {current_year} {contributors_text}"
+              custom_message = "${{ github.event.inputs.copyright_message }}"
+              
+              if file_ext == '.json':
+                  add_copyright_to_json(file_path, copyright_text, custom_message)
+                  return
+              
+              comment_prefix = get_comment_style(file_ext)
+              
+              with open(file_path, 'a', encoding='utf-8') as f:
+                  f.write(f"\n")
+                  if comment_prefix == '<!--':
+                      f.write(f"<!-- {copyright_text} -->\n")
+                      if custom_message:
+                          f.write(f"<!-- {custom_message} -->\n")
+                  elif comment_prefix == '/*':
+                      f.write(f"/* {copyright_text} */\n")
+                      if custom_message:
+                          f.write(f"/* {custom_message} */\n")
+                  else:
+                      f.write(f"{comment_prefix} {copyright_text}\n")
+                      if custom_message:
+                          f.write(f"{comment_prefix} {custom_message}\n")
+          
+          # 全ファイルを処理
+          for root, dirs, files in os.walk('.'):
+              if '.git' in dirs:
+                  dirs.remove('.git')
+              for file in files:
+                  file_path = os.path.join(root, file)
+                  if should_process_file(file_path):
+                      contributors = get_all_contributors(file_path)
+                      if contributors:
+                          add_copyright_comment(file_path, contributors)
+          EOF
+          
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff --staged --quiet || git commit -m "Add copyright comments to all supported files"
+          git push

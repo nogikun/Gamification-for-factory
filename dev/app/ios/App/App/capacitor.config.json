@@ -4,6 +4,7 @@
 	"webDir": "dist",
 	"packageClassList": [
 		"AppPlugin",
+		"CAPBrowserPlugin",
 		"HapticsPlugin",
 		"KeyboardPlugin",
 		"StatusBarPlugin"

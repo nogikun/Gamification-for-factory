@@ -12,9 +12,11 @@ import { shieldOutline, shieldCheckmark } from 'ionicons/icons';
 
 // redux
 import { useSelector } from 'react-redux';
+import { envReducer } from '@reduxjs/toolkit';
 
 // components
 import { MenuTile } from '../stories/Menu/MenuTile';
+import { APIKeyCard } from '../stories/Settings/APIKeyCard';
 
 // ngrok認証フック
 import { useNgrokAuth } from '../lib/useNgrokAuth';
@@ -245,14 +247,14 @@ const Tab4: React.FC = () => {
 		<IonPage>
 			<IonHeader>
 				<IonToolbar>
-					<IonTitle>Tab 4</IonTitle>
+					<IonTitle>Settings</IonTitle>
 				</IonToolbar>
 			</IonHeader>
 			<IonContent fullscreen>
 				{/* <Accordion label="This is Menu" borderRadius={50} width="100px" height="100px" backgroundColor='#262626'/> */}
 				<IonHeader collapse="condense">
 					<IonToolbar>
-						<IonTitle size="large">Tab 4</IonTitle>
+						{/* <IonTitle size="large">Tab 4</IonTitle> */}
 					</IonToolbar>
 				</IonHeader>
 
@@ -261,9 +263,17 @@ const Tab4: React.FC = () => {
                 <HostServerCard
                     host={host}
                     port={port}
-                    width="100%"
+                    width="95%"
                     height="300px"
                 />
+                
+                <br />
+
+                {/* <APIKeyCard
+                    width="100%"
+                    height="300px"
+                    title="Gemini API設定"
+                /> */}
                 
                 {/* ngrok認証ボタンとAPI通信テスト */}
 				<div style={{ padding: '20px', textAlign: 'center' }}>

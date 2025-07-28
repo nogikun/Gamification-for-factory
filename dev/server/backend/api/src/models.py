@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text, Enum as SAEnum, ForeignKey, JSON, LargeBinary, UUID, Float
+from sqlalchemy import Column, Integer, String, DateTime, Text, Enum as SAEnum, ForeignKey, JSON, LargeBinary, UUID, Float, Index, BigInteger
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
@@ -32,6 +32,14 @@ class ParticipantStatusEnum(enum.Enum):
 class ReviewStatusEnum(enum.Enum):
     REQUESTED = "依頼中"
     COMPLETED = "完了"
+
+# ログタイプEnum
+class LogTypeEnum(enum.Enum):
+    QUEST_START = "クエスト開始"
+    QUEST_COMPLETE = "クエスト達成"
+    LEVEL_UP = "レベルアップ"
+    BOSS_DEFEAT = "ボス撃破"
+    ITEM_GET = "アイテム獲得"
 
 class Event(Base):
     __tablename__ = "events"
@@ -108,15 +116,24 @@ class ReviewRequest(Base):
 # レビューモデル
 class Review(Base):
     __tablename__ = "reviews"
-    __table_args__ = {"schema": "public"}
+    __table_args__ = (
+        # パフォーマンス最適化用インデックス
+        Index('idx_reviews_reviewee_id', 'reviewee_id'),
+        Index('idx_reviews_reviewer_id', 'reviewer_id'),
+        Index('idx_reviews_event_id', 'event_id'),
+        Index('idx_reviews_created_at', 'created_at'),
+        Index('idx_reviews_reviewee_event', 'reviewee_id', 'event_id'),
+        {"schema": "public"}
+    )
     
     review_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    application_id = Column(UUID(as_uuid=True), ForeignKey("applications.application_id"), nullable=False)
-    reviewer_id = Column(UUID(as_uuid=True), nullable=False)
-    rating = Column(Float, nullable=False)
-    comment = Column(Text, nullable=True)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    reviewee_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=False, comment="レビュイーID（企業、個人）")
+    reviewer_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=False, comment="レビュアーID（企業、個人）")
+    event_id = Column(UUID(as_uuid=True), ForeignKey("events.event_id"), nullable=True, comment="対象となるイベントID")
+    rating = Column(Float, nullable=False, comment="評価点（1.0〜5.0）")
+    comment = Column(Text, nullable=True, comment="レビューコメント")
+    created_at = Column(DateTime, server_default=func.now(), comment="作成日時")
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), comment="更新日時")
 
 class Participant(Base):
     __tablename__ = "participants"
@@ -143,3 +160,37 @@ class User(Base):
     
     # リレーションシップの追加
     participants = relationship("Participant", back_populates="user")
+
+# ログタイプモデル
+class LogType(Base):
+    __tablename__ = "log_types"
+    
+    type_id = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)  # 文字列として保存（日本語対応）
+    template_message = Column(String(255), nullable=False)
+
+# ゲームログモデル
+class GameLog(Base):
+    __tablename__ = "game_logs"
+    
+    log_id = Column(BigInteger, primary_key=True, autoincrement=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=False)
+    log_type_id = Column(Integer, ForeignKey("log_types.type_id"), nullable=False)
+    details = Column(JSON, nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    
+    # リレーションシップ
+    user = relationship("User")
+    log_type = relationship("LogType")
+
+# ゲーム進捗モデル
+class GameProgress(Base):
+    __tablename__ = "game_progress"
+    
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), primary_key=True, index=True)
+    cleared_stages = Column(Integer, nullable=False)
+    progress_percentage = Column(Integer, nullable=True)  # 自動計算される進行度
+    updated_at = Column(DateTime, nullable=False)
+    
+    # リレーションシップ
+    user = relationship("User")

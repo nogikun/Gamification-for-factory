@@ -1,0 +1,18 @@
+# Welding Training Quiz Database
+# Format: QuestionID,Question,OptionA,OptionB,OptionC,OptionD,CorrectAnswer,Explanation
+
+Q001,溶接とは何か？,高温で母材を溶かし融合させる加工,溶接棒同士を接触させて結合する方法,低温で樹脂を付着させる接着技術,,A,溶接は金属などを高温で溶かして融合させる加工方法です
+
+Q002,溶接作業前に必ず行うべき準備はどれ？,溶接機の動作確認,周囲の可燃物の除去,作業服・手袋・安全靴の着用,すべて正しい,D,火花やヒューム対策、安全確保のため、①機器チェック、②可燃物を除去、③適切な服装はすべて必要です
+
+Q003,アーク溶接で目を守るために必要なのは？,サングラス,溶接面付きヘルメット,通常の作業用ゴーグル,防塵マスク,B,強い紫外線から目を守るには「溶接面」が必須。ゴーグルでは不足です
+
+Q004,濡れた服装・手袋での溶接作業が危険な理由は？,感電しやすくなるから,火傷しやすくなるから,溶接ビードが汚れやすくなるから,服が縮むから,A,濡れた状態では水分が電気を通し、感電リスクが高まります
+
+Q005,溶接後に火花やスパッタの残り火はいつまで注意が必要？,作業直後だけ,1時間程度,数分程度,翌日,B,終了後1時間程度は火災の恐れがあるのでチェックが必要です
+
+# Additional quiz questions can be added below following the same format
+# QuestionID should be unique (Q006, Q007, etc.)
+# If OptionD is not needed, leave it empty but keep the comma
+# CorrectAnswer should be A, B, C, or D
+# Explanation should be clear and educational

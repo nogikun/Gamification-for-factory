@@ -8,3 +8,11 @@ wheels/
 
 # venv
 .venv
+
+# Log files and directories
+*.log
+logs/*.log
+logs/*.txt
+logs/error/*.txt
+!logs/error/.gitkeep
+!logs/error/README.md

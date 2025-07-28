@@ -1,0 +1,323 @@
+/* 
+ * APIKeyCard.css
+ * APIキーカードコンポーネント用のスタイル
+ * HostServerCardと統一感のあるデザイン
+ */
+
+.api-key-card {
+  /* 基本レイアウト */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  
+  /* サイズとスペーシング */
+  margin: auto;
+  padding: 20px;
+  min-height: 400px;
+  max-width: 400px;
+  
+  /* 外観 */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  
+  /* アニメーション */
+  transition: all 0.3s ease;
+  
+  /* 背景（JSでオーバーライド） */
+  background-color: #ffffff;
+}
+
+/* ホバー効果 */
+.api-key-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* ダークモード対応 */
+.api-key-card.dark-mode {
+  background-color: #333333;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.api-key-card.dark-mode:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* タイトルエリア */
+.api-key-card .title-section {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.api-key-card .title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #333333;
+}
+
+.api-key-card.dark-mode .title {
+  color: #ffffff;
+}
+
+/* 状態表示エリア */
+.api-key-card .status-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.api-key-card .status-chip {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.api-key-card .status-chip.configured {
+  background-color: #4caf50;
+  color: #ffffff;
+}
+
+.api-key-card .status-chip.not-configured {
+  background-color: #e0e0e0;
+  color: #666666;
+}
+
+.api-key-card.dark-mode .status-chip.configured {
+  background-color: #2e7d32;
+}
+
+.api-key-card.dark-mode .status-chip.not-configured {
+  background-color: #424242;
+  color: #ffffff;
+}
+
+/* 入力フィールドエリア */
+.api-key-card .input-section {
+  width: 100%;
+  margin-bottom: 25px;
+}
+
+.api-key-card .input-field {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+/* ボタンエリア */
+.api-key-card .button-section {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.api-key-card .primary-button {
+  flex: 2;
+  min-width: 120px;
+  height: 42px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-transform: none;
+  transition: all 0.2s ease;
+}
+
+.api-key-card .secondary-button {
+  flex: 1;
+  min-width: 80px;
+  height: 42px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-transform: none;
+  transition: all 0.2s ease;
+}
+
+/* アラートエリア */
+.api-key-card .alert-section {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.api-key-card .warning-alert {
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+/* レスポンシブデザイン */
+
+/* タブレット（768px以下） */
+@media (max-width: 768px) {
+  .api-key-card {
+    max-width: 90%;
+    min-width: 300px;
+    padding: 18px;
+    margin: 10px auto;
+  }
+  
+  .api-key-card .button-section {
+    flex-direction: column;
+  }
+  
+  .api-key-card .primary-button,
+  .api-key-card .secondary-button {
+    flex: none;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .api-key-card .title {
+    font-size: 1.1rem;
+  }
+}
+
+/* スマートフォン（480px以下） */
+@media (max-width: 480px) {
+  .api-key-card {
+    max-width: 95%;
+    min-width: 280px;
+    padding: 16px;
+    margin: 8px auto;
+    min-height: 380px;
+  }
+  
+  .api-key-card .title {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  
+  .api-key-card .status-section {
+    margin-bottom: 16px;
+  }
+  
+  .api-key-card .input-section {
+    margin-bottom: 20px;
+  }
+  
+  .api-key-card .primary-button,
+  .api-key-card .secondary-button {
+    height: 40px;
+    font-size: 0.875rem;
+  }
+}
+
+/* 小さな画面（360px以下） */
+@media (max-width: 360px) {
+  .api-key-card {
+    padding: 14px;
+    min-width: 260px;
+  }
+  
+  .api-key-card .title {
+    font-size: 0.9rem;
+  }
+  
+  .api-key-card .status-chip {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+  }
+  
+  .api-key-card .primary-button,
+  .api-key-card .secondary-button {
+    height: 38px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ローディング状態 */
+.api-key-card.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.api-key-card.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #4a6da7;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* フォーカス状態の強化 */
+.api-key-card .input-field:focus-within {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}
+
+.api-key-card .primary-button:focus,
+.api-key-card .secondary-button:focus {
+  outline: 2px solid #4a6da7;
+  outline-offset: 2px;
+}
+
+/* アニメーション効果 */
+.api-key-card .status-chip {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.api-key-card .button-section button {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* エラー状態 */
+.api-key-card .error-state {
+  border-color: #f44336;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* 成功状態 */
+.api-key-card .success-state {
+  border-color: #4caf50;
+  animation: pulse 0.6s ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}

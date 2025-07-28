@@ -173,13 +173,70 @@ CREATE TABLE review_requests (
 --------------------------------------------------
 CREATE TABLE reviews (
     review_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),    -- レビューID（主キー）
-    application_id UUID NOT NULL,                             -- 応募ID（外部キー）
-    reviewer_id UUID NOT NULL,                                -- レビュアーID（企業ユーザー）
+    reviewee_id UUID NOT NULL,                                -- レビュイーID（企業, 個人）
+    reviewer_id UUID NOT NULL,                                -- レビュアーID（企業, 個人）
+    event_id UUID,                                            -- 対象となるイベントID
     rating NUMERIC(3, 1) NOT NULL,                            -- 評価点（1.0〜5.0）
     comment TEXT,                                             -- レビューコメント
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,           -- 作成日時
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,           -- 更新日時
-    FOREIGN KEY (application_id) REFERENCES applications(application_id) ON DELETE CASCADE,  -- 応募が削除された場合、関連するレビューも削除
-    FOREIGN KEY (reviewer_id) REFERENCES users(user_id) ON DELETE CASCADE                     -- ユーザーが削除された場合、関連するレビューも削除
+    FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE,   -- イベントが削除された場合、関連するレビューも削除
+    FOREIGN KEY (reviewee_id) REFERENCES users(user_id) ON DELETE CASCADE,  -- ユーザーが削除された場合、関連するレビューも削除
+    FOREIGN KEY (reviewer_id) REFERENCES users(user_id) ON DELETE CASCADE   -- ユーザーが削除された場合、関連するレビューも削除
 );
 
+--------------------------------------------------
+--   TABLE NAME: log_type
+-- DESCRIPTIONS: ログの種類と表示用のテンプレート情報を管理するマスターデータ
+--------------------------------------------------
+-- ENUMの追加（先に定義していない場合）
+CREATE TYPE log_type_enum AS ENUM (
+  'クエスト開始', 'クエスト達成',
+  'レベルアップ', 'ボス撃破',
+  'アイテム獲得'
+);
+
+-- テーブル作成（まだの人用）
+CREATE TABLE log_types (
+    type_id INT PRIMARY KEY,
+    name log_type_enum NOT NULL,
+    template_message VARCHAR(255) NOT NULL
+);
+
+--------------------------------------------------
+--   TABLE NAME: game_item
+-- DESCRIPTIONS: ゲームの進行度に必要な情報を管理する。
+--------------------------------------------------
+CREATE TYPE item_type_enum AS ENUM ('武器', '支援アイテム');
+
+CREATE TABLE game_item (
+    item_id UUID PRIMARY KEY,              -- アイテムID（主キー）
+    item_type item_type_enum,              -- アイテムタイプ（ENUM: 武器 or 支援アイテム）
+    atk INTEGER,                           -- 攻撃力
+    hit_rate REAL,                         -- 命中率
+    crit_dmg INTEGER,                      -- 会心ダメージ
+    crit_rate REAL                         -- 会心率
+);
+
+--------------------------------------------------
+--   TABLE NAME: game_progress
+-- DESCRIPTIONS: ゲームの進行度に必要な情報を管理する。
+--------------------------------------------------
+CREATE TABLE game_progress (
+    user_id UUID PRIMARY KEY,            -- ユーザーID（主キー）
+    cleared_stages INTEGER NOT NULL,     -- クリア済ステージ数
+    progress_percentage INTEGER,         -- 自動計算される進行度（%）
+    updated_at TIMESTAMP NOT NULL        -- 最終更新日時
+);
+
+--------------------------------------------------
+--   TABLE NAME: game_logs
+-- DESCRIPTIONS: プレイヤーの行動履歴を時系列で管理する。
+--------------------------------------------------
+CREATE TABLE game_logs (
+    log_id BIGSERIAL PRIMARY KEY,         -- 自動採番
+    user_id UUID NOT NULL,                -- ユーザーID（外部キーを想定）
+    log_type_id INT NOT NULL,             -- ログ種別ID（外部キーを想定）
+    details JSON NOT NULL,                -- 詳細（JSON形式）
+    created_at TIMESTAMP DEFAULT NOW()    -- 作成日時
+);

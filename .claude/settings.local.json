@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(mv:*)",
+      "Bash(docker-compose:*)",
+      "Bash(curl:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker exec:*)",
+      "Bash(find:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_take_screenshot"
+    ],
+    "deny": []
+  },
+  "enabledMcpjsonServers": [
+    "playwright",
+    "markitdown",
+    "arxiv-mcp-server",
+    "context7",
+    "youtube",
+    "mcp-taskmanager",
+    "sequential-thinking",
+    "browsermcp",
+    "filesystem",
+    "time",
+    "puppeteer",
+    "memory"
+  ]
+}

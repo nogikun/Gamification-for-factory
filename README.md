@@ -2,8 +2,8 @@
 
 # FactVATE
 地域共生ソリューション開発 / B-3  
-[![GitHub](https://img.shields.io/badge/-Gamification_for_factory-0D1117.svg?logo=GitHub&style=for-the-badge)](https://github.com/nogikun/Gamification-for-factory)
-[![GitHub](https://img.shields.io/badge/-Docs_Gamification_for_factory-0D1117.svg?logo=GitHub&style=for-the-badge)](https://github.com/nogikun/Docs-Gamification-for-factory)
+[![GitHub](https://img.shields.io/badge/-FactVATE-0D1117.svg?logo=GitHub&style=for-the-badge)](https://github.com/nogikun/Gamification-for-factory)
+[![GitHub](https://img.shields.io/badge/-Docs-0D1117.svg?logo=GitHub&style=for-the-badge)](https://github.com/nogikun/Docs-Gamification-for-factory)
 
 <br />
 
